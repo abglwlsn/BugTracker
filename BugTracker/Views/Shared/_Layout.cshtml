@@ -1,44 +1,132 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNet.Identity
+@using BugTracker.Models
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>BugSleuth - by Abigail West</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700' rel='stylesheet' type='text/css'>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/t/dt/dt-1.10.11,b-1.1.2,b-colvis-1.1.2,r-2.0.2/datatables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.0.2/css/responsive.dataTables.min.css" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
 
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-                </ul>
-                @Html.Partial("_LoginPartial")
+    <div class="container-fluid">
+        <!-- logo-->
+        <div class="logo-brand header sidebar rows">
+            <div class="logo">
+                <h1><a href=@Url.Action("Index", "Home") class="text-title">BugSleuth</a></h1>
             </div>
         </div>
-    </div>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
-    </div>
+        <!-- BEGIN SIDEBAR -->
+        <div class="left side-menu">
+            <div class="body rows scroll-y">
+                <!-- Scrolling sidebar -->
+                <div class="sidebar-inner slimscroller">
+                    <!-- User Session -->
+                    <div class="media">
+                        @{
+                            var manager = new UserManager<ApplicationUser>(new Microsoft.AspNet.Identity.EntityFramework.UserStore<ApplicationUser>(new ApplicationDbContext()));
+                            var currentUser = manager.FindById(User.Identity.GetUserId());
+                        }
+                        <div class="media-body">
+                            Welcome back,
+                            <h4 class="media-heading"><strong>@currentUser.FirstName</strong></h4>
+                        </div><!-- End div .media-body -->
+                    </div><!-- End div .media -->
+                    <!-- Sidebar menu -->
+                    <div id="sidebar-menu">
+                        <ul>
+                            @if (!User.IsInRole("Submitter"))
+                            {
+                                <li><a href=@Url.Action("Index", "Projects")><i class="fa fa-bar-chart"></i> Projects</a></li>
+                                <li><a href=@Url.Action("Index", "Tickets")><i class="fa fa-fw fa-plus"></i> Tickets</a></li>
+                                if (User.IsInRole("Administrator"))
+                                {
+                                    <li>
+                                        <a href="#fakelink"><i class="fa fa-cogs"></i><i class="fa fa-fw fa-angle-double-down i-right"></i> Manage</a>
+                                        <ul>
+                                            <li><a href=@Url.Action("Roles", "Administrator")><i class="fa fa-fw fa-angle-right"></i> Roles</a></li>
+                                            <li><a href=@Url.Action("Users", "Admin")><i class="fa fa-fw fa-angle-right"></i> Users </a></li>
+                                            <li><a href=@Url.Action("Index", "Manage")><i class="fa fa-fw fa-angle-right"></i> Profile</a></li>
+                                        </ul>
+                                    </li>
+                                }
+                                else if (User.IsInRole("Project Manager"))
+                                {
+                                    <li><a href=@Url.Action("Users", "Admin")><i class="fa fa-fw fa-angle-right"></i> Users </a></li>
+                                }
+                            }
+                            <li><a href=@Url.Action("Index", "Manage")><i class="fa fa-fw fa-angle-right"></i> Profile</a></li>
 
+
+                            @*</ul>
+                                </li>*@
+                        </ul>
+                        <div class="clear"></div>
+                    </div><!-- End div #sidebar-menu -->
+                </div><!-- End div .sidebar-inner .slimscroller -->
+            </div><!-- End div .body .rows .scroll-y -->
+        </div><!-- End div .footer .rows -->
+        <!-- END SIDEBAR -->
+        <!-- BEGIN CONTENT -->
+        <div class="right content-page">
+            <!-- BEGIN CONTENT HEADER -->
+            <div class="header content rows-content-header">
+                <!-- Button mobile view to collapse sidebar menu -->
+                <button class="button-menu-mobile show-sidebar"><i class="fa fa-bars"></i></button>
+                <!-- BEGIN NAVBAR CONTENT-->
+                <div class="navbar navbar-default" role="navigation">
+                    <div class="container-fluid">
+                        <!-- Navbar Header -->
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                                <i class="fa fa-angle-double-down"></i>
+                            </button>
+                        </div>
+                        <!-- /navbar header -->
+                        <!-- Navbar Collapse -->
+                        <div class="navbar-collapse collapse">
+                            <!-- left navbar -->
+                            <ul class="nav navbar-nav top nav-pad">
+                                <li><a href="http://awest.azurewebsites.net" target="_blank" class="logo-pad text-title-sm">abigail west</a></li>
+                            </ul>
+                            <!-- right navbar -->
+                            <ul class="nav navbar-nav navbar-right top-navbar nav-pad">
+                                <li>@Html.Partial("_LoginPartial")</li>
+                                <li><a href="https://awest-bugtracker.azurewebsites.net#about">About</a></li>
+                                <li><a href="https://awest-bugtracker.azurewebsites.net#contact">Contact</a></li>
+                                <li><a href="https://github.com/abigailwest/BugTracker" target="_blank"><i class="fa fa-github fa-2x"></i></a></li>
+                            </ul>
+                        </div><!-- /.navbar-collapse -->
+                    </div><!-- /div .container-->
+                </div>
+                <!-- END NAVBAR CONTENT-->
+            </div>
+            <!-- END CONTENT HEADER -->
+
+
+
+            <div class="body content rows scroll-y">
+                @RenderBody()
+            </div>
+            <hr />
+            <footer>
+                <p>&copy; 2016 - Abigail West</p>
+            </footer>
+        </div>
+    </div>
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    <script type="text/javascript" src="https://cdn.datatables.net/t/dt/dt-1.10.11,b-1.1.2,b-colvis-1.1.2,r-2.0.2/datatables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.0.2/js/dataTables.responsive.min.js"></script>
+    <script src="~/Site Template/js/lanceng.js"></script>
+    <script src="~/Scripts/Site.js"></script>
     @RenderSection("scripts", required: false)
 </body>
 </html>

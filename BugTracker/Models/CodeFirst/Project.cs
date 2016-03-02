@@ -10,6 +10,7 @@ namespace BugTracker.Models
     {
         public Project()
         {
+            this.Users = new HashSet<ApplicationUser>();
             this.Tickets = new HashSet<Ticket>();
         }
 
@@ -22,6 +23,7 @@ namespace BugTracker.Models
         public string Description { get; set; }
         public string Version { get; set; }
 
+        public virtual ICollection<ApplicationUser> Users { get; set; }
         public virtual ICollection<Ticket> Tickets { get; set; }
         public virtual ApplicationUser ProjectManager { get; set; }
     }

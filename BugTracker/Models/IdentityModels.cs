@@ -16,7 +16,6 @@ namespace BugTracker.Models
         public string LastName { get; set; }
         public string FullName { get { return FirstName + LastName; } }
 
-
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
@@ -40,7 +39,7 @@ namespace BugTracker.Models
 
         public DbSet<Priority> Priorities { get; set; }
         public DbSet<Status> Statuses { get; set; }
-        public DbSet<TicketType> TicketTypes { get; set; }
+        public DbSet<TicketPhase> TicketTypes { get; set; }
         public DbSet<TicketAction> TicketActions { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<NotificationType> NotificationTypes { get; set; }
@@ -49,5 +48,7 @@ namespace BugTracker.Models
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Attachment> Attachments { get; set; }
         public DbSet<Project> Projects { get; set; }
+
+        public System.Data.Entity.DbSet<BugTracker.Models.ApplicationUser> ApplicationUsers { get; set; }
     }
 }

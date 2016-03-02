@@ -27,8 +27,11 @@ namespace BugTracker.Migrations
             if (!context.Roles.Any(r => r.Name == "ProjectManager"))
                 roleManager.Create(new IdentityRole { Name = "Project Manager" });
 
-            if (!context.Roles.Any(r => r.Name == "Admin"))
+            if (!context.Roles.Any(r => r.Name == "Administrator"))
                 roleManager.Create(new IdentityRole { Name = "Administrator" });
+
+            if (!context.Roles.Any(r => r.Name == "Submitter"))
+                roleManager.Create(new IdentityRole { Name = "Submitter" });
 
             //--------------add as administrator
             if (!context.Users.Any(u => u.Email == "abigailwwest@gmail.com"))
@@ -62,13 +65,13 @@ namespace BugTracker.Migrations
                 );
 
             context.TicketTypes.AddOrUpdate(t => t.Name,
-                new TicketType() { Name = "Design" },
-                new TicketType() { Name = "Testing" },
-                new TicketType() { Name = "Database" },
-                new TicketType() { Name = "Routing" },
-                new TicketType() { Name = "User Interface" },
-                new TicketType() { Name = "Security" },
-                new TicketType() { Name = "Integrated" }
+                new TicketPhase() { Name = "Design" },
+                new TicketPhase() { Name = "Testing" },
+                new TicketPhase() { Name = "Database" },
+                new TicketPhase() { Name = "Routing" },
+                new TicketPhase() { Name = "User Interface" },
+                new TicketPhase() { Name = "Security" },
+                new TicketPhase() { Name = "Integrated" }
                 );
 
             context.TicketActions.AddOrUpdate(a => a.Name,
@@ -83,7 +86,8 @@ namespace BugTracker.Migrations
                 new NotificationType() { Name = "Ticket Assigned" },
                 new NotificationType() { Name = "Ticket Resolved" },
                 new NotificationType() { Name = "Reminder: Update Tickets" },
-                new NotificationType() { Name = "Ticket Modified" }
+                new NotificationType() { Name = "Ticket Modified" },
+                new NotificationType() { Name = "Ticket Reassigned" }
                 );
         }
     }

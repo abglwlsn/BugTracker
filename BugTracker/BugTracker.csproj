@@ -196,14 +196,18 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\TicketsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="HelperExtensions\MessageHelpers.cs" />
+    <Compile Include="HelperExtensions\UserRolesHelpers.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\AdminViewModels.cs" />
     <Compile Include="Models\CodeFirst\Attachment.cs" />
     <Compile Include="Models\CodeFirst\Comment.cs" />
     <Compile Include="Models\CodeFirst\TicketAction.cs" />
@@ -216,7 +220,7 @@
     <Compile Include="Models\CodeFirst\Project.cs" />
     <Compile Include="Models\CodeFirst\Status.cs" />
     <Compile Include="Models\CodeFirst\Ticket.cs" />
-    <Compile Include="Models\CodeFirst\TicketType.cs" />
+    <Compile Include="Models\CodeFirst\TicketPhase.cs" />
     <Compile Include="Models\TicketViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -247,6 +251,12 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="Site Template\animate.css" />
+    <Content Include="Site Template\datepicker\bootstrap-datepicker.js" />
+    <Content Include="Site Template\datepicker\datepicker.css" />
+    <Content Include="Site Template\lanceng.js" />
+    <Content Include="Site Template\style-responsive.css" />
+    <Content Include="Site Template\style.css" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -286,9 +296,13 @@
     <Content Include="Views\Tickets\Details.cshtml" />
     <Content Include="Views\Tickets\Edit.cshtml" />
     <Content Include="Views\Tickets\Index.cshtml" />
+    <Content Include="Views\Admin\Users.cshtml" />
+    <Content Include="Views\Admin\Roles.cshtml" />
+    <Content Include="Views\Admin\_UserInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\UserRoles\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
