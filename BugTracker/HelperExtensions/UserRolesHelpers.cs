@@ -27,7 +27,16 @@ namespace BugTracker.HelperExtensions
         public static IList<ApplicationUser> UsersInRole(this string roleName)
         {
             var role = db.Roles.FirstOrDefault(r => r.Name == roleName);
-            var userList = (IList<ApplicationUser>)role.Users;
+            var userList = new List<ApplicationUser>();
+           
+            foreach (var user in db.Users)
+            {
+                if (UserIsInRole(user.Id, roleName))
+                {
+                    userList.Add(user);
+                }
+            }
+
             return userList;
         }
 

@@ -49,7 +49,7 @@ namespace BugTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,ProjectId,SubmitterId,AssignedToId,PriorityId,StatusId,TypeId,Name,Submitted,Description")] TicketViewModel model)
+        public ActionResult Create([Bind(Include = "Id,ProjectId,SubmitterId,AssignedToId,PriorityId,StatusId,TypeId,Name,Submitted,Description")] CreateEditTicketViewModel model)
         {
             var userId = User.Identity.GetUserId();
 
@@ -65,7 +65,7 @@ namespace BugTracker.Controllers
                     ticket.Status = db.Statuses.Find(2);
                     var developer = db.Users.Find(ticket.AssignedToId);
                     var es = new EmailService();
-                    var msg = developer.CreateAssignedToMessage(ticket);
+                    var msg = ticket.CreateAssignedToTicketMessage(developer);
                     es.SendAsync(msg);
                 }
                 else
@@ -102,6 +102,25 @@ namespace BugTracker.Controllers
         {
             if (ModelState.IsValid)
             {
+                ticket.LastModified = DateTimeOffset.Now;
+
+                if (ticket.Status.Name == "Resolved")
+                {
+                    ticket.Closed = DateTimeOffset.Now;
+
+                    //notify submitter, project manager, admins
+                    var es = new EmailService();
+                    var recipientList = new List<ApplicationUser>();
+                    var admins = db.Roles.FirstOrDefault(r => r.Name == "Administrator").Name.UsersInRole();
+                    recipientList.Add(ticket.Project.ProjectManager);
+                    recipientList.Add(ticket.Submitter);
+                    recipientList.Union(admins);
+
+                    var msgList = ticket.CreateTicketResolvedMessage(recipientList);
+                    foreach (var message in msgList)
+                        es.Send(message);
+                }
+
                 db.Entry(ticket).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");

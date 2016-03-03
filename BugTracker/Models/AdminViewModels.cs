@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity.EntityFramework;
+﻿using BugTracker.HelperExtensions;
+using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +8,17 @@ using System.Web.Mvc;
 
 namespace BugTracker.Models
 {
+
     public class UserInfoViewModel
     {
+        private ApplicationDbContext db = new ApplicationDbContext();
+
+        public UserInfoViewModel(string userId)
+        {
+            this.User = db.Users.Find(userId);
+            this.Roles = userId.ListUserRoles();
+        }
+
         public ApplicationUser User { get; set; }
         public IEnumerable<Ticket> AssignedTickets { get; set; }
         public IEnumerable<Project> AssignedProjects { get; set; }

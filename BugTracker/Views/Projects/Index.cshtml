@@ -1,0 +1,158 @@
+﻿@model IEnumerable<BugTracker.Models.Project>
+@using BugTracker.Models
+@{
+    ViewBag.Title = "Index";
+}
+
+@if (User.IsInRole("Administrator") || User.IsInRole("Project Manager"))
+{
+    @: <div id="projectsRender" class="col-md-9">
+}
+else
+{
+    @: <div id="projectsRender" class="col-md-12">
+}
+@foreach (var project in Model)
+{
+    <div class="box-info shadow">
+        <h2>
+            @project.Name <small>Due: @project.Deadline.DateTime.ToLongDateString()</small>
+            <button type="button" class="viewProjectInfo btn btn-primary"><i class="fa fa-eye"></i></button>
+            @if (User.IsInRole("Administrator") || User.IsInRole("Project Manager"))
+            {
+            <button type="button" class="addTicketToProject btn btn-primary" data-id="@project.Id"><i class="fa fa-plus"></i>Ticket</button>
+            <button type="button" class="editProject btn btn-primary" data-id="@project.Id"><i class="fa fa-edit"></i></button>
+            if (project.Tickets.Count() == 0)
+            { <button type="button" class="deleteProject btn btn-danger" data-id="@project.Id"><i class="fa fa-trash"></i></button>}
+            }
+        </h2>
+    </div>
+        <div class="collapse" role="tabpanel">
+            <div class="row">
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>Project Manager</dt>
+                        <dd>@project.ProjectManager.FullName</dd>
+                        <dt>Version</dt>
+                        @if (project.Version != null)
+                        {
+                            <dd>@project.Version</dd> }
+                        else {
+                            <dd><small>none given</small></dd> }
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>Description</dt>
+                        <dd>@project.Description</dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>Created</dt>
+                        <dd>@project.Created.DateTime.ToShortDateString()</dd>
+                        <dt>Last Modified</dt>
+                        @if (project.LastModified != null)
+                        {
+                            <dd>@project.LastModified.DateTime.ToShortDateString()</dd> }
+                        else {
+                            <dd><small>no changes yet</small></dd>}
+                    </dl>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <table>
+                    <caption>Active Tickets</caption>
+                    <thead>
+                        <tr>
+                            <th>Ticket Name</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Assigned To</th>
+                            <th>Phase</th>
+                            <th>Action</th>
+                            <th>Submitted</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ticket in project.Tickets)
+                        {
+                            <tr>
+                                <td>@ticket.Name</td>
+
+                                @if (ticket.Priority != null)
+                                {
+                                    <td>@ticket.Priority.Name</td> }
+                                else {
+                                    <td><small>none given</small></td>}
+
+                                <td>@ticket.Status.Name</td>
+
+                                @if (ticket.AssignedToId != null)
+                                {
+                                    <td>@ticket.AssignedTo.FullName</td> }
+                                else {
+                                    <td><small>not assigned</small></td> }
+
+                                @if (ticket.Phase != null)
+                                {
+                                    <td>@ticket.Phase.Name</td> }
+                                else {
+                                    <td><small>none given</small></td> }
+
+                                @if (ticket.Action != null)
+                                {
+                                    <td>@ticket.Action.Name</td> }
+                                else {
+                                    <td><small>none given</small></td> }
+
+                                <td>@ticket.Submitted.DateTime.ToShortDateString()</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-12">
+                <table>
+                    <caption>Change Log</caption>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Modified Property</th>
+                            <th>New Value</th>
+                            <th>Old Value</th>
+                            <th>Modified By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (project.Logs.Count() == 0)
+                        {
+                            <tr><td>There have been no changes to this project.</td></tr>
+                        }
+                        else
+                        {
+                            foreach (var log in project.Logs)
+                            {
+                                <tr>
+                                    <td>@log.Modified.DateTime.ToShortDateString()</td>
+                                    <td>@log.Property</td>
+                                    <td>@log.NewValue</td>
+                                    <td>@log.OldValue</td>
+                                    <td>@log.ModifiedBy.FullName</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+}
+</div>
+@if (User.IsInRole("Administrator") || User.IsInRole("Project Manager"))
+{
+    <div id="editView" class="col-md-3">
+        <div class="box-info shadow">
+@{ Html.Action("_Create");}
+        </div>
+    </div>
+};

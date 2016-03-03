@@ -33,7 +33,64 @@ namespace BugTracker.Migrations
             if (!context.Roles.Any(r => r.Name == "Submitter"))
                 roleManager.Create(new IdentityRole { Name = "Submitter" });
 
-            //--------------add as administrator
+            //--------------add guest roles and administrator
+            //+administrator
+            if (!context.Users.Any(u => u.Email == "guestadmin@bugsleuth.com"))
+            {
+                userManager.Create(new ApplicationUser
+                {
+                    UserName = "guestadmin@bugsleuth.com",
+                    Email = "guestadmin@bugsleuth.com",
+                    FirstName = "Guest",
+                    LastName = "Admin"
+                }, "Password-1");
+            }
+            var userId = userManager.FindByEmail("guestadmin@bugsleuth.com").Id;
+            userManager.AddToRole(userId, "Administrator");
+
+            //+project manager
+            if (!context.Users.Any(u => u.Email == "guestprojectmanager@bugsleuth.com"))
+            {
+                userManager.Create(new ApplicationUser
+                {
+                    UserName = "guestprojectmanager@bugsleuth.com",
+                    Email = "guestprojectmanager@bugsleuth.com",
+                    FirstName = "Guest",
+                    LastName = "ProjectManager"
+                }, "Password-1");
+            }
+            userId = userManager.FindByEmail("guestprojectmanager@bugsleuth.com").Id;
+            userManager.AddToRole(userId, "Project Manager");
+
+            //+developer
+            if (!context.Users.Any(u => u.Email == "guestdeveloper@bugsleuth.com"))
+            {
+                userManager.Create(new ApplicationUser
+                {
+                    UserName = "guestdeveloper@bugsleuth.com",
+                    Email = "guestdeveloper@bugsleuth.com",
+                    FirstName = "Guest",
+                    LastName = "Developer"
+                }, "Password-1");
+            }
+            userId = userManager.FindByEmail("guestdeveloper@bugsleuth.com").Id;
+            userManager.AddToRole(userId, "Developer");
+
+            //+submitter
+            if (!context.Users.Any(u => u.Email == "guestsubmitter@bugsleuth.com"))
+            {
+                userManager.Create(new ApplicationUser
+                {
+                    UserName = "guestsubmitter@bugsleuth.com",
+                    Email = "guestsubmitter@bugsleuth.com",
+                    FirstName = "Guest",
+                    LastName = "Submitter"
+                }, "Password-1");
+            }
+            userId = userManager.FindByEmail("guestsubmitter@bugsleuth.com").Id;
+            userManager.AddToRole(userId, "Submitter");
+
+            //+self admin
             if (!context.Users.Any(u => u.Email == "abigailwwest@gmail.com"))
             {
                 userManager.Create(new ApplicationUser
@@ -42,9 +99,9 @@ namespace BugTracker.Migrations
                     Email = "abigailwwest@gmail.com",
                     FirstName = "Abigail",
                     LastName = "West"
-                }, "Budget1!");
+                }, "Bugs1!");
             }
-            var userId = userManager.FindByEmail("abigailwwest@gmail.com").Id;
+            userId = userManager.FindByEmail("abigailwwest@gmail.com").Id;
             userManager.AddToRole(userId, "Administrator");
 
             //---------------seed look up tables
@@ -87,7 +144,10 @@ namespace BugTracker.Migrations
                 new NotificationType() { Name = "Ticket Resolved" },
                 new NotificationType() { Name = "Reminder: Update Tickets" },
                 new NotificationType() { Name = "Ticket Modified" },
-                new NotificationType() { Name = "Ticket Reassigned" }
+                new NotificationType() { Name = "Ticket Reassigned" },
+                new NotificationType() { Name = "Project Reassigned" },
+                new NotificationType() { Name = "Project Assigned" },
+                new NotificationType() { Name = "New Project Manager" }
                 );
         }
     }

@@ -9,7 +9,7 @@ namespace BugTracker.HelperExtensions
 {
     public static class MessageHelpers
     {
-        public static IdentityMessage CreateAssignedToMessage(this ApplicationUser user, Ticket ticket)
+        public static IdentityMessage CreateAssignedToTicketMessage(this Ticket ticket, ApplicationUser user)
         {
             var msg = new IdentityMessage();
             msg.Destination = user.Email;
@@ -19,7 +19,29 @@ namespace BugTracker.HelperExtensions
             return msg;
         }
 
-        public static IdentityMessage CreateAssignmentRemovedMessage(this ApplicationUser user, Ticket ticket)
+        public static IdentityMessage CreateAssignedToProjectMessage(this Project project, ApplicationUser user)
+        {
+            var msg = new IdentityMessage();
+            return msg;
+        }
+
+        public static IdentityMessage CreateRemovedFromProjectMessage(this Project project, ApplicationUser user)
+        {
+            var msg = new IdentityMessage();
+            return msg;
+        }
+
+        public static IEnumerable<IdentityMessage> CreateNewProjectManagerMessage(this Project project, IEnumerable<ApplicationUser> developers)
+        {
+            var msgList = new List<IdentityMessage>();
+            foreach(var developer in developers)
+            {
+                var msg = new IdentityMessage();
+            }
+            return msgList;
+        }
+
+        public static IdentityMessage CreateAssignmentRemovedMessage(this Ticket ticket, ApplicationUser user)
         {
             var msg = new IdentityMessage();
             msg.Destination = user.Email;
@@ -28,5 +50,28 @@ namespace BugTracker.HelperExtensions
 
             return msg;
         }
+
+        public static IEnumerable<IdentityMessage> CreateTicketResolvedMessage(this Ticket ticket, IEnumerable<ApplicationUser> recipients)
+        {
+            var msgList = new List<IdentityMessage>();
+            foreach (var recipient in recipients)
+            {
+                var msg = new IdentityMessage();
+            }
+            return msgList;
+        }
+
+        public static IdentityMessage CreateTicketIsExplosiveMessage(this Ticket ticket, ApplicationUser developer, ApplicationUser projectManager)
+        {
+            var msg = new IdentityMessage();
+            return msg;
+        }
+
+        public static IdentityMessage CreateUserRolesModifiedMessage(this ApplicationUser user)
+        {
+            var msg = new IdentityMessage();
+            return msg;
+        }
+
     }
 }

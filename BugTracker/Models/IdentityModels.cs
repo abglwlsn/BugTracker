@@ -14,7 +14,7 @@ namespace BugTracker.Models
         public string FirstName { get; set; }
         [Required]
         public string LastName { get; set; }
-        public string FullName { get { return FirstName + LastName; } }
+        public string FullName { get { return FirstName + " " + LastName; } }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
@@ -49,6 +49,5 @@ namespace BugTracker.Models
         public DbSet<Attachment> Attachments { get; set; }
         public DbSet<Project> Projects { get; set; }
 
-        public System.Data.Entity.DbSet<BugTracker.Models.ApplicationUser> ApplicationUsers { get; set; }
     }
 }

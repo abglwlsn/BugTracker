@@ -1,32 +1,22 @@
 ﻿@model IEnumerable<BugTracker.Models.ApplicationUser>
-
+@using BugTracker.Models
 
 
     <div id="usersRender" class="col-md-9">
         @foreach (var user in Model)
         {
             <div class="box-info shadow">
-                <h2>@user.FullName
-                    <button type="button" class="viewUserInfo btn btn-primary">User Info</button>
-                    <button type="button" class="assignUser btn btn-primary">Assign</button>
-                    @if (User.IsInRole("Administrator"))
-                    {<button type="button" class="manageUserRoles btn btn-primary"><i class="fa fa-plus"></i>/<i class="fa fa-minus"></i>Roles</button>}
-                </h2>
-                <div class="collapse" role="tabpanel">
-                    <div class="row">
-                        <div class="col-md-4">
-                                <>@user.Email</>
-                                <>...Roles...</>
-                        </div>
-                        <div class="col-md-6">
-
-                        </div>
-                        <div class="col-md-2">
-
-                        </div>
-                    </div>
-                </div>
+                <h2>
+                    @user.FullName
+                <button type="button" class="viewUserInfo btn btn-primary">User Info</button>
+                <button type="button" class="assignUser btn btn-primary">Assign To New Ticket</button>
+                @if (User.IsInRole("Administrator"))
+                {<button type="button" class="manageUserRoles btn btn-primary"><i class="fa fa-plus"></i>/<i class="fa fa-minus"></i>Roles</button>}
+            </h2>
+            <div class="collapse" role="tabpanel">
+                @{Html.RenderPartial("_UserInfo", new UserInfoViewModel(user.Id));}
             </div>
+        </div>
         }
     </div>
     <div id="renderUserViews" class="col-md-3">

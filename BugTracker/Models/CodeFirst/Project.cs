@@ -12,19 +12,26 @@ namespace BugTracker.Models
         {
             this.Users = new HashSet<ApplicationUser>();
             this.Tickets = new HashSet<Ticket>();
+            this.Logs = new HashSet<Log>();
         }
 
         public int Id { get; set; }
+        [Required]
         public string ProjectManagerId { get; set; }
+        public DateTimeOffset Created { get; set; }
+        public DateTimeOffset LastModified { get; set; }
         [Required]
         public string Name { get; set; }
         public DateTimeOffset Deadline { get; set; }
         [Required]
+        [DataType(DataType.MultilineText)]
         public string Description { get; set; }
         public string Version { get; set; }
+        public bool IsSoftDeleted { get; set; }
 
         public virtual ICollection<ApplicationUser> Users { get; set; }
         public virtual ICollection<Ticket> Tickets { get; set; }
+        public virtual ICollection<Log> Logs { get; set; }
         public virtual ApplicationUser ProjectManager { get; set; }
     }
 }
