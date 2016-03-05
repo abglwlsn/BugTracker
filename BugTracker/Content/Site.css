@@ -1,6 +1,10 @@
-﻿
+﻿/*warning #f0ad4e*/
+
+
 body {
-    background-color: #079292;
+    background-color: #262626;
+    padding-top:0;
+    width:100%;
 }
 
 .header.sidebar .logo h1 a {
@@ -14,6 +18,18 @@ body {
 
 .navbar {
     height: 50px;
+}
+
+.navbar-default {
+    background-color:#262626;
+}
+
+.nav.navbar-nav.top-navbar li a {
+    color:#fff;
+}
+
+#title h4 {
+    padding-left:50px;
 }
 
 a {
@@ -41,12 +57,19 @@ ul a:hover {
 
 footer {
     margin: 0;
-    background-color: #33464a;
+    background-color: #cbc9ca;
 }
 /*-------- WELCOME PAGE --------*/
 
+#title {
+    height:125px;
+    position:absolute;
+    bottom:50px;
+    right:300px;
+}
+
 #hero {
-    background: url(/Images/hero-sunflower.jpg) center center no-repeat;
+    background: url(/Images/hero-detective.png) center center no-repeat;
     background-size: cover;
     width: 100%;
     height: 100vh;
@@ -56,7 +79,7 @@ footer {
 
 @media only screen and (max-width: 767px) {
     #hero {
-        background-image: url(/Images/hero-sunflower-mobile.jpg);
+        background-image: url(/Images/hero-detective-mobile.jpg);
     }
 }
 
@@ -70,7 +93,15 @@ footer {
 #contact {
     width: 60%;
     margin: auto;
-    color: #fff;
+    color: #262626;
+}
+
+.module {
+    padding:75px 25px;
+    box-sizing: border-box;
+    width:100%;
+    margin:auto;
+    box-shadow:10px 0 5px -5px #789aa1, -10px 0 -5px #789aa1;
 }
 
 .technologies {
@@ -81,21 +112,21 @@ footer {
 .full-content-large {
     width: 100%;
     max-width: 800px;
-    margin: 5% auto;
+    /*margin: 5% auto;*/
     text-align: center;
 }
 
 .full-content-small {
     width: 100%;
     max-width: 400px;
-    margin: 2% auto;
+    /*margin: 2% auto;*/
     text-align: center;
 }
 
 .full-content-xsmall {
     width: 100%;
     max-width: 300px;
-    margin: 2% auto;
+    /*margin: 2% auto;*/
     text-align: center;
 }
 
@@ -105,6 +136,12 @@ footer {
     font-size: 5em;
     /*color:#09c3c3;*/
     color: #fff;
+}
+
+.text-title {
+    /*font-family: 'Bangers', cursive;*/
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size:1.5em;
 }
 
 h1 span {
@@ -150,8 +187,8 @@ label {
     height: 132px;
 }
 
-#contact a {
-    color: #09c3c3;
+#contact a, #contact i {
+    color: #ed9c28;
 }
 
 /* -------- DATA TABLE ---------*/

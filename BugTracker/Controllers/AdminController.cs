@@ -84,7 +84,7 @@ namespace BugTracker.Controllers
         {
             var model = new AssignUserViewModel();
             model.UserId = userId;
-            model.Projects = db.Projects.Where(p=>p.IsSoftDeleted != true).ToList();
+            model.Projects = db.Projects.Where(p=>p.IsResolved != true).ToList();
             model.Tickets = db.Tickets.Where(t=>t.Status.Name != "Resolved").ToList();
             model.CurrentTickets = db.Tickets.Where(t => t.AssignedToId == userId).ToList();
 
@@ -105,21 +105,21 @@ namespace BugTracker.Controllers
             ticket.Status = db.Statuses.FirstOrDefault(s => s.Name == "Assigned");
 
             //notify developers
-            var developer = db.Users.Find(ticket.AssignedToId);
-            var es = new EmailService();
-            var msg = ticket.CreateAssignedToTicketMessage(developer);
-            es.SendAsync(msg);
+            //var developer = db.Users.Find(ticket.AssignedToId);
+            //var es = new EmailService();
+            //var msg = ticket.CreateAssignedToTicketMessage(developer);
+            //es.SendAsync(msg);
         
-            var oldDeveloper = db.Users.Find(original.AssignedToId);
-            var msg2 = original.CreateAssignmentRemovedMessage(oldDeveloper);
-            es.SendAsync(msg2);
+            //var oldDeveloper = db.Users.Find(original.AssignedToId);
+            //var msg2 = original.CreateAssignmentRemovedMessage(oldDeveloper);
+            //es.SendAsync(msg2);
 
-            //add changelog
-            ticket.Id.CreateTicketChangeLog(userId, "Assigned To", ticket.AssignedTo.FullName, original.AssignedTo.FullName);
+            ////add changelog
+            //ticket.Id.CreateTicketChangeLog(userId, "Assigned To", ticket.AssignedTo.FullName, original.AssignedTo.FullName);
 
-            //add notifications
-            ticket.Id.CreateTicketNotification("Ticket Assigned", new List<string>{developer.Id}, msg.Body);
-            ticket.Id.CreateTicketNotification("Ticket Reassigned", new List<string> { oldDeveloper.Id }, msg2.Body);
+            ////add notifications
+            //ticket.Id.CreateTicketNotification("Ticket Assigned", new List<string>{developer.Id}, msg.Body);
+            //ticket.Id.CreateTicketNotification("Ticket Reassigned", new List<string> { oldDeveloper.Id }, msg2.Body);
 
             db.SaveChanges();
             ViewBag.SuccessMessage = "Ticket: " + ticket.Name + "has been reassigned, and a notification has been sent to the developers.";

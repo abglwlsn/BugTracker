@@ -42,7 +42,8 @@ namespace BugTracker.Migrations
                     UserName = "guestadmin@bugsleuth.com",
                     Email = "guestadmin@bugsleuth.com",
                     FirstName = "Guest",
-                    LastName = "Admin"
+                    LastName = "Admin",
+                    FullName = "Guest Admin"
                 }, "Password-1");
             }
             var userId = userManager.FindByEmail("guestadmin@bugsleuth.com").Id;
@@ -56,7 +57,8 @@ namespace BugTracker.Migrations
                     UserName = "guestprojectmanager@bugsleuth.com",
                     Email = "guestprojectmanager@bugsleuth.com",
                     FirstName = "Guest",
-                    LastName = "ProjectManager"
+                    LastName = "ProjectManager",
+                    FullName = "Guest ProjectManager"
                 }, "Password-1");
             }
             userId = userManager.FindByEmail("guestprojectmanager@bugsleuth.com").Id;
@@ -70,7 +72,8 @@ namespace BugTracker.Migrations
                     UserName = "guestdeveloper@bugsleuth.com",
                     Email = "guestdeveloper@bugsleuth.com",
                     FirstName = "Guest",
-                    LastName = "Developer"
+                    LastName = "Developer",
+                    FullName = "Guest Developer"
                 }, "Password-1");
             }
             userId = userManager.FindByEmail("guestdeveloper@bugsleuth.com").Id;
@@ -84,7 +87,8 @@ namespace BugTracker.Migrations
                     UserName = "guestsubmitter@bugsleuth.com",
                     Email = "guestsubmitter@bugsleuth.com",
                     FirstName = "Guest",
-                    LastName = "Submitter"
+                    LastName = "Submitter",
+                    FullName = "Guest Submitter"
                 }, "Password-1");
             }
             userId = userManager.FindByEmail("guestsubmitter@bugsleuth.com").Id;
@@ -98,7 +102,8 @@ namespace BugTracker.Migrations
                     UserName = "abigailwwest@gmail.com",
                     Email = "abigailwwest@gmail.com",
                     FirstName = "Abigail",
-                    LastName = "West"
+                    LastName = "West",
+                    FullName = "Abigail West"
                 }, "Bugs1!");
             }
             userId = userManager.FindByEmail("abigailwwest@gmail.com").Id;
@@ -121,13 +126,13 @@ namespace BugTracker.Migrations
                 new Status() { Name = "Resolved" }
                 );
 
-            context.TicketTypes.AddOrUpdate(t => t.Name,
+            context.TicketPhases.AddOrUpdate(t => t.Name,
                 new TicketPhase() { Name = "Design" },
-                new TicketPhase() { Name = "Testing" },
                 new TicketPhase() { Name = "Database" },
                 new TicketPhase() { Name = "Routing" },
-                new TicketPhase() { Name = "User Interface" },
                 new TicketPhase() { Name = "Security" },
+                new TicketPhase() { Name = "User Interface" },
+                new TicketPhase() { Name = "Testing" },
                 new TicketPhase() { Name = "Integrated" }
                 );
 

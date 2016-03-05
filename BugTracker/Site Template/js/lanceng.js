@@ -4,7 +4,7 @@ $(document).ready(function(){
 	
 	
 	//SLIM SCROLL
-	$('.slimscroller').slimscroll({
+	$('.slimscroller').slimScroll({
 		height: 'auto',
 		size: '3px',
 		railOpacity: 0.3,

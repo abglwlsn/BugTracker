@@ -39,8 +39,27 @@ namespace BugTracker.Controllers
         }
 
         // GET: Tickets/Create
-        public ActionResult Create()
+        public ActionResult Create(int? id)
         {
+            var project = db.Projects.Find(id);
+            IEnumerable<ApplicationUser> developers;
+
+            if (project != null)
+                developers = project.Users.Where(u => u.Id.UserIsInRole("Developer"));
+            else
+                developers = db.Users.Where(u => u.Id.UserIsInRole("Developer"));
+
+            var model = new CreateEditTicketViewModel()
+            {
+                Ticket = new Ticket(),
+                Project = project,
+                Projects = new SelectList(db.Projects.Where(p => p.IsResolved != true)),
+                Developers = new SelectList(developers),
+                Priorities = new SelectList(db.Priorities.OrderByDescending(p => p.Name)),
+                Statuses = new SelectList(db.Statuses),
+                Phases = new SelectList(db.TicketPhases),
+                Actions = new SelectList(db.TicketActions)
+            };
             return View();
         }
 
@@ -63,10 +82,10 @@ namespace BugTracker.Controllers
                 if (ticket.AssignedToId != null)
                 {
                     ticket.Status = db.Statuses.Find(2);
-                    var developer = db.Users.Find(ticket.AssignedToId);
-                    var es = new EmailService();
-                    var msg = ticket.CreateAssignedToTicketMessage(developer);
-                    es.SendAsync(msg);
+                    //var developer = db.Users.Find(ticket.AssignedToId);
+                    //var es = new EmailService();
+                    //var msg = ticket.CreateAssignedToTicketMessage(developer);
+                    //es.SendAsync(msg);
                 }
                 else
                     ticket.Status = db.Statuses.Find(1);
@@ -90,6 +109,19 @@ namespace BugTracker.Controllers
             {
                 return HttpNotFound();
             }
+
+            var developers = ticket.Project.Users.Where(u => u.Id.UserIsInRole("Developer"));
+            var model = new CreateEditTicketViewModel()
+            {
+                Ticket = ticket,
+                Project = ticket.Project,
+                Developers = new SelectList(developers),
+                Priorities = new SelectList(db.Priorities.OrderByDescending(p => p.Name)),
+                Statuses = new SelectList(db.Statuses),
+                Phases = new SelectList(db.TicketPhases),
+                Actions = new SelectList(db.TicketActions)
+            };
+
             return View(ticket);
         }
 
@@ -104,22 +136,22 @@ namespace BugTracker.Controllers
             {
                 ticket.LastModified = DateTimeOffset.Now;
 
-                if (ticket.Status.Name == "Resolved")
-                {
-                    ticket.Closed = DateTimeOffset.Now;
+                //if (ticket.Status.Name == "Resolved")
+                //{
+                //    ticket.Closed = DateTimeOffset.Now;
 
-                    //notify submitter, project manager, admins
-                    var es = new EmailService();
-                    var recipientList = new List<ApplicationUser>();
-                    var admins = db.Roles.FirstOrDefault(r => r.Name == "Administrator").Name.UsersInRole();
-                    recipientList.Add(ticket.Project.ProjectManager);
-                    recipientList.Add(ticket.Submitter);
-                    recipientList.Union(admins);
+                //    //notify submitter, project manager, admins
+                //    var es = new EmailService();
+                //    var recipientList = new List<ApplicationUser>();
+                //    var admins = db.Roles.FirstOrDefault(r => r.Name == "Administrator").Name.UsersInRole();
+                //    recipientList.Add(ticket.Project.ProjectManager);
+                //    recipientList.Add(ticket.Submitter);
+                //    recipientList.Union(admins);
 
-                    var msgList = ticket.CreateTicketResolvedMessage(recipientList);
-                    foreach (var message in msgList)
-                        es.Send(message);
-                }
+                //    var msgList = ticket.CreateTicketResolvedMessage(recipientList);
+                //    foreach (var message in msgList)
+                //        es.Send(message);
+                //}
 
                 db.Entry(ticket).State = EntityState.Modified;
                 db.SaveChanges();

@@ -204,6 +204,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="HelperExtensions\FormatHelpers.cs" />
     <Compile Include="HelperExtensions\MessageHelpers.cs" />
     <Compile Include="HelperExtensions\NotificatonHelpers.cs" />
     <Compile Include="HelperExtensions\ProjectHelpers.cs" />
@@ -237,6 +238,11 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\hero-detective.png" />
+    <Content Include="Images\icon-c.png" />
+    <Content Include="Images\icon-entity.png" />
+    <Content Include="Images\icon-javascript.png" />
+    <Content Include="Images\icon-mvc.png" />
     <Content Include="Scripts\ai.0.15.0-build58334.js" />
     <Content Include="Scripts\ai.0.15.0-build58334.min.js" />
     <Content Include="Scripts\bootstrap.js" />

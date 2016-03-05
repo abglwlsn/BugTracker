@@ -27,7 +27,10 @@
             @Html.DisplayNameFor(model => model.Submitter.FirstName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Type.Name)
+            @Html.DisplayNameFor(model => model.Phase.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Action.Name)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Name)
@@ -65,7 +68,10 @@
             @Html.DisplayFor(modelItem => item.Submitter.FirstName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Type.Name)
+            @Html.DisplayFor(modelItem => item.Phase.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Action.Name)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Name)

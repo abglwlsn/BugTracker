@@ -24,7 +24,7 @@ namespace BugTracker.HelperExtensions
         {
             var devProjects = db.Projects.Include("Tickets").Include("ProjectManager").Include("Users").OrderByDescending(p => p.Deadline).Where(p => p.Tickets.Any(t => t.AssignedToId == userId));
             var progManProjects = db.Projects.Include("Tickets").Include("ProjectManager").Include("Users").OrderByDescending(p => p.Deadline).Where(p => p.ProjectManagerId == userId);
-            IEnumerable<Project> allProjects = devProjects.Union(progManProjects);
+           var allProjects = devProjects.Union(progManProjects).ToList();
 
             return allProjects;
         }
@@ -41,13 +41,12 @@ namespace BugTracker.HelperExtensions
             return users;
         }
 
-        public static void AssignProjectManager(this int projectId, string userId)
-        {
-            var project = db.Projects.Find(projectId);
-            project.ProjectManagerId = userId;
-            project.Users.Add(db.Users.Find(userId));
-            db.SaveChanges();
-        }
+        //public static void AssignProjectManager(this int projectId, string userId)
+        //{
+        //    var project = db.Projects.Find(projectId);
+        //    project.ProjectManagerId = userId;
+        //    db.SaveChanges();
+        //}
 
         public static void ReassignProjectManager(this int projectId, string oldPMId, string newPMId)
         {
@@ -58,21 +57,21 @@ namespace BugTracker.HelperExtensions
             db.SaveChanges();
         }
 
-        public static void AddDeveloperToProject(this int ticketId, string userId)
-        {
-            var project = db.Tickets.Find(ticketId).Project;
-            if (!project.Users.Any(u=>u.Id == userId))
-                project.Users.Add(db.Users.Find(userId));
-            db.SaveChanges();
-        }
+        //public static void AddDeveloperToProject(this int ticketId, string userId)
+        //{
+        //    var project = db.Tickets.Find(ticketId).Project;
+        //    if (!project.Users.Any(u=>u.Id == userId))
+        //        project.Users.Add(db.Users.Find(userId));
+        //    db.SaveChanges();
+        //}
 
-        public static void RemoveDeveloperFromProject(this int ticketId, string userId)
-        {
-            var project = db.Tickets.Find(ticketId).Project;
-            if (project.Users.Any(u => u.Id == userId))
-                project.Users.Remove(db.Users.Find(userId));
-            db.SaveChanges();
-        }
+        //public static void RemoveDeveloperFromProject(this int ticketId, string userId)
+        //{
+        //    var project = db.Tickets.Find(ticketId).Project;
+        //    if (project.Users.Any(u => u.Id == userId))
+        //        project.Users.Remove(db.Users.Find(userId));
+        //    db.SaveChanges();
+        //}
 
         public static void CreateProjectChangeLog(this int projectId, string userId, string property, string newValue, string oldValue)
         {

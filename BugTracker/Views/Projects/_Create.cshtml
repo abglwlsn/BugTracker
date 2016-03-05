@@ -1,7 +1,10 @@
 ﻿@model BugTracker.Models.CreateEditProjectViewModel
+@{ 
+    Layout = null;
+}
 
 <h2><strong>Create</strong> New Project</h2>
-@using (Html.BeginForm("Create"))
+@using (Html.BeginForm("Create", "Projects"))
             {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -26,14 +29,18 @@
 
     <div class="form-group">
         <label>Project Manager</label>
-        @Html.DropDownList("ProjectManagerId", Model.ProjectManagers, "Select Project Manager", new { @class = "form-control" })
+        @Html.DropDownListFor(model => model.Project.ProjectManagerId, Model.ProjectManagers, "Select Project Manager", new { @class = "form-control" })
         @Html.ValidationMessageFor(model => model.Project.ProjectManagerId, "", new { @class = "text-danger" })
     </div>
 
     <div class="form-group">
         <label>Deadline</label>
-        @Html.TextBoxFor(model=>model.Project.Deadline, new { @class = "form-control" })
-        @Html.ValidationMessageFor(model => model.Project.Deadline, "", new { @class = "text-danger, datepicker" })
+        @Html.TextBoxFor(model=>model.Project.Deadline, new { @class = "form-control datepicker", value="" })
+    </div>
+
+    <div class="form-group">
+        <label>Assign Developers</label>
+        @Html.ListBox("SelectedDevelopers", Model.Developers)
     </div>
 
     <input type="submit" class="btn btn-primary" value="Create Project"/>

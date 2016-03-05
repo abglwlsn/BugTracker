@@ -6,11 +6,16 @@
 <div class="row">
     <div class="col-md-3 full-content-xsmall animated fadeInDownBig">
         <div class="login-wrap">
-            <a href=@Url.Action("Login", "Account") class="btn btn-primary btn-block"><i class="fa fa-unlock"></i> Login</a>
-            <a href=@Url.Action("Register", "Account") class="btn btn-primary btn-block"><i class="fa fa-rocket fa-inverse"></i> Register</a>
+            <a class="section-scroll btn btn-warning btn-block btn-lg" href="#about">Learn More</a>
+        </div>
+    </div>
+    <div class="col-md-3 col-md-offset-6 full-content-xsmall animated fadeInDownBig">
+        <div class="login-wrap">
+            <a href=@Url.Action("Login", "Account") class="btn btn-warning btn-block"><i class="fa fa-unlock"></i> Login</a>
+            <a href=@Url.Action("Register", "Account") class="btn btn-warning btn-block"><i class="fa fa-rocket fa-inverse"></i> Register</a>
         </div>
         <div class="login-wrap">
-            <h2>Demo application as:</h2>
+            <h2 class="text-title">Demo application as:</h2>
             @using (Html.BeginForm("LoginGuestSubmitter", "Account"))
             {
                 @Html.AntiForgeryToken()
@@ -33,15 +38,11 @@
             }
         </div>
     </div>
-    <div class="col-md-3 full-content-xsmall animated fadeInDownBig">
-        <div class="login-wrap">
-            <a class="section-scroll btn btn-primary btn-block btn-lg" href="#about">Learn More</a>
-        </div>
     </div>
-</div>
+
 <div class="row">
-    <div id="title" class="col-md-4">
-        <h4 class="pull-left" style="color:#09c3c3">Welcome to</h4>
+    <div id="title" class="col-md-5">
+        <h4 style="color:#f0ad4e">Welcome to</h4>
         <h1 class="app-title text-right">Bug Sleuth</h1>
     </div>
 </div>
