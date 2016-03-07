@@ -16,15 +16,17 @@ else
         foreach (var project in Model)
         {
             <div class="box-info shadow">
-                <h2>
-                    @project.Name <small>Due: @project.Deadline.FormatDateTimeOffset()</small>
-                    <a role="button" data-toggle="collapse" data-parent="#projectsRender" data-target="#collapse-@project.Id" aria-expanded="false"><i class="btn btn-primary fa fa-eye"></i></a>
+                <h2>@project.Name <small> Due: @project.Deadline.FormatDateTimeOffsetCondensed()</small>
+                </h2>
+                <div id="headerButtons">
+                    <a role="button" data-toggle="collapse" data-parent="#projectsRender" data-target="#collapse-@project.Id" aria-expanded="false"><i class="btn btn-warning fa fa-eye"></i></a>
                     @if (User.IsInRole("Administrator") || User.IsInRole("Project Manager"))
                     {
-                        <a href=@Url.Action("Create", "Tickets", new { id = project.Id }) class="btn btn-primary"><i class="fa fa-plus"></i>Ticket</a>
-                        <button type="button" class="editProject btn btn-primary" data-id="@project.Id"><i class="fa fa-edit"></i></button>
+                        <a href=@Url.Action("Create", "Tickets", new { id = project.Id }) class="btn btn-warning"><i class="fa fa-plus"></i> Ticket</a>
+                            <button type="button" class="editProject btn btn-warning" data-id="@project.Id"><i class="fa fa-edit"></i></button>
                     }
-                </h2>
+                </div>
+                  
                 <div id="collapse-@project.Id" class="collapse" role="tabpanel">
                     <div class="row">
                         <div class="col-md-3">
@@ -50,7 +52,7 @@ else
                                 <dt>Created</dt>
                                 <dd>@project.Created.DateTime.ToShortDateString()</dd>
                                 <dt>Last Modified</dt>
-                                    <dd>@project.LastModified.FormatDateTimeOffset()</dd> 
+                                    <dd>@project.LastModified.FormatDateTimeOffsetCondensed()</dd> 
                             </dl>
                         </div>
                         <div class="col-md-3">

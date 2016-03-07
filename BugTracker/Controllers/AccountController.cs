@@ -92,6 +92,66 @@ namespace BugTracker.Controllers
             }
         }
 
+        // POST: /Account/LoginGuestSubmitter
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> LoginGuestSubmitter()
+        {
+            // This doesn't count login failures towards account lockout
+            // To enable password failures to trigger account lockout, change to shouldLockout: true
+            var user = await UserManager.FindByNameAsync("guestsubmitter@bugsleuth.com");
+
+            var result = await SignInManager.PasswordSignInAsync("guestsubmitter@bugsleuth.com", "Password-1", false, shouldLockout: false);
+
+            return RedirectToAction("Dashboard", "Home");
+        }
+
+        // POST: /Account/LoginGuestSuperUser
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> LoginGuestDeveloper()
+        {
+            // This doesn't count login failures towards account lockout
+            // To enable password failures to trigger account lockout, change to shouldLockout: true
+            var user = await UserManager.FindByNameAsync("guestdeveloper@bugsleuth.com");
+
+            var result = await SignInManager.PasswordSignInAsync("guestdeveloper@bugsleuth.com", "Password-1", false, shouldLockout: false);
+
+            return RedirectToAction("Dashboard", "Home");
+        }
+
+        // POST: /Account/LoginGuestSuperUser
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> LoginGuestProjectManager()
+        {
+            // This doesn't count login failures towards account lockout
+            // To enable password failures to trigger account lockout, change to shouldLockout: true
+            var user = await UserManager.FindByNameAsync("guestprojectmanager@bugsleuth.com");
+
+            var result = await SignInManager.PasswordSignInAsync("guestprojectmanager@bugsleuth.com", "Password-1", false, shouldLockout: false);
+
+            return RedirectToAction("Dashboard", "Home");
+        }
+
+        // POST: /Account/LoginGuestSuperUser
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> LoginGuestAdministrator()
+        {
+            // This doesn't count login failures towards account lockout
+            // To enable password failures to trigger account lockout, change to shouldLockout: true
+            var user = await UserManager.FindByNameAsync("guestadmin@bugsleuth.com");
+
+            var result = await SignInManager.PasswordSignInAsync("guestadmin@bugsleuth.com", "Password-1", false, shouldLockout: false);
+
+            return RedirectToAction("Dashboard", "Home");
+        }
+
         //
         // GET: /Account/VerifyCode
         [AllowAnonymous]

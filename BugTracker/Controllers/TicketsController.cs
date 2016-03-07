@@ -12,26 +12,48 @@ using BugTracker.HelperExtensions;
 
 namespace BugTracker.Controllers
 {
+    [RequireHttps]
     public class TicketsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Tickets
         public ActionResult Index()
-        {
-            var userId = User.Identity.GetUserId();
-            List<Ticket> tickets;
-
-            if (User.IsInRole("Administrator"))
-                tickets = db.Tickets.Include(t => t.AssignedTo).Include(t => t.Project).ToList();
-            else if (User.IsInRole("ProjectManager"))
-                tickets = db.Tickets.Include(t => t.AssignedTo).Include(t => t.Project).Where(t => t.Project.ProjectManagerId == userId).ToList();
-            else if (User.IsInRole("Developer"))
-                tickets = db.Tickets.Include(t => t.AssignedTo).Include(t => t.Project).Where(t => t.AssignedToId == userId).ToList();
-            else 
-                tickets = db.Tickets.Include(t => t.Project).OrderBy(t => t.Project.Name).Where(t => t.SubmitterId == userId).ToList();
+        { 
+            IEnumerable<Ticket> tickets = db.Tickets.Include(t => t.AssignedTo).Include(t => t.Project).Where(t=>t.Status.Name != "Resolved").OrderBy(t=>t.Priority).AsEnumerable();
 
             return View(tickets);
+        }
+
+        //GET: Tickets/UserTickets
+        //try route prefix for Tickets/{user.FirstName}
+        public ActionResult UserTickets()
+        {
+            var userId = User.Identity.GetUserId();
+            IEnumerable<Project> projects;
+            IEnumerable<Ticket> assignedTickets;
+            IEnumerable<Ticket> submittedTickets;
+
+            if (User.IsInRole("Project Manager") || User.IsInRole("Developer"))
+                projects = userId.ListUserProjects().OrderByDescending(p=>p.Deadline);
+            else
+                projects = null;
+
+            if (User.IsInRole("Developer"))
+                assignedTickets = userId.ListUserTickets().OrderBy(t=>t.Priority);
+            else
+                assignedTickets = null;
+
+            submittedTickets = db.Tickets.Where(t => t.SubmitterId == userId).OrderBy(t => t.Submitted);
+
+            var model = new UserTicketsViewModel()
+            {
+                AssignedProjects = projects,
+                AssignedTickets = assignedTickets,
+                SubmittedTickets = submittedTickets
+            };
+
+            return View(model);
         }
 
         // GET: Tickets/Details/5
@@ -56,22 +78,22 @@ namespace BugTracker.Controllers
             IEnumerable<ApplicationUser> developers;
 
             if (project != null)
-                developers = project.Users.Where(u => u.Id.UserIsInRole("Developer"));
+                developers = project.Users.Where(u => u.Id.UserIsInRole("Developer")).AsEnumerable();
             else
-                developers = db.Users.Where(u => u.Id.UserIsInRole("Developer"));
+                developers = db.Users.Where(u => u.Id.UserIsInRole("Developer")).AsEnumerable();
 
             var model = new CreateEditTicketViewModel()
             {
                 Ticket = new Ticket(),
                 Project = project,
-                Projects = new SelectList(db.Projects.Where(p => p.IsResolved != true)),
-                Developers = new SelectList(developers),
-                Priorities = new SelectList(db.Priorities.OrderByDescending(p => p.Name)),
-                Statuses = new SelectList(db.Statuses),
-                Phases = new SelectList(db.TicketPhases),
-                Actions = new SelectList(db.TicketActions)
+                Projects = new SelectList(db.Projects.Where(p => p.IsResolved != true), "Id", "Name"),
+                Developers = new SelectList(developers, "Id", "Name"),
+                Priorities = new SelectList(db.Priorities.OrderByDescending(p => p.Name), "Id", "Name"),
+                Statuses = new SelectList(db.Statuses, "Id", "Name"),
+                Phases = new SelectList(db.TicketPhases, "Id", "Name"),
+                Actions = new SelectList(db.TicketActions, "Id", "Name")
             };
-            return View();
+            return View(model);
         }
 
         // POST: Tickets/Create
@@ -79,33 +101,36 @@ namespace BugTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,ProjectId,SubmitterId,AssignedToId,PriorityId,StatusId,TypeId,Name,Submitted,Description")] CreateEditTicketViewModel model)
+        public ActionResult Create([Bind(Include = "Id,ProjectId,SubmitterId,AssignedToId,PriorityId,StatusId,TypeId,Name,Submitted,Description")] Ticket ticket)
         {
             var userId = User.Identity.GetUserId();
 
             if (ModelState.IsValid)
             {
-                Ticket ticket = model.Ticket;
                 ticket.SubmitterId = userId;
                 ticket.Submitted = DateTimeOffset.Now;
 
-
                 if (ticket.AssignedToId != null)
                 {
-                    ticket.Status = db.Statuses.Find(2);
+                    ticket.Status = db.Statuses.FirstOrDefault(s=>s.Name == "Assigned");
                     //var developer = db.Users.Find(ticket.AssignedToId);
                     //var es = new EmailService();
                     //var msg = ticket.CreateAssignedToTicketMessage(developer);
                     //es.SendAsync(msg);
                 }
                 else
-                    ticket.Status = db.Statuses.Find(1);
+                    ticket.Status = db.Statuses.FirstOrDefault(s=>s.Name == "Unassigned");
+
+                if (!User.IsInRole("Administrator"))
+                {
+                    // send notification of submitted ticket to admins
+                }
 
                 db.Tickets.Add(ticket);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(model);
+            return View(ticket);
         }
 
         // GET: Tickets/Edit/5

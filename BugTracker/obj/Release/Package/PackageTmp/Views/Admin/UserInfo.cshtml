@@ -10,7 +10,7 @@
                     <dd>@Model.User.Email</dd>
                     <dt>Roles</dt>
                     <dd>
-                        <ul>
+                        <ul class="list-unstyled">
                             @foreach (var role in Model.Roles)
                             { <li>@role</li>}
                         </ul>
@@ -49,7 +49,9 @@
                         </tbody>
                     </table>
                 </div>
-                if (Model.User.Id.UserIsInRole("Developer") || Model.User.Id.UserIsInRole("Project Manager"))
+            }
+
+                @if (Model.User.Id.UserIsInRole("Developer") || Model.User.Id.UserIsInRole("Project Manager"))
                 {
                     <div class="col-md-10 col-md-offset-1">
                         <table>
@@ -82,7 +84,6 @@
                         </table>
                     </div>
                 }
-            }
         </div>
         <a href=@Url.Action("Users", "Admin") class="btn btn-warning">Back to List</a>
     </div>

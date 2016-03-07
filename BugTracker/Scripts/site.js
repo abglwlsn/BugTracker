@@ -7,9 +7,7 @@
     $('.data-table').DataTable();
 
     //chosen plugin
-    $('body').on('load', function () {
-        $(".chosen-select").chosen();
-    })
+    $(".chosen-select").chosen();
 
 
     //partial views handling

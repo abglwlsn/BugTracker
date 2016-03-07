@@ -6,6 +6,13 @@ using System.Web.Mvc;
 
 namespace BugTracker.Models
 {
+    public class UserTicketsViewModel
+    {
+        public IEnumerable<Ticket> AssignedTickets;
+        public IEnumerable<Project> AssignedProjects;
+        public IEnumerable<Ticket> SubmittedTickets;
+    }
+
     public class CreateEditTicketViewModel
     {
         //bring in whole ticket object to access those properties directly. assign to ticket.Id in get action. in post, a little more complex to access embedded ticket object  - will have to figure this out.

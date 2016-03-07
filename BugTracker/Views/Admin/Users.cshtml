@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<BugTracker.Models.ApplicationUser>
 @using BugTracker.Models
-
+@using BugTracker.HelperExtensions
 
 <div id="usersRender" class="col-md-9">
     @if (ViewBag.SuccessMessage != null)
@@ -10,17 +10,17 @@
     @foreach (var user in Model.OrderBy(u => u.LastName))
     {
     <div class="box-info shadow">
-        <h2>
-            @user.FullName
+        <h2>@user.FullName <small>(@user.Id.ListUserTickets().Count()) Tickets</small></h2>
             @*<button type="button" class="viewUserInfo btn btn-primary" data-id="@user.Id"><i class="fa fa-eye"></i></button>*@
+        <div id="headerButtons">
             <a href=@Url.Action("UserInfo", new { id = user.Id }) class="btn btn-warning"><i class="fa fa-eye"></i></a>
-            <button type="button" class="assignUser btn btn-primary" data-id="@user.Id"><i class="fa fa-plus"></i> Ticket</button>
+            <button type="button" class="assignUser btn btn-warning" data-id="@user.Id"><i class="fa fa-plus"></i> Ticket</button>
             @if (User.IsInRole("Administrator"))
             {
                 @*<button type="button" class="manageUserRoles btn btn-primary" data-id="@user.Id"><i class="fa fa-plus"></i>/<i class="fa fa-minus"></i>Roles</button>*@
-            <a href=@Url.Action("AddRemoveRole", new { id = user.Id }) class="btn btn-warning"><i class="fa fa-plus"></i>/<i class="fa fa-minus"></i>Roles</a>
+                <a href=@Url.Action("AddRemoveRole", new { id = user.Id }) class="btn btn-warning"><i class="fa fa-plus"></i>/<i class="fa fa-minus"></i>Roles</a>
             }
-        </h2>
+        </div>
         <div id="userInfo-@user.Id" class="collapse" role="tabpanel">
             @*@Html.Action("_UserInfo", new { id = user.Id })*@
         </div>

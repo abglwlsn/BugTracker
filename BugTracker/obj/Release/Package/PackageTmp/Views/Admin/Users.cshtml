@@ -14,7 +14,7 @@
             @user.FullName
             @*<button type="button" class="viewUserInfo btn btn-primary" data-id="@user.Id"><i class="fa fa-eye"></i></button>*@
             <a href=@Url.Action("UserInfo", new { id = user.Id }) class="btn btn-warning"><i class="fa fa-eye"></i></a>
-            <button type="button" class="assignUser btn btn-primary" data-id="@user.Id"><i class="fa fa-plus"></i> Ticket</button>
+            <button type="button" class="assignUser btn btn-warning" data-id="@user.Id"><i class="fa fa-plus"></i> Ticket</button>
             @if (User.IsInRole("Administrator"))
             {
                 @*<button type="button" class="manageUserRoles btn btn-primary" data-id="@user.Id"><i class="fa fa-plus"></i>/<i class="fa fa-minus"></i>Roles</button>*@

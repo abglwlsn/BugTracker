@@ -43,33 +43,23 @@
                     <!-- Sidebar menu -->
                     <div id="sidebar-menu">
                         <ul>
-                            @if (User.IsInRole("Developer") || User.IsInRole("Project Manager"))
+                            @if (User.IsInRole("Developer") || User.IsInRole("Project Manager") || User.IsInRole("Administrator"))
                             {
                                 <li><a href=@Url.Action("Index", "Projects")><i class="fa fa-bar-chart"></i> Projects</a></li>
                                 <li><a href=@Url.Action("Index", "Tickets")><i class="fa fa-fw fa-plus"></i> Tickets</a></li>
                                 if (User.IsInRole("Project Manager") && !User.IsInRole("Developer") && !User.IsInRole("Administrator"))
                                 { <li><a href=@Url.Action("Users", "Admin")><i class="fa fa-fw fa-angle-right"></i> Users </a></li> }
-                                if (!User.IsInRole("Administrator"))
-                                { <li><a href=@Url.Action("Index", "Manage")><i class="fa fa-fw fa-angle-right"></i> Profile</a></li> }
                             }
                                 @if (User.IsInRole("Administrator"))
                                 {
-                                    <li><a href=@Url.Action("Index", "Projects")><i class="fa fa-bar-chart"></i> Projects</a></li>
-                                    <li><a href=@Url.Action("Index", "Tickets")><i class="fa fa-fw fa-plus"></i> Tickets</a></li>
-                                    <li>
-                                        <a href="#fakelink"><i class="fa fa-cogs"></i><i class="fa fa-fw fa-angle-double-down i-right"></i> Manage</a>
-                                        <ul>
-                                            <li><a href=@Url.Action("Roles", "Admin")><i class="fa fa-fw fa-angle-right"></i> Roles</a></li>
+                                            @*<li><a href=@Url.Action("Roles", "Admin")><i class="fa fa-fw fa-angle-right"></i> Roles</a></li>*@
                                             <li><a href=@Url.Action("Users", "Admin")><i class="fa fa-fw fa-angle-right"></i> Users </a></li>
-                                            <li><a href=@Url.Action("Index", "Manage")><i class="fa fa-fw fa-angle-right"></i> Profile</a></li>
-                                        </ul>
-                                    </li>
                                 }
                                 @if (User.IsInRole("Submitter") && !User.IsInRole("Project Manager") && !User.IsInRole("Developer") && !User.IsInRole("Administrator"))
                                 {
                                     <li><a href=@Url.Action("Index", "Tickets")><i class="fa fa-bar-chart"></i> Tickets</a></li>
-                                    <li><a href=@Url.Action("Index", "Manage")><i class="fa fa-fw fa-angle-right"></i> Profile</a></li>
                                 }
+                            <li><a href=@Url.Action("Index", "Manage")><i class="fa fa-fw fa-angle-right"></i> Profile</a></li>
                         </ul>
                         <div class="clear"></div>
                     </div><!-- End div #sidebar-menu -->

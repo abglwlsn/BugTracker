@@ -241,3 +241,18 @@ img {
 #about .btn {
     margin:25px 0 25px 30%;
 }
+
+.btn-block {
+    width: 100%;
+    margin: 5px 25px;
+}
+
+#userProjects .box-info, #usersRender .box-info {
+    position:relative;
+}
+
+#headerButtons {
+    position:absolute;
+    top:0;
+    right:0;
+}

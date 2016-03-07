@@ -12,7 +12,7 @@ namespace BugTracker.HelperExtensions
 
         public static IEnumerable<Ticket> ListUserTickets(this string userId)
         {
-            var tickets = db.Tickets.OrderBy(o=>o.PriorityId).Where(t => t.AssignedToId == userId);
+            var tickets = db.Tickets.OrderBy(o=>o.PriorityId).Where(t => t.AssignedToId == userId && t.Status.Name != "Resolved").ToList();
 
             return tickets;
         }

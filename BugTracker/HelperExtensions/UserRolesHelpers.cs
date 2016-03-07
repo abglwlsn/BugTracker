@@ -30,12 +30,8 @@ namespace BugTracker.HelperExtensions
             var userList = new List<ApplicationUser>();
            
             foreach (var user in db.Users)
-            {
                 if (UserIsInRole(user.Id, roleName))
-                {
                     userList.Add(user);
-                }
-            }
 
             return userList;
         }

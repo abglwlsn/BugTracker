@@ -10,7 +10,7 @@ using System.Collections;
 
 namespace BugTracker.Controllers
 {
-    //[RequireHttps]
+    [RequireHttps]
     public class AdminController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -29,7 +29,7 @@ namespace BugTracker.Controllers
         public ActionResult UserInfo(string id)
         {
             var model = new UserInfoViewModel(id);
-            var devTickets = db.Tickets.OrderBy(t => t.PriorityId).Where(t => t.AssignedToId == id && t.Status.Name != "Resolved");
+            var devTickets = db.Tickets.OrderBy(t => t.PriorityId).Where(t => t.AssignedToId == id && t.Status.Name != "Resolved").ToList();
 
             model.AssignedProjects = id.ListUserProjects();
             model.AssignedTickets = id.ListUserTickets();

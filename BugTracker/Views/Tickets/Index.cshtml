@@ -1,99 +1,67 @@
 ﻿@model IEnumerable<BugTracker.Models.Ticket>
-
+@using BugTracker.HelperExtensions
 @{
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
-
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.AssignedTo.FirstName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Priority.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Project.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Status.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Submitter.FirstName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Phase.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Action.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Submitted)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.LastModified)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Closed)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Description)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.AssignedTo.FirstName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Priority.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Project.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Status.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Submitter.FirstName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Phase.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Action.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Submitted)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.LastModified)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Closed)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
-
-</table>
+<div class="box-info shadow">
+    <h2><strong>All</strong> Tickets 
+    @if (User.IsInRole("Project Manager") || User.IsInRole("Developer"))
+    {
+        <a href=@Url.Action("UserTickets") class="btn btn-warning pull-right">View My Tickets</a>
+    }
+     </h2>
+    <table id="allTickets" class="data-table hover table-striped compact">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Project</th>
+                <th>Assigned To</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Type</th>
+                <th>Phase</th>
+                <th>Submitted By</th>
+                <th>On</th>
+                <td>Actions</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ticket in Model)
+            {
+                <tr>
+                    <td>@ticket.Name</td>
+                    @if (ticket.Project == null)
+                    { <td>unassigned</td>}
+                    else
+                    { <td>@ticket.Project.Name</td> } 
+                    @if (ticket.AssignedToId == null)
+                    { <td>unassigned</td> }
+                    else
+                    { <td>@ticket.AssignedTo.FullName</td> } 
+                    @if (ticket.Priority == null)
+                    { <td>unassigned</td> }
+                    else
+                    { <td>@ticket.Priority.Name</td> } 
+                    @if (ticket.Status == null)
+                    {
+                    <td>unassigned</td> }
+                    else
+                    { <td>@ticket.Status.Name</td> } 
+                    @if (ticket.Action == null)
+                    {
+                    <td>unassigned</td> }
+                    else
+                    { <td>@ticket.Action.Name</td> } 
+                    @if (ticket.Phase == null)
+                    { <td>unassigned</td> }
+                    else
+                    { <td>@ticket.Phase.Name</td> }                                         
+                    <td>@ticket.Submitter.FullName</td>
+                    <td>@ticket.Submitted.FormatDateTimeOffsetCondensed()</td>
+                    <td><a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-warning"><i class="fa fa-eye"></i></a>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

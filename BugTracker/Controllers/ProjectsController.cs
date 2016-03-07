@@ -11,6 +11,7 @@ using System.Web.Mvc;
 
 namespace BugTracker.Controllers
 {
+    [RequireHttps]
     public class ProjectsController : Controller
     {
         private static ApplicationDbContext db = new ApplicationDbContext();
@@ -91,12 +92,10 @@ namespace BugTracker.Controllers
                 //    es.Send(msg);
                 //}
                 foreach (var user in db.Users)
-                {
                     if (SelectedDevelopers.Contains(user.FullName))
                         project.Users.Add(user);
-                }
-                project.Users.Add(project.ProjectManager);
 
+                project.Users.Add(project.ProjectManager);
                 project.Created = DateTimeOffset.Now;
                 db.Projects.Add(project);
                 db.SaveChanges();
@@ -141,31 +140,34 @@ namespace BugTracker.Controllers
         {
             var original = db.Projects.AsNoTracking().FirstOrDefault(p=>p.Id == project.Id);
             var projectManagerId = original.ProjectManagerId;
-            var proj = db.Projects.Find(project.Id);
-            proj.Name = project.Name;
-            proj.ProjectManagerId = project.ProjectManagerId;
-            proj.Version = project.Version;
-            proj.Deadline = project.Deadline;
-            proj.Description = project.Description;
-            var user = User.Identity.GetUserId();
-            var manager = db.Users.Find(proj.ProjectManagerId);
+
+            db.Entry(project).State = EntityState.Modified;
+            //var proj = db.Projects.Find(project.Id);
+            //proj.Name = project.Name;
+            //proj.ProjectManagerId = project.ProjectManagerId;
+            //proj.Version = project.Version;
+            //proj.Deadline = project.Deadline;
+            //proj.Description = project.Description;
+            //var user = User.Identity.GetUserId();
+            var manager = db.Users.Find(project.ProjectManagerId);
 
             if (ModelState.IsValid)
             {
-                proj.Users.Clear();
+                project.Users.Clear();
 
                 foreach (var dev in db.Users)
                     if (SelectedDevelopers.Contains(dev.FullName))
-                        proj.Users.Add(dev);
+                        project.Users.Add(dev);
 
-                if (proj.ProjectManagerId != projectManagerId)
-                    proj.Id.ReassignProjectManager(projectManagerId, proj.ProjectManagerId);
+                if (project.ProjectManagerId != projectManagerId)
+                    project.Id.ReassignProjectManager(projectManagerId, project.ProjectManagerId);
                 else
-                    proj.Users.Add(manager);
+                    project.Users.Add(manager);
 
-                proj.LastModified = DateTimeOffset.Now;
+                project.LastModified = DateTimeOffset.Now;
                 //db.Entry(project).State = EntityState.Modified;
                 db.SaveChanges();
+
                 //notify involved users
                 //if (original.ProjectManagerId != project.ProjectManagerId)
                 //{
@@ -190,8 +192,6 @@ namespace BugTracker.Controllers
                 //add changelog
                 //project.Id.CreateProjectChangeLog(userId, );
                 //How to determin which fields where changed? foreach through all, need new and old value
-
-                //db.SaveChanges();
 
                 return RedirectToAction("Index");
 
