@@ -250,6 +250,9 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Properties\PublishProfiles\awest-bugtracker %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\awest-bugtracker %283%29.pubxml" />
+    <None Include="Properties\PublishProfiles\awest-bugtracker.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -403,6 +406,11 @@
     <Content Include="Site Template\third\weather-icon\font\weathericons-regular-webfont.eot" />
     <Content Include="Site Template\third\weather-icon\font\weathericons-regular-webfont.ttf" />
     <Content Include="Site Template\third\weather-icon\font\weathericons-regular-webfont.woff" />
+    <Content Include="Views\Admin\_AssignUserToTicket.cshtml" />
+    <Content Include="Views\Admin\UserInfo.cshtml" />
+    <Content Include="Views\Admin\AddRemoveRole.cshtml" />
+    <Content Include="Views\Account\ResendEmaillConfirmation.cshtml" />
+    <Content Include="Views\Account\ConfirmationSent.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -415,6 +423,9 @@
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

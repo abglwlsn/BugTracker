@@ -10,7 +10,7 @@ using System.Collections;
 
 namespace BugTracker.Controllers
 {
-    [RequireHttps]
+    //[RequireHttps]
     public class AdminController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -19,74 +19,117 @@ namespace BugTracker.Controllers
         [Authorize(Roles = "Project Manager, Administrator")]
         public ActionResult Users()
         {
-            return View();
+            var users = db.Users.ToList();
+            return View(users);
         }
 
         //GET: Admin/Users
         [Authorize(Roles = "Project Manager, Administrator")]
-        public PartialViewResult _UserInfo(string userId)
+        //public PartialViewResult _UserInfo(string id)
+        public ActionResult UserInfo(string id)
         {
-            var model = new UserInfoViewModel(userId);
-            var devTickets = db.Tickets.OrderBy(t => t.PriorityId).Where(t => t.AssignedToId == userId && t.Status.Name != "Resolved");
+            var model = new UserInfoViewModel(id);
+            var devTickets = db.Tickets.OrderBy(t => t.PriorityId).Where(t => t.AssignedToId == id && t.Status.Name != "Resolved");
 
-            model.AssignedProjects = userId.ListUserProjects();
-            model.AssignedTickets = userId.ListUserTickets();
+            model.AssignedProjects = id.ListUserProjects();
+            model.AssignedTickets = id.ListUserTickets();
+            model.Roles = id.ListUserRoles();
 
-            return PartialView(model);
+            //return PartialView(model);
+            return View(model);
         }
 
-        //GET: Admin/Users
+        //GET: Admin/Users/_AddRemoveRole/5
         [Authorize(Roles = "Administrator")]
-        public PartialViewResult _EditUserRoles(string userId)
+        //public PartialViewResult _AddRemoveRole(string id)
+        public ActionResult AddRemoveRole(string id)
         {
-            var model = new AddRemoveRolesViewModel();
-            model.UserId = userId;
-            model.SelectedRoles = userId.ListUserRoles().ToArray();
-            model.Roles = new MultiSelectList(db.Roles, "Name", "FullName", model.SelectedRoles);
+            //var roles = id.ListUserRoles().ToList();
+            //var selectedRoles = new List<SelectListItem>();
+            //foreach (var role in roles)
+            //    selectedRoles.Add(new SelectListItem() { Text = role });
 
-            return PartialView(model);
+            var model = new AddRemoveRolesViewModel();
+            model.User = db.Users.Find(id);
+            model.Roles = new MultiSelectList(db.Roles, "Name", "Name", model.SelectedRoles);
+            model.SelectedRoles = id.ListUserRoles().ToArray();
+            //model.SelectedRoles = selectedRoles;
+
+            //return PartialView(model);
+            return View(model);
         }
 
-        //POST: Admin/Users/EditUserRoles/5
+        //POST: Admin/Users/AddRemoveRole/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrator")]
-        public ActionResult EditUserRoles(AddRemoveRolesViewModel model)
+        public ActionResult AddRemoveRole([Bind(Include="User, SelectedRoles")]AddRemoveRolesViewModel model)
         {
+            //model.User = db.Users.Find(model.User.Id);
+
+            //var selectedRoles = new List<string>();
+            //foreach (var role in model.SelectedRoles)
+            //    selectedRoles.Add(role.Text);
+
+            ModelState.Remove("User.FirstName");
+            ModelState.Remove("User.LastName");
+            //ModelState.Add("SelectedRoles", model.SelectedRoles);
+
             if(ModelState.IsValid)
             {
                 foreach (var role in db.Roles.Select(r=>r.Name))
                 {
                     if (model.SelectedRoles.Contains(role))
-                        model.UserId.AddUserToRole(role);
+                        model.User.Id.AddUserToRole(role);
                     else
-                        model.UserId.RemoveUserFromRole(role);
+                        if (model.User.Id.UserIsInRole(role))
+                            model.User.Id.RemoveUserFromRole(role);
                     //UserManager handles validation for us, ex: user is already in role when add is attempted. Fails silently.
                 }
 
                 //notify user of role change
-                var es = new EmailService();
-                var user = db.Users.Find(model.UserId);
-                var msg = user.CreateUserRolesModifiedMessage();
-                es.Send(msg);
+                //var es = new EmailService();
+                //var user = db.Users.Find(model.User.Id);
+                //var msg = user.CreateUserRolesModifiedMessage();
+                //es.Send(msg);
 
                 ViewBag.SuccessMessage = "User roles have been successfully updated.";
                 return RedirectToAction("Users");
             }
 
             ViewBag.ErrorMessage = "Something went wrong. Please try again, or contact tech support.";
-            return RedirectToAction("Users");
+            //return RedirectToAction("Users");
+            return View(model);
+        }
+
+        //GET: Admin/Roles/_AddRemoveUsers/roleName
+        [Authorize(Roles = "Administrator")]
+        public PartialViewResult _AddRemoveUsers(string roleName)
+        {
+            var users = new List<string>();
+            foreach (var user in db.Users)
+                users.Add(user.FullName);
+
+            var model = new AddRemoveUsersViewModel();
+            model.RoleName = roleName;
+            model.Users = new MultiSelectList(db.Users, "Id", "FullName", users);
+
+            return PartialView(model);
         }
 
         //GET: Admin/Users
         [Authorize(Roles = "Project Manager, Administrator")]
-        public PartialViewResult _AssignUserToTicket(string userId)
+        public PartialViewResult _AssignUserToTicket(string id)
         {
+            var user = db.Users.Find(id);
+            var projects = db.Projects.Where(p => p.Users.Contains(user)).ToList();
+            var tickets = db.Tickets.Where(t => t.Status.Name != "Resolved").ToList();
+
             var model = new AssignUserViewModel();
-            model.UserId = userId;
-            model.Projects = db.Projects.Where(p=>p.IsResolved != true).ToList();
-            model.Tickets = db.Tickets.Where(t=>t.Status.Name != "Resolved").ToList();
-            model.CurrentTickets = db.Tickets.Where(t => t.AssignedToId == userId).ToList();
+            model.User = db.Users.Find(id);
+            model.Projects = new SelectList(projects, "Id", "Name");
+            model.Tickets = new SelectList(tickets, "Id", "Name");
+            model.CurrentTickets = db.Tickets.Where(t => t.AssignedToId == id).ToList();
 
             return PartialView(model);
         }
@@ -97,11 +140,11 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult AssignUserToTicket(AssignUserViewModel model)
         {
-            var original = db.Tickets.AsNoTracking().FirstOrDefault(t=>t.Id == model.SelectedTicket.Id);
-            var ticket = db.Tickets.Find(model.SelectedTicket.Id);
+            var original = db.Tickets.AsNoTracking().FirstOrDefault(t=>t.Id == model.SelectedTicketId);
+            var ticket = db.Tickets.Find(model.SelectedTicketId);
             var userId = User.Identity.GetUserId();
 
-            ticket.AssignedToId = model.UserId;
+            ticket.AssignedToId = model.User.Id;
             ticket.Status = db.Statuses.FirstOrDefault(s => s.Name == "Assigned");
 
             //notify developers
@@ -131,7 +174,20 @@ namespace BugTracker.Controllers
         [Authorize(Roles = "Administrator")]
         public ActionResult Roles()
         {
-            return View();
+            var developers = db.Roles.FirstOrDefault(r => r.Name == "Developer").Name.UsersInRole().AsEnumerable();
+            var administrators = db.Roles.FirstOrDefault(r => r.Name == "Administrator").Name.UsersInRole().AsEnumerable();
+            var projectManagers = db.Roles.FirstOrDefault(r => r.Name == "Project Manager").Name.UsersInRole().AsEnumerable();
+            var submitters = db.Roles.FirstOrDefault(r => r.Name == "Submitter").Name.UsersInRole().AsEnumerable();
+
+            var model = new RolesIndexViewModel()
+            {
+                Submitters = submitters,
+                Developers = developers,
+                ProjectManagers = projectManagers,
+                Administrators = administrators
+            };
+
+            return View(model);
         }
     }
 }

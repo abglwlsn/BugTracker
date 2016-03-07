@@ -19,8 +19,19 @@ namespace BugTracker.Controllers
         // GET: Tickets
         public ActionResult Index()
         {
-            var tickets = db.Tickets.Include(t => t.AssignedTo).Include(t => t.Priority).Include(t => t.Project).Include(t => t.Status).Include(t => t.Submitter).Include(t => t.Phase).Include(t => t.Action);
-            return View(tickets.OrderBy(p=>p.PriorityId).ToList());
+            var userId = User.Identity.GetUserId();
+            List<Ticket> tickets;
+
+            if (User.IsInRole("Administrator"))
+                tickets = db.Tickets.Include(t => t.AssignedTo).Include(t => t.Project).ToList();
+            else if (User.IsInRole("ProjectManager"))
+                tickets = db.Tickets.Include(t => t.AssignedTo).Include(t => t.Project).Where(t => t.Project.ProjectManagerId == userId).ToList();
+            else if (User.IsInRole("Developer"))
+                tickets = db.Tickets.Include(t => t.AssignedTo).Include(t => t.Project).Where(t => t.AssignedToId == userId).ToList();
+            else 
+                tickets = db.Tickets.Include(t => t.Project).OrderBy(t => t.Project.Name).Where(t => t.SubmitterId == userId).ToList();
+
+            return View(tickets);
         }
 
         // GET: Tickets/Details/5

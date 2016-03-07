@@ -1,0 +1,15 @@
+﻿@model BugTracker.Models.AddRemoveRolesViewModel
+
+<div @*id="partial-right"*@ class="box-info shadow">
+    <h2>Reassign Roles for @Model.User.FullName</h2>
+    @using (Html.BeginForm("AddRemoveRole","Admin"))
+    {
+        @Html.HiddenFor(m=>m.User.Id)
+        @Html.AntiForgeryToken()
+        //@Html.ListBox("SelectedRoles", Model.Roles, new { @class = "chosen-select" })
+        @Html.ListBoxFor(m=>m.SelectedRoles, Model.Roles, new { @class = "chosen-select" })
+        <input type="submit" class="btn btn-warning" value="Update User Roles" />
+        <a href=@Url.Action("Users", "Admin") class="btn btn-warning">Back to All Users</a>
+    }
+
+</div>

@@ -50,16 +50,16 @@ namespace BugTracker.Controllers
         public PartialViewResult _Create()
         {
             var managers = db.Roles.FirstOrDefault(r => r.Name == "Project Manager").Name.UsersInRole();
-            var developers = db.Roles.FirstOrDefault(r => r.Name == "Developer").Name.UsersInRole();
-            var displayDevelopers = new List<string>();
-            foreach (var user in developers)
-                displayDevelopers.Add(user.FullName);
+            var developers = db.Roles.FirstOrDefault(r => r.Name == "Developer").Name.UsersInRole().AsEnumerable();
+            //var displayDevelopers = new List<string>();
+            //foreach (var user in developers)
+            //    displayDevelopers.Add(user.FullName);
 
             var model = new CreateEditProjectViewModel()
             {
                 Project = new Project(),
                 ProjectManagers = new SelectList(managers, "Id", "FullName"),
-                Developers = new MultiSelectList(displayDevelopers)
+                Developers = new MultiSelectList(developers, "FullName", "FullName")
             };
 
             return PartialView(model);
@@ -75,7 +75,12 @@ namespace BugTracker.Controllers
             if (ModelState.IsValid)
             {
                 if (project.ProjectManagerId == null && userId.UserIsInRole("Project Manager"))
-                    project.ProjectManagerId = userId;
+                        project.ProjectManagerId = userId;
+                else if (project.ProjectManagerId != null)
+                {
+                    var projectManager = db.Users.Find(project.ProjectManagerId);
+                    project.Users.Add(projectManager);
+                }
 
                 //VERIFY THAT THE ABOVE CODE APPLIES BEFORE THIS RUNS
                 //notify project manager
