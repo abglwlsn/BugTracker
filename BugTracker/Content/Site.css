@@ -188,7 +188,8 @@ label {
     height: 132px;
 }
 
-#contact a, #contact i {
+#contact a, 
+#contact i {
     color: #ed9c28;
 }
 
@@ -247,12 +248,16 @@ img {
     margin: 5px 25px;
 }
 
-#userProjects .box-info, #usersRender .box-info {
+#userProjects .box-info, 
+#userTickets .box-info,
+#allTickets .box-info,
+#usersRender .box-info, 
+#ticketDetails .box-info {
     position:relative;
 }
 
 #headerButtons {
     position:absolute;
-    top:0;
-    right:0;
+    top:10px;
+    right:25px;
 }

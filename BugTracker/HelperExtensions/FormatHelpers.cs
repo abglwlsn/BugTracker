@@ -42,5 +42,17 @@ namespace BugTracker.HelperExtensions
 
             return datestring;
         }
+
+        public static string FormatDateTimeOffset(this DateTimeOffset date)
+        {
+            string datestring;
+
+            if (date != null)
+                datestring = date.DateTime.ToString("ddd, MMMM dd, yyyy");
+            else
+                datestring = "No date provided";
+
+            return datestring;
+        }
     }
 }

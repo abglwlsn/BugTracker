@@ -142,6 +142,7 @@ namespace BugTracker.Controllers
             var projectManagerId = original.ProjectManagerId;
 
             db.Entry(project).State = EntityState.Modified;
+            db.SaveChanges();
             //var proj = db.Projects.Find(project.Id);
             //proj.Name = project.Name;
             //proj.ProjectManagerId = project.ProjectManagerId;

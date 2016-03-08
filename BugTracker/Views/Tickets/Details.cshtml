@@ -1,106 +1,63 @@
 ﻿@model BugTracker.Models.Ticket
+@using BugTracker.HelperExtensions
 
-@{
-    ViewBag.Title = "Details";
-}
-
-<h2>Details</h2>
-
-<div>
-    <h4>Ticket</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.AssignedTo.FirstName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.AssignedTo.FirstName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Priority.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Priority.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Project.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Project.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Status.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Status.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Submitter.FirstName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Submitter.FirstName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Type.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Type.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Submitted)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Submitted)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.LastModified)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.LastModified)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Closed)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Closed)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-
-    </dl>
+<div id="ticketDetails" class="col-md-12">
+    <div class="box-info shadow">
+        <h2><strong>Details</strong> for Ticket: @Model.Name</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <dl>
+                    <dt>Project</dt>
+                    <dd>@Model.Project.Name</dd>
+                    <dt>Priority</dt>
+                    <dd>@Model.Priority.Name</dd>
+                    <dt>Project Deadline</dt>
+                    @if (Model.Project.Deadline != null)
+                    { <dd>@Model.Project.Deadline.FormatDateTimeOffset()</dd> }
+                    else { <dd>none given </dd>}
+                    <dt>Assigned To</dt>
+                    @if (Model.AssignedTo != null)
+                    { <dd>@Model.AssignedTo.FullName</dd> }
+                    else { <dd>unassigned</dd> }
+                </dl>
+            </div>
+            <div class="col-md-4">
+                <dl>
+                    <dt>Description</dt>
+                    @if (Model.Description != null)
+                    { <dd>@Model.Description</dd> }
+                    else { <dd>no description given</dd> }
+                </dl>
+            </div>
+            <div class="col-md-4">
+                <dl>
+                    <dt>Status</dt>
+                    @if (Model.Status != null)
+                    { <dd>@Model.Status.Name</dd> }
+                    else { <dd>unassigned </dd>}
+                    <dt>Phase</dt>
+                    @if (Model.Phase != null)
+                    { <dd>@Model.Phase.Name</dd> }
+                    else { <dd>unassigned </dd>}
+                    <dt>Type</dt>
+                    @if (Model.Action != null)
+                    { <dd>@Model.Action.Name</dd> }
+                    else { <dd>unassigned </dd>}
+                    <dt>Submitted</dt>
+                    <dd>@Model.Submitted.FormatDateTimeOffset()</dd>
+                </dl>
+            </div>
+            <div class="col-md-12">
+                <div class="pull-right">
+                    <a href=@Url.Action("Edit", "Tickets", new { id = Model.Id }) class="btn btn-warning">Edit</a>
+                    <a href=@Url.Action("UserTickets") class="btn btn-info">Back To My Tickets</a>
+                    @if (User.IsInRole("Administrator"))
+            {
+                        <a href=@Url.Action("Index") class="btn btn-info">Back To All Tickets</a>
+                    }  
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+
