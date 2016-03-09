@@ -1,7 +1,7 @@
 ﻿$(document).ready(function () {
 
     //datepicker
-    //$('.datepicker').datepicker();
+    $('.datepicker').datepicker();
 
     //datatables
     $('.data-table').DataTable();
@@ -26,12 +26,8 @@
         })
     }
 
-    AssignPartialViewHandler('#projectsRender', '#editView', '.editProject', 'Projects', '_Edit', true);
     AssignPartialViewHandler('#usersRender', '#editView', '.assignUser', 'Admin', '_AssignUserToTicket', true);
     AssignPartialViewHandler('#usersRender', '#editView', '.manageUserRoles', 'Admin', '_AddRemoveRole', true);
     AssignRoleHandler('#rolesRender', '#editView', '.addRemoveUser');
 
-    //$('#usersRender').on('click', '.viewUserInfo', function () {
-    //    $('#userInfo-' + ($(this).data('id'))).load('/Admin/_UserInfo/' + $(this).data('id'));
-    //})
 });

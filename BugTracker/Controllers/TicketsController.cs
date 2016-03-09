@@ -29,7 +29,7 @@ namespace BugTracker.Controllers
         //GET: Tickets/UserTickets
         //try route prefix for Tickets/{user.FirstName}
         [Authorize(Roles = "Project Manager, Developer")]
-        public ActionResult UserTickets()
+        public ActionResult UserTickets(string returnUrl)
         {
             var userId = User.Identity.GetUserId();
             IEnumerable<Project> projects;
@@ -42,7 +42,7 @@ namespace BugTracker.Controllers
                 assignedTickets = null;
 
             projects = userId.ListUserProjects().OrderByDescending(p => p.Deadline);
-            submittedTickets = db.Tickets.Where(t => t.SubmitterId == userId).Where(t=>t.Status.Name != "Resolved").OrderBy(t => t.Submitted);
+            submittedTickets = db.Tickets.Where(t => t.SubmitterId == userId).Where(t=>t.Status.Name != "Resolved").OrderBy(t => t.Submitted).ToList();
 
             var model = new UserTicketsViewModel()
             {
@@ -72,15 +72,24 @@ namespace BugTracker.Controllers
         public ActionResult Create(int? id)
         {
             var project = db.Projects.Find(id);
+            var userId = User.Identity.GetUserId();
             string projectName;
-            var devRole = db.Roles.FirstOrDefault(r => r.Name == "Developer").Name;
-            IList<ApplicationUser> developers = devRole.UsersInRole();
+            var projectId = project.Id;
+            var projects = new List<Project>();
+            var devRole = "Developer";
+            var developers = devRole.UsersInRole().ToList();
+            var projectDevelopers = new List<ApplicationUser>();
+
+            if (User.IsInRole("Administrator"))
+                projects = db.Projects.Where(p => p.IsResolved != true).ToList();
+            else
+                projects = userId.ListUserProjects().Where(p => p.IsResolved != true).ToList();
 
             if (project != null)
             {
                 foreach (var dev in developers)
-                    if (!project.Users.Contains(dev))
-                        developers.Remove(dev);
+                    if (project.Users.Any(u=>u.Id == dev.Id))
+                        projectDevelopers.Add(dev);
                 projectName = project.Name;
             }
             else
@@ -90,8 +99,9 @@ namespace BugTracker.Controllers
             {
                 Ticket = new Ticket(),
                 ProjectName = projectName,
-                Projects = new SelectList(db.Projects.Where(p => p.IsResolved != true), "Id", "Name"),
-                Developers = new SelectList(developers, "Id", "FullName"),
+                ProjectId = project.Id,
+                Projects = new SelectList(projects, "Id", "Name"),
+                Developers = new SelectList(projectDevelopers, "Id", "FullName"),
                 Priorities = new SelectList(db.Priorities.OrderBy(p => p.Id), "Id", "Name"),
                 Statuses = new SelectList(db.Statuses, "Id", "Name"),
                 Phases = new SelectList(db.TicketPhases, "Id", "Name"),
@@ -105,7 +115,7 @@ namespace BugTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,ProjectId,SubmitterId,AssignedToId,PriorityId,PhaseId,StatusId,ActionId,Name,Submitted,Description")] Ticket ticket)
+        public ActionResult Create([Bind(Include = "Id,ProjectId,SubmitterId,AssignedToId,PriorityId,PhaseId,StatusId,ActionId,Name,Submitted,Description")] Ticket ticket, int ProjectId)
         {
             var userId = User.Identity.GetUserId();
 
@@ -113,6 +123,7 @@ namespace BugTracker.Controllers
             {
                 ticket.SubmitterId = userId;
                 ticket.Submitted = DateTimeOffset.Now;
+                ticket.ProjectId = ProjectId;
 
                 if (ticket.AssignedToId != null)
                 {
@@ -132,7 +143,8 @@ namespace BugTracker.Controllers
 
                 db.Tickets.Add(ticket);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                //return RedirectToAction("Index");
+                return Redirect(ControllerContext.HttpContext.Request.UrlReferrer.ToString());
             }
             return View(ticket);
         }
@@ -142,6 +154,12 @@ namespace BugTracker.Controllers
         public ActionResult Edit(int? id)
         {
             Ticket ticket = db.Tickets.Find(id);
+            var userId = User.Identity.GetUserId();
+            var project = db.Projects.Find(id);
+            string projectName;
+            var projects = new List<Project>();
+            var devRole = db.Roles.FirstOrDefault(r => r.Name == "Developer").Name;
+            IList<ApplicationUser> developers = devRole.UsersInRole();
 
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -149,11 +167,10 @@ namespace BugTracker.Controllers
             if (ticket == null)
                 return HttpNotFound();
 
-            var project = db.Projects.Find(id);
-            string projectName;
-            var devRole = db.Roles.FirstOrDefault(r => r.Name == "Developer").Name;
-            IList<ApplicationUser> developers = devRole.UsersInRole();
-
+            if (User.IsInRole("Administrator"))
+                projects = db.Projects.Where(p => p.IsResolved != true).ToList();
+            else
+                projects = userId.ListUserProjects().Where(p => p.IsResolved != true).ToList();
 
             if (project != null)
             {
@@ -169,7 +186,7 @@ namespace BugTracker.Controllers
             {
                 Ticket = ticket,
                 ProjectName = projectName,
-                Projects = new SelectList(db.Projects.Where(p => p.IsResolved != true), "Id", "Name"),
+                Projects = new SelectList(projects, "Id", "Name"),
                 Developers = new SelectList(developers, "Id", "FullName", ticket.AssignedTo),
                 Priorities = new SelectList(db.Priorities.OrderBy(p => p.Id), "Id", "Name", ticket.Priority),
                 Statuses = new SelectList(db.Statuses, "Id", "Name", ticket.Status),

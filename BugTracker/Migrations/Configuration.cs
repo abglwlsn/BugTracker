@@ -130,10 +130,12 @@ namespace BugTracker.Migrations
                 new TicketPhase() { Name = "Design" },
                 new TicketPhase() { Name = "Database" },
                 new TicketPhase() { Name = "Routing" },
+                new TicketPhase() { Name = "Forms" },
                 new TicketPhase() { Name = "Security" },
                 new TicketPhase() { Name = "User Interface" },
                 new TicketPhase() { Name = "Testing" },
-                new TicketPhase() { Name = "Integrated" }
+                new TicketPhase() { Name = "Integrated" },
+                new TicketPhase() { Name = "Other" }
                 );
 
             context.TicketActions.AddOrUpdate(a => a.Name,

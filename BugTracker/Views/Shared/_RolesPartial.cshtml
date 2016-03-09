@@ -1,0 +1,13 @@
+﻿@using Microsoft.AspNet.Identity
+@using BugTracker.HelperExtensions
+
+@{ var userId = User.Identity.GetUserId();
+    var roles = userId.ListUserRoles();}
+<ul class="nav navbar-nav navbar-right">
+    <li>
+        @foreach (var role in roles)
+        {
+        <span style="color:#fff">@role</span>
+        }
+    </li>
+</ul>

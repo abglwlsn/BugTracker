@@ -13,8 +13,6 @@
             @Html.HiddenFor(m => m.Ticket.Id)
             @Html.HiddenFor(m=>m.Ticket.Submitted)
             @Html.HiddenFor(m=>m.Ticket.SubmitterId)
-            @*@Html.HiddenFor(m=>m.Ticket.SubmitterId)
-    @Html.HiddenFor(m=>m.Ticket.Submitted)*@
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
             <div class="form-group">
@@ -41,6 +39,7 @@
             {
                 <div class="form-group">
                     <p><strong>@Model.ProjectName</strong></p>
+                    @Html.HiddenFor(m=>m.Ticket.Project.Name)
                 </div>
             }
 
@@ -57,6 +56,11 @@
                     @Html.DropDownListFor(m=>m.Ticket.PriorityId, Model.Priorities, "Select Priority Level", new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(m=>m.Ticket.PriorityId, "", new { @class = "text-danger" })
                 </div>
+            }
+            else
+            {
+                @Html.HiddenFor(m=>m.Ticket.AssignedTo)
+                @Html.HiddenFor(m=>m.Ticket.Priority.Id)
             }
 
             <div class="form-group">

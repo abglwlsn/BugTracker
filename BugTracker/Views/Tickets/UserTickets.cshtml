@@ -7,7 +7,7 @@
 @if (User.IsInRole("Developer"))
 {
 <div id="userTickets" class="box-info shadow">
-    <h2><strong>My</strong> Tickets</h2>
+    <h2>My <strong>Assigned Tickets</strong></h2>
         @if (User.IsInRole("Administrator"))
         {<div id="headerButtons">
             <a href=@Url.Action("Index") class="btn btn-warning pull-right">View All Tickets</a>
@@ -51,61 +51,11 @@
     </table>
 </div>
 }
-@if (User.IsInRole("Project Manager") || User.IsInRole("Developer"))
-{
-<div id="userProjects" class="box-info shadow">
-    <h2><strong>My</strong> Projects</h2>
-    @if (Model.AssignedProjects == null)
-    {
-        <p>You do not belong to any projects.</p>
-    }
-    else
-    {
-        foreach (var project in Model.AssignedProjects)
-        {
-            <a role="button" class="btn btn-warning btn-block" data-toggle="collapse" data-parent="#userProjects" data-target="#collapse-@project.Id" aria-expanded="false">@project.Name<small> (@project.Tickets.Count()) Tickets</small><span class="pull-right">Deadline: @project.Deadline.FormatDateTimeOffsetCondensed()</span></a>
-            <div id="collapse-@project.Id" class="collapse" role="tabpanel">
-                <table id="userTickets" class="data-table hover table-striped compact">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Project</th>
-                            <th>Assigned To</th>
-                            <th>Priority</th>
-                            <th>Status</th>
-                            <th>Type</th>
-                            <th>Phase</th>
-                            <th>Submitted</th>
-                            <td>Actions</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var ticket in project.Tickets)
-                        {
-                            <tr>
-                                <td>@ticket.Name</td>
-                                <td>@ticket.Project.Name</td>
-                                <td>@ticket.AssignedTo.FullName</td>
-                                <td>@ticket.Priority.Name</td>
-                                <td>@ticket.Status.Name</td>
-                                <td>@ticket.Action.Name</td>
-                                <td>@ticket.Phase.Name</td>
-                                <td>@ticket.Submitted.FormatDateTimeOffsetCondensed()</td>
-                                <td><a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-warning"><i class="fa fa-eye"></i></a>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        }
-    }
-</div>
-}
 
 @if (Model.SubmittedTickets != null)
 {
 <div id="submittedTickets" class="box-info shadow">
-    <h2><strong>My</strong> Current Submitted Tickets</h2>
+    <h2>My Current <strong>Submitted Tickets</strong></h2>
     <table id="userTickets" class="data-table hover table-striped compact">
         <thead>
             <tr>

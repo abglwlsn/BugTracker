@@ -36,7 +36,9 @@
             else
             {
                 <div class="form-group">
+                    <label>Project</label>
                     <p><strong>@Model.ProjectName</strong></p>
+                    @Html.HiddenFor(m=>m.ProjectId)
                 </div>
             }
 
@@ -66,11 +68,12 @@
                 @Html.ValidationMessageFor(model => model.Ticket.ActionId, "", new { @class = "text-danger" })
             </div>
             <div class="pull-right">
-                <input type="submit" class="btn btn-warning" value="Create Project" />
-                <a href=@Url.Action("UserTickets") class="btn btn-info">Back To My Tickets</a>
+                <input type="submit" class="btn btn-warning" value="Create Ticket" />
+                <a href=@Url.Action("Index", "Projects") class="btn btn-info">To Projects</a>
+                <a href=@Url.Action("UserTickets") class="btn btn-info">To Tickets</a>
                 @if (User.IsInRole("Administrator"))
                 {
-                <a href=@Url.Action("Index") class="btn btn-info">Back To All Tickets</a>
+                <a href=@Url.Action("Index") class="btn btn-info">To All Tickets</a>
                 }
             </div>
         }

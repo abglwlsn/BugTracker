@@ -20,9 +20,9 @@ namespace BugTracker.Controllers
         [Authorize(Roles = "Administrator, Project Manager, Developer")]
         public ActionResult Index()
         {
-
             var userId = User.Identity.GetUserId();
             List<Project> projects;
+
             if (User.IsInRole("Administrator"))
                 projects = db.Projects.Where(p => p.IsResolved != true).OrderByDescending(p => p.Deadline).ToList();
             else
@@ -35,23 +35,22 @@ namespace BugTracker.Controllers
         [Authorize(Roles = "Administrator, Project Manager, Developer")]
         public ActionResult Details(int? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
             Project project = db.Projects.Find(id);
+
+            if (id == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             if (project == null)
-            {
                 return HttpNotFound();
-            }
+
             return View(project);
         }
 
         //GET: Projects/Create
-        public PartialViewResult _Create()
+        public ActionResult Create()
         {
-            var managers = db.Roles.FirstOrDefault(r => r.Name == "Project Manager").Name.UsersInRole();
+            var managers = db.Roles.FirstOrDefault(r => r.Name == "Project Manager").Name.UsersInRole().AsEnumerable();
             var developers = db.Roles.FirstOrDefault(r => r.Name == "Developer").Name.UsersInRole().AsEnumerable();
+            var submitters = db.Roles.FirstOrDefault(r => r.Name == "Submitter").Name.UsersInRole().AsEnumerable();
             //var displayDevelopers = new List<string>();
             //foreach (var user in developers)
             //    displayDevelopers.Add(user.FullName);
@@ -60,40 +59,44 @@ namespace BugTracker.Controllers
             {
                 Project = new Project(),
                 ProjectManagers = new SelectList(managers, "Id", "FullName"),
-                Developers = new MultiSelectList(developers, "FullName", "FullName")
+                Developers = new MultiSelectList(developers, "FullName", "FullName"),
+                Submitters = new MultiSelectList(submitters, "FullName", "FullName")
             };
 
-            return PartialView(model);
+            return View(model);
         }
 
         // POST: Projects/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrator, Project Manager")]
-        public ActionResult Create([Bind(Include="Id,ProjectManagerId,Name,Deadline,Description,Version")]Project project, List<string> SelectedDevelopers)
+        public ActionResult Create([Bind(Include="Id,ProjectManagerId,Name,Deadline,Description,Version")]Project project, List<string> SelectedDevelopers, List<string> SelectedSubmitters)
         {
             var userId = User.Identity.GetUserId();
             if (ModelState.IsValid)
             {
-                if (project.ProjectManagerId == null && userId.UserIsInRole("Project Manager"))
+                var projectManager = db.Users.Find(project.ProjectManagerId);
+
+                if (projectManager == null && userId.UserIsInRole("Project Manager"))
                         project.ProjectManagerId = userId;
-                else if (project.ProjectManagerId != null)
-                {
-                    var projectManager = db.Users.Find(project.ProjectManagerId);
+                else if (projectManager != null)
                     project.Users.Add(projectManager);
-                }
 
                 //VERIFY THAT THE ABOVE CODE APPLIES BEFORE THIS RUNS
                 //notify project manager
-                //if (project.ProjectManagerId != null)
+                //if (projectManager != null)
                 //{
                 //    var es = new EmailService();
                 //    var msg = project.CreateAssignedToProjectMessage(project.ProjectManager);
                 //    es.Send(msg);
                 //}
                 foreach (var user in db.Users)
+                {
                     if (SelectedDevelopers.Contains(user.FullName))
                         project.Users.Add(user);
+                    if (SelectedSubmitters.Contains(user.FullName) && !project.Users.Any(u=>u.FullName == user.FullName))
+                        project.Users.Add(user);
+                }
 
                 project.Users.Add(project.ProjectManager);
                 project.Created = DateTimeOffset.Now;
@@ -110,62 +113,76 @@ namespace BugTracker.Controllers
 
         // GET: Projects/Edit/5
         [Authorize(Roles = "Administrator, Project Manager")]
-        public PartialViewResult _Edit(int id)
+        public ActionResult Edit(int id)
         {
             Project project = db.Projects.Find(id);
 
+            var projectUsers = project.Users.ToList();
             var managers = db.Roles.FirstOrDefault(r => r.Name == "Project Manager").Name.UsersInRole();
-            var selectedManager = project.ProjectManager;
             var developers = db.Roles.FirstOrDefault(r => r.Name == "Developer").Name.UsersInRole();
-            var selectedDevelopers = project.Users;
-            var displayDevelopers = new List<string>();
-            foreach (var user in developers)
-                displayDevelopers.Add(user.FullName);
+            var submitters = db.Roles.FirstOrDefault(r => r.Name == "Submitter").Name.UsersInRole();
+            var selectedManager = project.ProjectManager;
+            var selectedDevelopers = new List<string>();
+            var selectedSubmitters = new List<string>();
+            TempData["ProjectManagerId"] = project.ProjectManagerId;
+            foreach (var user in projectUsers)
+            {
+                if (user.Id.UserIsInRole("Developer"))
+                    selectedDevelopers.Add(user.FullName);
+                if (user.Id.UserIsInRole("Submitter"))
+                    selectedSubmitters.Add(user.FullName);
+            }
 
             var model = new CreateEditProjectViewModel()
             {
                 Project = project,
                 ProjectManagers = new SelectList(managers, "Id", "FullName", selectedManager),
-                Developers = new MultiSelectList(displayDevelopers, selectedDevelopers)
+                Developers = new MultiSelectList(developers, "FullName", "FullName", selectedDevelopers),
+                Submitters = new MultiSelectList(submitters, "FullName", "FullName", selectedSubmitters)
             };
 
-            return PartialView(model);
+            return View(model);
         }
 
         // POST: Projects/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrator, Project Manager")]
-        public ActionResult Edit([Bind(Include="Id,ProjectManagerId,Name,Deadline,Description,Version")]Project project, List<string> SelectedDevelopers)
+        public ActionResult Edit([Bind(Include="Id,ProjectManagerId,Name,Deadline,Description,Version")]Project project, List<string> SelectedDevelopers, List<string> SelectedSubmitters)
         {
             var original = db.Projects.AsNoTracking().FirstOrDefault(p=>p.Id == project.Id);
-            var projectManagerId = original.ProjectManagerId;
+            //string projectManagerId = (string)TempData["ProjectManagerId"];
 
-            db.Entry(project).State = EntityState.Modified;
-            db.SaveChanges();
-            //var proj = db.Projects.Find(project.Id);
-            //proj.Name = project.Name;
-            //proj.ProjectManagerId = project.ProjectManagerId;
-            //proj.Version = project.Version;
-            //proj.Deadline = project.Deadline;
-            //proj.Description = project.Description;
-            //var user = User.Identity.GetUserId();
+            var proj = db.Projects.Find(project.Id);
+            proj.Name = project.Name;
+            proj.ProjectManagerId = project.ProjectManagerId;
+            proj.Version = project.Version;
+            proj.Deadline = project.Deadline;
+            proj.Description = project.Description;
+            var userId = User.Identity.GetUserId();
             var manager = db.Users.Find(project.ProjectManagerId);
 
             if (ModelState.IsValid)
             {
-                project.Users.Clear();
+                proj.Users.Clear();
+                foreach (var user in db.Users)
+                {
+                    if (SelectedDevelopers.Contains(user.FullName))
+                        proj.Users.Add(user);
+                    if (SelectedSubmitters.Contains(user.FullName) && !proj.Users.Any(u => u.FullName == user.FullName))
+                        proj.Users.Add(user);
+                }
 
-                foreach (var dev in db.Users)
-                    if (SelectedDevelopers.Contains(dev.FullName))
-                        project.Users.Add(dev);
-
-                if (project.ProjectManagerId != projectManagerId)
-                    project.Id.ReassignProjectManager(projectManagerId, project.ProjectManagerId);
+                if (proj.ProjectManagerId != original.ProjectManagerId)
+                {
+                    //proj.Id.ReassignProjectManager(original.ProjectManagerId, proj.ProjectManagerId);
+                    proj.Users.Remove(db.Users.Find(original.ProjectManagerId));
+                    proj.Users.Add(db.Users.Find(proj.ProjectManagerId));
+                }
                 else
-                    project.Users.Add(manager);
+                    proj.Users.Add(manager);
 
-                project.LastModified = DateTimeOffset.Now;
+                proj.LastModified = DateTimeOffset.Now;
                 //db.Entry(project).State = EntityState.Modified;
                 db.SaveChanges();
 
@@ -195,7 +212,6 @@ namespace BugTracker.Controllers
                 //How to determin which fields where changed? foreach through all, need new and old value
 
                 return RedirectToAction("Index");
-
             }
 
             ViewBag.ErrorMessage = "Something went wrong. Please try again or submit a ticket.";
@@ -203,25 +219,25 @@ namespace BugTracker.Controllers
         }
 
         // GET: Projects/Delete/5
-        [Authorize(Roles ="Administrator")]
-        public PartialViewResult _Delete(int id)
-        {
-            var project = db.Projects.Find(id);
+        //[Authorize(Roles ="Administrator")]
+        //public PartialViewResult _Delete(int id)
+        //{
+        //    var project = db.Projects.Find(id);
 
-            return PartialView(project);
-        }
+        //    return PartialView(project);
+        //}
 
         // POST: Projects/Delete/5
-        [HttpPost]
-        [ActionName("Delete")]
-        [Authorize(Roles = "Administrator")]
-        public ActionResult SoftDelete(int id)
-        {
-            var project = db.Projects.Find(id);
-            project.IsResolved = true;
-            db.SaveChanges();
+        //[HttpPost]
+        //[ActionName("Delete")]
+        //[Authorize(Roles = "Administrator")]
+        //public ActionResult SoftDelete(int id)
+        //{
+        //    var project = db.Projects.Find(id);
+        //    project.IsResolved = true;
+        //    db.SaveChanges();
 
-            return RedirectToAction("Index");
-        }
+        //    return RedirectToAction("Index");
+        //}
     }
 }

@@ -412,6 +412,9 @@
     <Content Include="Views\Account\ResendEmaillConfirmation.cshtml" />
     <Content Include="Views\Account\ConfirmationSent.cshtml" />
     <Content Include="Views\Tickets\UserTickets.cshtml" />
+    <Content Include="Views\Shared\_RolesPartial.cshtml" />
+    <Content Include="Views\Projects\Create.cshtml" />
+    <Content Include="Views\Projects\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

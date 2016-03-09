@@ -208,6 +208,10 @@ table td {
     vertical-align: top;
 }
 
+.innerTable h4 {
+    margin-top:35px;
+}
+
 /* ----------- IMAGES AND GRAPHS----------*/
 
 img {
@@ -244,8 +248,8 @@ img {
 }
 
 .btn-block {
-    width: 100%;
-    margin: 5px 25px;
+    width: 96%;
+    margin: 5px 2%;
 }
 
 #userProjects .box-info, 
@@ -260,4 +264,17 @@ img {
     position:absolute;
     top:10px;
     right:25px;
+}
+
+.btn span {
+    padding: 0 15px;
+}
+
+.btn small {
+    color:#5b5b5b;
+    padding: 0 25px;
+}
+
+h2 .btn {
+    margin-left:50px;
 }

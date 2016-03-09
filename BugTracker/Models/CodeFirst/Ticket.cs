@@ -24,7 +24,7 @@ namespace BugTracker.Models
         public int? PhaseId { get; set; }
         public int ActionId { get; set; }
         [Required]
-        [StringLength(25, ErrorMessage = "Ticket name must be between 5 and 25 characters.", MinimumLength = 5)]
+        [StringLength(40, ErrorMessage = "Ticket name must be between {2} and {1} characters.", MinimumLength = 5)]
         public string Name { get; set; }
         public DateTimeOffset Submitted { get; set; }
         public DateTimeOffset LastModified { get; set; }
