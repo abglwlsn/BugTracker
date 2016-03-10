@@ -22,12 +22,12 @@ namespace BugTracker.HelperExtensions
 
         public static IEnumerable<Project> ListUserProjects(this string userId)
         {
-            var devProjects = db.Projects.Include("Tickets").Include("ProjectManager").Include("Users").OrderByDescending(p => p.Deadline).Where(p => p.Tickets.Any(t => t.AssignedToId == userId) && p.IsResolved != true);
-            //var progManProjects = db.Projects.Include("Tickets").Include("ProjectManager").Include("Users").OrderByDescending(p => p.Deadline).Where(p => p.ProjectManagerId == userId && p.IsResolved != true);
-            //var allProjects = devProjects.Union(progManProjects).ToList();
+            var devProjects = db.Projects.Include("Tickets").Include("Users").OrderByDescending(p => p.Deadline).Where(p => p.Tickets.Any(t => t.AssignedToId == userId) && p.IsResolved != true);
+            var progManProjects = db.Projects.Include("Tickets").Include("Users").OrderByDescending(p => p.Deadline).Where(p => p.ProjectManagerId == userId && p.IsResolved != true);
+            var allProjects = devProjects.Union(progManProjects).ToList();
 
-            //return allProjects;
-            return devProjects;
+            return allProjects;
+            //return devProjects;
         }
 
         public static IEnumerable<ApplicationUser> ListUsersNotOnProject(this int projectId)

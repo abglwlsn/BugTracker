@@ -40,56 +40,57 @@ else
                             <a href=@Url.Action("Edit", "Projects", new { id = project.Id }) class="btn btn-warning">Edit</a>
                     }
                 </div>
-                  
-                <div id="collapse-@project.Id" class="collapse" role="tabpanel">
-                    <div class="row">
-                        <div class="col-md-2">
-                            <dl>
-                                <dt>Project Manager</dt>
-                                <dd>@manager.FullName</dd>
-                                <dt>Version</dt>
-                                @if (project.Version != null)
-                                {
-                                    <dd>@project.Version</dd> }
-                                else {
-                                    <dd><small>none given</small></dd> }
-
-                            </dl>
-                        </div>
-                        <div class="col-md-4">
-                            <dl>
-                                <dt>(@project.Tickets.Where(t => t.Status.Name != "Resolved").Count()) Open Tickets</dt>
-                                <dt><br />Description</dt>
-                                <dd>@project.Description</dd>
-                            </dl>
-                        </div>
-                        <div class="col-md-3">
-                            <dl>
-                                <dt>Created</dt>
-                                <dd>@project.Created.FormatDateTimeOffset()</dd>
-                                <dt>Last Modified</dt>
-                                    <dd>@project.LastModified.FormatDateTimeOffset()</dd> 
-                            </dl>
-                        </div>
-                        <div class="col-md-3">
-                            <dl>
-                                <dt>Assigned Users</dt>
-                                <dd>
-                                    <ul class="list-unstyled">
-                                        @if (project.Users.Count() != 0)
+                    <div id="collapse-@project.Id" class="collapse" role="tabpanel">
+                        <div class="box-content">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <dl>
+                                        <dt>Project Manager</dt>
+                                        <dd>@manager.FullName</dd>
+                                        <dt>Version</dt>
+                                        @if (project.Version != null)
                                         {
-                                            foreach (var user in project.Users)
-                                            {
-                                                if (user.FullName != null)
+                                            <dd>@project.Version</dd> }
+                                        else {
+                                            <dd><small>none given</small></dd> }
+
+                                    </dl>
+                                </div>
+                                <div class="col-md-4">
+                                    <dl>
+                                        <dt>(@project.Tickets.Where(t => t.Status.Name != "Resolved").Count()) Open Tickets</dt>
+                                        <dt><br />Description</dt>
+                                        <dd>@project.Description</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-3">
+                                    <dl>
+                                        <dt>Created</dt>
+                                        <dd>@project.Created.FormatDateTimeOffset()</dd>
+                                        <dt>Last Modified</dt>
+                                        <dd>@project.LastModified.FormatDateTimeOffset()</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-3">
+                                    <dl>
+                                        <dt>Assigned Users</dt>
+                                        <dd>
+                                            <ul class="list-unstyled">
+                                                @if (project.Users.Count() != 0)
                                                 {
-                                                    <li>@user.FullName</li>}
-                                            }
-                                        }
-                                    </ul>
-                                </dd>
-                            </dl>
+                                                    foreach (var user in project.Users)
+                                                    {
+                                                        if (user.FullName != null)
+                                                        {
+                                                            <li>@user.FullName</li>}
+                                                    }
+                                                }
+                                            </ul>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
                         </div>
-                    </div>
                 </div>
             </div>
 
@@ -99,7 +100,9 @@ else
     {
         <div class="box-info shadow">
             <h2>Projects</h2>
-            <p>There are no current projects.</p>
+            <div class="box-content">
+                <p>There are no current projects.</p>
+            </div>
         </div>
     }
 </div>

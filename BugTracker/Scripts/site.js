@@ -23,8 +23,7 @@
     });
 
     //chosen plugin
-    $(".chosen-select").chosen();
-
+        $(".chosen-select").chosen();
 
     //partial views handling
     function AssignPartialViewHandler(divContain, divRender, target, controllerName, actionName, hasDataTag) {
@@ -35,15 +34,15 @@
         })
     }
 
-    function AssignRoleHandler(divContain, divRender, target) {
+    //function AssignRoleHandler(divContain, divRender, target) {
+    //
+    //    $(divContain).on('click', target, function () {
+    //        $(divRender).load('/Admin/_AddRemoveUsers/' + $(this).data('name'));
+    //    })
+    //}
 
-        $(divContain).on('click', target, function () {
-            $(divRender).load('/Admin/_AddRemoveUsers/' + $(this).data('name'));
-        })
-    }
-
-    AssignPartialViewHandler('#usersRender', '#editView', '.assignUser', 'Admin', '_AssignUserToTicket', true);
-    AssignPartialViewHandler('#usersRender', '#editView', '.manageUserRoles', 'Admin', '_AddRemoveRole', true);
-    AssignRoleHandler('#rolesRender', '#editView', '.addRemoveUser');
+    AssignPartialViewHandler('#usersRender', '#userInfoRender', '.userInfo', 'Admin', '_UserInfo', true);
+    //AssignPartialViewHandler('#usersRender', '#rolesRender', '.manageUserRoles', 'Admin', '_AddRemoveRole', true);
+    //AssignRoleHandler('#rolesRender', '#editView', '.addRemoveUser');
 
 });

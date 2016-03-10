@@ -5,7 +5,7 @@
 }
 
 <div class="row">
-    <div class="col-md-3 col-md-offset-9 full-content-small animated fadeInDownBig">
+    <div class="col-md-3 col-md-offset-8 full-content-small animated fadeInDownBig">
         <div class="login-wrap">
             <h2 class="welcome-title"><strong>Login</strong></h2>
             @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
@@ -40,6 +40,12 @@
                 </div>
             }
         </div>
+    </div>
+</div>
+<div class="row">
+    <div id="title" class="col-md-5">
+        <h4 style="color:#f0ad4e">Welcome to</h4>
+        <h1 class="accent app-title text-right">Bug Sleuth</h1>
     </div>
 </div>
 @*<div class="col-md-4">

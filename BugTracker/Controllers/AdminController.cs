@@ -25,8 +25,8 @@ namespace BugTracker.Controllers
 
         //GET: Admin/Users
         [Authorize(Roles = "Project Manager, Administrator")]
-        //public PartialViewResult _UserInfo(string id)
-        public ActionResult UserInfo(string id)
+        public PartialViewResult _UserInfo(string id)
+        //public ActionResult UserInfo(string id)
         {
             var model = new UserInfoViewModel(id);
             var devTickets = db.Tickets.OrderBy(t => t.PriorityId).Where(t => t.AssignedToId == id && t.Status.Name != "Resolved").ToList();
@@ -35,28 +35,22 @@ namespace BugTracker.Controllers
             model.AssignedTickets = id.ListUserTickets();
             model.Roles = id.ListUserRoles();
 
-            //return PartialView(model);
-            return View(model);
+            return PartialView(model);
+            //return View(model);
         }
 
         //GET: Admin/Users/_AddRemoveRole/5
         [Authorize(Roles = "Administrator")]
-        //public PartialViewResult _AddRemoveRole(string id)
-        public ActionResult AddRemoveRole(string id)
+        public PartialViewResult _AddRemoveRole(string id)
+        //public ActionResult AddRemoveRole(string id)
         {
-            //var roles = id.ListUserRoles().ToList();
-            //var selectedRoles = new List<SelectListItem>();
-            //foreach (var role in roles)
-            //    selectedRoles.Add(new SelectListItem() { Text = role });
-
             var model = new AddRemoveRolesViewModel();
             model.User = db.Users.Find(id);
             model.Roles = new MultiSelectList(db.Roles, "Name", "Name", model.SelectedRoles);
             model.SelectedRoles = id.ListUserRoles().ToArray();
-            //model.SelectedRoles = selectedRoles;
 
-            //return PartialView(model);
-            return View(model);
+            return PartialView(model);
+            //return View(model);
         }
 
         //POST: Admin/Users/AddRemoveRole/5

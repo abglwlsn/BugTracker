@@ -1,53 +1,58 @@
 ﻿@model BugTracker.Models.CreateEditProjectViewModel
 
-<div class="col-md-12">
+<div class="col-md-8 col-md-offset-2">
     <div class="box-info shadow">
         <h2><strong>Create</strong> New Project</h2>
-        @using (Html.BeginForm("Create", "Projects"))
+        <div class="box-content">
+            @using (Html.BeginForm("Create", "Projects"))
             {
-            @Html.AntiForgeryToken()
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-            <div class="form-group">
-                <label>Name</label>
-                @Html.EditorFor(model => model.Project.Name, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Project.Name, "", new { @class = "text-danger" })
-            </div>
+                <div class="form-group">
+                    <label>Name</label>
+                    @Html.EditorFor(model => model.Project.Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Project.Name, "", new { @class = "text-danger" })
+                </div>
 
-            <div class="form-group">
-                <label>Version</label>
-                @Html.EditorFor(model => model.Project.Version, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Project.Version, "", new { @class = "text-danger" })
-            </div>
+                <div class="form-group">
+                    <label>Version</label>
+                    @Html.EditorFor(model => model.Project.Version, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Project.Version, "", new { @class = "text-danger" })
+                </div>
 
-            <div class="form-group">
-                <label>Description</label>
-                @Html.EditorFor(model => model.Project.Description, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Project.Description, "", new { @class = "text-danger" })
-            </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    @Html.EditorFor(model => model.Project.Description, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Project.Description, "", new { @class = "text-danger" })
+                </div>
 
-            <div class="form-group">
-                <label>Project Manager</label>
-                @Html.DropDownListFor(model => model.Project.ProjectManagerId, Model.ProjectManagers, "Select Project Manager", new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Project.ProjectManagerId, "", new { @class = "text-danger" })
-            </div>
+                <div class="form-group">
+                    <label>Project Manager</label>
+                    @Html.DropDownListFor(model => model.Project.ProjectManagerId, Model.ProjectManagers, "Select Project Manager", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Project.ProjectManagerId, "", new { @class = "text-danger" })
+                </div>
 
-            <div class="form-group">
-                <label>Deadline</label>
-                @Html.TextBoxFor(model => model.Project.Deadline, new { @class = "form-control datepicker", value = "" })
-            </div>
+                <div class="form-group">
+                    <label>Deadline</label>
+                    @Html.TextBoxFor(model => model.Project.Deadline, new { @class = "form-control datepicker", value = "" })
+                </div>
 
-            <div class="form-group">
-                <label>Assign Developers</label>
-                @Html.ListBoxFor(m => m.SelectedDevelopers, Model.Developers, new { @class = "chosen-select" })
-            </div>
+                <div class="form-group">
+                    <label>Assign Developers</label>
+                    @Html.ListBoxFor(m => m.SelectedDevelopers, Model.Developers, new { @class = "chosen-select" })
+                </div>
 
-            <div class="form-group">
-                <label>Select Testers</label>
-                @Html.ListBoxFor(m => m.SelectedSubmitters, Model.Submitters, new { @class = "chosen-select" })
-            </div>
-
-            <input type="submit" class="btn btn-warning" value="Create Project" />
-        }
+                <div class="form-group">
+                    <label>Select Testers</label>
+                    @Html.ListBoxFor(m => m.SelectedSubmitters, Model.Submitters, new { @class = "chosen-select" })
+                </div>
+                <div class="pull-right">
+                    <input type="submit" class="btn btn-warning" value="Create Project" />
+                    <a href=@Url.Action("Index", "Projects") class="btn btn-warning">Back to Projects</a>
+                </div>
+                <div class="clearfix"></div>
+            }
+        </div>
     </div>
 </div>

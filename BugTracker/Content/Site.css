@@ -2,14 +2,25 @@
 
 
 body {
-    background-color: #262626;
-    padding-top:0;
+    /*background-color: #262626;*/
+    background-color:#0a1010;
+    margin:0;
+    padding:0;
     width:100%;
+    overflow-x:hidden;
+}
+
+.body.content.rows {
+    background-color:#070712;
 }
 
 .header.sidebar .logo h1 a {
     color: #fff;
-    text-shadow: -2px 2px 1px #09c3c3;
+    text-shadow: -2px 2px 1px #f0ad4e;
+}
+
+.header.sidebar {
+    background:#0d0d0d;
 }
 
 .nav-pad {
@@ -21,11 +32,27 @@ body {
 }
 
 .navbar-default {
-    background-color:#262626;
+    /*background-color:#262626;*/
+   /* background-color:#050514;*/
+   /*background-color:#595959;*/
+   background-color:#0d0d0d;
+}
+
+.left {
+    background:#0b0c0f;
+}
+
+#sidebar-menu {
+    border-top:none;
+}
+
+.sidebar-inner .media {
+    border-bottom:none;
+    color:#ccc;
 }
 
 .nav.navbar-nav.top-navbar li a {
-    color:#fff;
+    color:#ccc;
 }
 
 #title h4 {
@@ -48,13 +75,13 @@ ul a:hover {
     text-decoration: none;
 }
 
-.shadow {
+/*.shadow {
     box-sizing: border-box;
-    -moz-box-shadow: 1px 1px 3px 3px #ccc;
-    -webkit-box-shadow: 1px 1px 3px 3px #ccc;
-    box-shadow: 1px 1px 3px 3px #ccc;
+    -moz-box-shadow: 1px 1px 3px 3px #e6e6e6;
+    -webkit-box-shadow: 1px 1px 3px 3px #e6e6e6;
+    box-shadow: 1px 1px 3px 3px #e6e6e6;
     margin: 20px 0;
-}
+}*/
 
 footer {
     margin: 0;
@@ -135,13 +162,13 @@ footer {
 
 .app-title {
     font-size: 5em;
-    /*color:#09c3c3;*/
-    color: #fff;
+    font-family: 'Fontdiner Swanky', cursive;
+    color: #ccc;
 }
 
 .text-title {
     /*font-family: 'Bangers', cursive;*/
-    font-family: 'Source Sans Pro', sans-serif;
+    font-family: 'Fontdiner Swanky', cursive;
     font-size:1.5em;
 }
 
@@ -174,8 +201,43 @@ h1 span {
     font-size: 12px;
 }
 
+.box-info {
+    background:#e6e6e6;
+    color:#262626;
+    padding:5px 5px 0 5px;
+    margin-bottom:10px;
+}
+
+.box-content {
+    padding:25px;
+}
+
+.box-info h2 {
+    color:#262626;
+    border-bottom:1px solid #070712;
+    margin-bottom:0;
+    padding:5px 20px 20px 20px;
+}
+
 dd {
     padding-left:25px;
+}
+
+#sidebar-menu .fa {
+    /*color:#f0ad4e;*/
+    color:#ccc;
+} 
+
+#sidebar-menu ul li a {
+    color:#ccc;
+}
+
+#sidebar-menu > ul > li > a:hover{
+        color:#f0ad4e;
+}
+
+.accent {
+        color:#f0ad4e;
 }
 
 /* --- FORMS AND VERIFICATION --*/
@@ -196,6 +258,12 @@ label {
 #contact i {
     color: #ed9c28;
 }
+
+.chosen-container {
+    width:100%!important;
+    line-height:34px;
+}
+
 
 /* -------- DATA TABLE ---------*/
 
@@ -282,4 +350,8 @@ img {
 
 h2 .btn {
     margin-left:50px;
+}
+
+.btn-pad {
+    margin:5px;
 }

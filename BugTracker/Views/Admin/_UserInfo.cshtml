@@ -2,17 +2,29 @@
 @using BugTracker.HelperExtensions;
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <dl class="dl-horizontal">
             <dt>Email</dt>
             <dd>@Model.User.Email</dd>
             <dt>Roles</dt>
-            <dd>@Model.User.Id.ListUserRoles()</dd>
+            <dd>
+                <ul class="list-unstyled">
+                    @foreach (var role in Model.Roles)
+                    {
+                        <li>@role</li>}
+                </ul>
+            </dd>
         </dl>
     </div>
+    @if (User.IsInRole("Administrator"))
+    {
+        <div class="col-md-6">
+@Html.Action("_AddRemoveRole", "Admin", new { id = Model.User.Id })
+        </div>
+    }
     @if (Model.User.Id.UserIsInRole("Developer"))
             {
-        <div class="col-md-4">
+        <div class="col-md-12">
             <table>
                 <thead>
                     <tr>
@@ -42,9 +54,9 @@
                 </tbody>
             </table>
         </div>
-        if (Model.User.Id.UserIsInRole("Developer") || Model.User.Id.UserIsInRole("Program Manager"))
+        if (Model.User.Id.UserIsInRole("Program Manager"))
         {
-            <div class="col-md-4">
+            <div class="col-md-12">
                 <table>
                     <thead>
                         <tr>
