@@ -8,12 +8,12 @@ namespace BugTracker.Models
 {
     public class Ticket
     {
-        public Ticket()
-        {
-            this.Logs = new HashSet<Log>();
-            this.Comments = new HashSet<Comment>();
-            this.Attachments = new HashSet<Attachment>();
-        }
+        //public Ticket()
+        //{
+        //    this.Logs = new HashSet<Log>();
+        //    this.Comments = new HashSet<Comment>();
+        //    this.Attachments = new HashSet<Attachment>();
+        //}
 
         public int Id { get; set; }
         public int? ProjectId { get; set; }
@@ -39,8 +39,8 @@ namespace BugTracker.Models
         public virtual Status Status { get; set; }
         public virtual TicketPhase Phase { get; set; }
         public virtual TicketAction Action { get; set; }
-        public virtual ICollection<Log> Logs { get; set; }
-        public virtual ICollection<Comment> Comments { get; set; }
-        public virtual ICollection<Attachment> Attachments { get; set; }
+        //public virtual ICollection<Log> Logs { get; set; }
+        //public virtual ICollection<Comment> Comments { get; set; }
+        //public virtual ICollection<Attachment> Attachments { get; set; }
     }
 }

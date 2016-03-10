@@ -4,7 +4,23 @@
     $('.datepicker').datepicker();
 
     //datatables
-    $('.data-table').DataTable();
+    $('.data-table').DataTable({
+        responsive: true
+    });
+
+    $('.data-table-t').DataTable({
+        "columnDefs": [
+          { "width": "50%", "targets": 3 }
+        ],
+        responsive:true
+    });
+
+    $('.data-table-p').DataTable({
+        "columnDefs": [
+          { "width": "50%", "targets": 2 }
+        ],
+        responsive:true
+    });
 
     //chosen plugin
     $(".chosen-select").chosen();

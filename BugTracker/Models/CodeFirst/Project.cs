@@ -12,7 +12,7 @@ namespace BugTracker.Models
         {
             this.Users = new HashSet<ApplicationUser>();
             this.Tickets = new HashSet<Ticket>();
-            this.Logs = new HashSet<Log>();
+            //this.Logs = new HashSet<Log>();
         }
 
         public int Id { get; set; }
@@ -30,7 +30,7 @@ namespace BugTracker.Models
 
         public virtual ICollection<ApplicationUser> Users { get; set; }
         public virtual ICollection<Ticket> Tickets { get; set; }
-        public virtual ICollection<Log> Logs { get; set; }
-        public virtual ApplicationUser ProjectManager { get; set; }
+        //public virtual ICollection<Log> Logs { get; set; }
+        //public virtual ApplicationUser ProjectManager { get; set; }
     }
 }

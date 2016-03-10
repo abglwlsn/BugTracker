@@ -60,5 +60,11 @@ namespace BugTracker.HelperExtensions
             var result = manager.RemoveFromRole(userId, roleName);
             return result.Succeeded;
         }
+
+        public static ApplicationUser GetProjectManager(this string userId)
+        {
+            var user = db.Users.Find(userId);
+            return user;
+        }
     }
 }

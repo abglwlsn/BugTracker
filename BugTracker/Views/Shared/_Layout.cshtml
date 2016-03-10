@@ -49,7 +49,7 @@
                                 if (User.IsInRole("Administrator"))
                                 { <li><a href=@Url.Action("Index", "Tickets")><i class="fa fa-fw fa-ticket"></i> Tickets</a></li> }
                                 else
-                                {  <li><a href=@Url.Action("UserTickets", "Tickets")><i class="fa fa-fw fa-ticket"></i></a></li>}
+                                {  <li><a href=@Url.Action("UserTickets", "Tickets")><i class="fa fa-fw fa-ticket"></i> Tickets</a></li>}
                                 if (User.IsInRole("Project Manager") && !User.IsInRole("Developer") && !User.IsInRole("Administrator"))
                                 { <li><a href=@Url.Action("Users", "Admin")><i class="fa fa-fw fa-users"></i> Users </a></li> }
                             }

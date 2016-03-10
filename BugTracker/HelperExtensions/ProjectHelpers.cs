@@ -23,10 +23,11 @@ namespace BugTracker.HelperExtensions
         public static IEnumerable<Project> ListUserProjects(this string userId)
         {
             var devProjects = db.Projects.Include("Tickets").Include("ProjectManager").Include("Users").OrderByDescending(p => p.Deadline).Where(p => p.Tickets.Any(t => t.AssignedToId == userId) && p.IsResolved != true);
-            var progManProjects = db.Projects.Include("Tickets").Include("ProjectManager").Include("Users").OrderByDescending(p => p.Deadline).Where(p => p.ProjectManagerId == userId && p.IsResolved != true);
-           var allProjects = devProjects.Union(progManProjects).ToList();
+            //var progManProjects = db.Projects.Include("Tickets").Include("ProjectManager").Include("Users").OrderByDescending(p => p.Deadline).Where(p => p.ProjectManagerId == userId && p.IsResolved != true);
+            //var allProjects = devProjects.Union(progManProjects).ToList();
 
-            return allProjects;
+            //return allProjects;
+            return devProjects;
         }
 
         public static IEnumerable<ApplicationUser> ListUsersNotOnProject(this int projectId)
@@ -48,14 +49,14 @@ namespace BugTracker.HelperExtensions
         //    db.SaveChanges();
         //}
 
-        public static void ReassignProjectManager(this int projectId, string oldPMId, string newPMId)
-        {
-            var project = db.Projects.Find(projectId);
-            project.ProjectManagerId = newPMId;
-            project.Users.Remove(db.Users.Find(oldPMId));
-            project.Users.Add(db.Users.Find(newPMId));
-            db.SaveChanges();
-        }
+        //public static void ReassignProjectManager(this int projectId, string oldPMId, string newPMId)
+        //{
+        //    var project = db.Projects.Find(projectId);
+        //    project.ProjectManagerId = newPMId;
+        //    project.Users.Remove(db.Users.Find(oldPMId));
+        //    project.Users.Add(db.Users.Find(newPMId));
+        //    db.SaveChanges();
+        //}
 
         //public static void AddDeveloperToProject(this int ticketId, string userId)
         //{

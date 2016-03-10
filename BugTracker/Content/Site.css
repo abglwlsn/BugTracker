@@ -174,6 +174,10 @@ h1 span {
     font-size: 12px;
 }
 
+dd {
+    padding-left:25px;
+}
+
 /* --- FORMS AND VERIFICATION --*/
 label {
     display: inline;
@@ -256,7 +260,8 @@ img {
 #userTickets .box-info,
 #allTickets .box-info,
 #usersRender .box-info, 
-#ticketDetails .box-info {
+#ticketDetails .box-info,
+#projectDetails .box-info {
     position:relative;
 }
 

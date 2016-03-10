@@ -57,8 +57,8 @@ namespace BugTracker.Controllers
         // GET: Tickets/Details/5
         public ActionResult Details(int? id)
         {
-            Ticket ticket = db.Tickets.Include(t=>t.Logs).FirstOrDefault(t=>t.Id == id);
-
+            Ticket ticket = db.Tickets.FirstOrDefault(t=>t.Id == id);
+            //.Include(t=>t.Logs)
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             
@@ -143,8 +143,7 @@ namespace BugTracker.Controllers
 
                 db.Tickets.Add(ticket);
                 db.SaveChanges();
-                //return RedirectToAction("Index");
-                return Redirect(ControllerContext.HttpContext.Request.UrlReferrer.ToString());
+                return RedirectToAction("Index");
             }
             return View(ticket);
         }
@@ -174,7 +173,7 @@ namespace BugTracker.Controllers
 
             if (project != null)
             {
-                foreach (var dev in developers)
+                foreach (var dev in developers.ToList())
                     if (!project.Users.Contains(dev))
                         developers.Remove(dev);
                 projectName = project.Name;

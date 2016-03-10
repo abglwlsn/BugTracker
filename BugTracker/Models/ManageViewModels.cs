@@ -7,6 +7,12 @@ namespace BugTracker.Models
 {
     public class IndexViewModel
     {
+        [Display(Name = "First Name")]
+        public string FirstName { get; set; }
+        [Display(Name = "Last Name")]
+        public string LastName { get; set; }
+        [EmailAddress]
+        public string Email { get; set; }
         public bool HasPassword { get; set; }
         public IList<UserLoginInfo> Logins { get; set; }
         public string PhoneNumber { get; set; }

@@ -51,9 +51,6 @@ namespace BugTracker.Controllers
             var managers = db.Roles.FirstOrDefault(r => r.Name == "Project Manager").Name.UsersInRole().AsEnumerable();
             var developers = db.Roles.FirstOrDefault(r => r.Name == "Developer").Name.UsersInRole().AsEnumerable();
             var submitters = db.Roles.FirstOrDefault(r => r.Name == "Submitter").Name.UsersInRole().AsEnumerable();
-            //var displayDevelopers = new List<string>();
-            //foreach (var user in developers)
-            //    displayDevelopers.Add(user.FullName);
 
             var model = new CreateEditProjectViewModel()
             {
@@ -73,18 +70,17 @@ namespace BugTracker.Controllers
         public ActionResult Create([Bind(Include="Id,ProjectManagerId,Name,Deadline,Description,Version")]Project project, List<string> SelectedDevelopers, List<string> SelectedSubmitters)
         {
             var userId = User.Identity.GetUserId();
+            var manager = project.ProjectManagerId.GetProjectManager();
             if (ModelState.IsValid)
             {
-                var projectManager = db.Users.Find(project.ProjectManagerId);
-
-                if (projectManager == null && userId.UserIsInRole("Project Manager"))
+                if (manager == null && userId.UserIsInRole("Project Manager"))
                         project.ProjectManagerId = userId;
-                else if (projectManager != null)
-                    project.Users.Add(projectManager);
+                else if (manager != null)
+                    project.Users.Add(manager);
 
                 //VERIFY THAT THE ABOVE CODE APPLIES BEFORE THIS RUNS
                 //notify project manager
-                //if (projectManager != null)
+                //if (manager != null)
                 //{
                 //    var es = new EmailService();
                 //    var msg = project.CreateAssignedToProjectMessage(project.ProjectManager);
@@ -98,7 +94,7 @@ namespace BugTracker.Controllers
                         project.Users.Add(user);
                 }
 
-                project.Users.Add(project.ProjectManager);
+                project.Users.Add(manager);
                 project.Created = DateTimeOffset.Now;
                 db.Projects.Add(project);
                 db.SaveChanges();
@@ -121,10 +117,10 @@ namespace BugTracker.Controllers
             var managers = db.Roles.FirstOrDefault(r => r.Name == "Project Manager").Name.UsersInRole();
             var developers = db.Roles.FirstOrDefault(r => r.Name == "Developer").Name.UsersInRole();
             var submitters = db.Roles.FirstOrDefault(r => r.Name == "Submitter").Name.UsersInRole();
-            var selectedManager = project.ProjectManager;
+            var selectedManager = project.ProjectManagerId.GetProjectManager();
             var selectedDevelopers = new List<string>();
             var selectedSubmitters = new List<string>();
-            TempData["ProjectManagerId"] = project.ProjectManagerId;
+
             foreach (var user in projectUsers)
             {
                 if (user.Id.UserIsInRole("Developer"))
@@ -151,7 +147,8 @@ namespace BugTracker.Controllers
         public ActionResult Edit([Bind(Include="Id,ProjectManagerId,Name,Deadline,Description,Version")]Project project, List<string> SelectedDevelopers, List<string> SelectedSubmitters)
         {
             var original = db.Projects.AsNoTracking().FirstOrDefault(p=>p.Id == project.Id);
-            //string projectManagerId = (string)TempData["ProjectManagerId"];
+            var origManager = original.ProjectManagerId.GetProjectManager();
+            var manager = project.ProjectManagerId.GetProjectManager();
 
             var proj = db.Projects.Find(project.Id);
             proj.Name = project.Name;
@@ -159,8 +156,6 @@ namespace BugTracker.Controllers
             proj.Version = project.Version;
             proj.Deadline = project.Deadline;
             proj.Description = project.Description;
-            var userId = User.Identity.GetUserId();
-            var manager = db.Users.Find(project.ProjectManagerId);
 
             if (ModelState.IsValid)
             {
@@ -175,9 +170,8 @@ namespace BugTracker.Controllers
 
                 if (proj.ProjectManagerId != original.ProjectManagerId)
                 {
-                    //proj.Id.ReassignProjectManager(original.ProjectManagerId, proj.ProjectManagerId);
-                    proj.Users.Remove(db.Users.Find(original.ProjectManagerId));
-                    proj.Users.Add(db.Users.Find(proj.ProjectManagerId));
+                    proj.Users.Remove(origManager);
+                    proj.Users.Add(manager);
                 }
                 else
                     proj.Users.Add(manager);

@@ -8,11 +8,12 @@
 {
 <div id="userTickets" class="box-info shadow">
     <h2>My <strong>Assigned Tickets</strong></h2>
+    <div id="headerButtons">
         @if (User.IsInRole("Administrator"))
-        {<div id="headerButtons">
-            <a href=@Url.Action("Index") class="btn btn-warning pull-right">View All Tickets</a>
-        </div>
+        { <a href=@Url.Action("Index") class="btn btn-warning">View All Tickets</a>
         }
+        <a href=@Url.Action("Create", "Tickets") class="btn btn-warning"><i class="fa fa-plus"></i> Ticket</a>
+    </div>
     <table id="userTickets" class="data-table hover table-striped compact">
         <thead>
             <tr>
@@ -44,6 +45,10 @@
                         <td>@ticket.Phase.Name</td>
                         <td>@ticket.Submitted.FormatDateTimeOffsetCondensed()</td>
                         <td><a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-warning"><i class="fa fa-eye"></i></a>
+                        @if (User.IsInRole("Developer") || User.IsInRole("Project Manager"))
+                        {
+                            <a href=@Url.Action("Edit", "Tickets", new { id = ticket.Id }) class="btn btn-warning"><i class="fa fa-edit"></i></a>
+                        }
                     </tr>
                 }
             }
@@ -83,6 +88,10 @@
                     <td>@ticket.Phase.Name</td>
                     <td>@ticket.Submitted.FormatDateTimeOffsetCondensed()</td>
                     <td><a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-warning"><i class="fa fa-eye"></i></a>
+                    @if (User.IsInRole("Developer") || User.IsInRole("Project Manager"))
+                    {
+                        <a href=@Url.Action("Edit", "Tickets", new { id = ticket.Id }) class="btn btn-warning"><i class="fa fa-edit"></i></a>
+                    }
                 </tr>
             }
         </tbody>

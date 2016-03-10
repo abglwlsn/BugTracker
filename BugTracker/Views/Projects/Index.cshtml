@@ -2,6 +2,9 @@
 @using BugTracker.Models
 @using BugTracker.HelperExtensions
 
+@{ 
+}
+
 @if (User.IsInRole("Administrator"))
 {
     <h2>All Projects<a href=@Url.Action("Create", "Projects") class="btn btn-warning">Create New Project</a></h2>
@@ -23,44 +26,49 @@ else
     {
         foreach (var project in Model)
         {
+            var manager = project.ProjectManagerId.GetProjectManager();
+
             <div class="box-info shadow">
-                <h2>@project.Name <small> Due: @project.Deadline.FormatDateTimeOffsetCondensed()</small>
+                <h2>@project.Name <small> Due: @project.Deadline.FormatDateTimeOffset()</small>
                 </h2>
                 <div id="headerButtons">
-                    <a role="button" data-toggle="collapse" data-parent="#projectsRender" data-target="#collapse-@project.Id" aria-expanded="false" class="btn btn-warning"><i class="fa fa-eye"></i></a>
+                    <a role="button" data-toggle="collapse" data-parent="#projectsRender" data-target="#collapse-@project.Id" aria-expanded="false" class="btn btn-warning">Quick View</a>
+                    <a href=@Url.Action("Details", "Projects", new { id = project.Id }) class="btn btn-warning">Full Info</a>
                     @if (User.IsInRole("Administrator") || User.IsInRole("Project Manager"))
                     {
                         <a href=@Url.Action("Create", "Tickets", new { id = project.Id }) class="btn btn-warning"><i class="fa fa-plus"></i> Ticket</a>
-                            <a href=@Url.Action("Edit", "Projects", new { id = project.Id }) class="btn btn-warning"><i class="fa fa-edit"></i></a>
+                            <a href=@Url.Action("Edit", "Projects", new { id = project.Id }) class="btn btn-warning">Edit</a>
                     }
                 </div>
                   
                 <div id="collapse-@project.Id" class="collapse" role="tabpanel">
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <dl>
                                 <dt>Project Manager</dt>
-                                <dd>@project.ProjectManager.FullName</dd>
+                                <dd>@manager.FullName</dd>
                                 <dt>Version</dt>
                                 @if (project.Version != null)
                                 {
                                     <dd>@project.Version</dd> }
                                 else {
                                     <dd><small>none given</small></dd> }
+
                             </dl>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <dl>
-                                <dt>Description</dt>
+                                <dt>(@project.Tickets.Where(t => t.Status.Name != "Resolved").Count()) Open Tickets</dt>
+                                <dt><br />Description</dt>
                                 <dd>@project.Description</dd>
                             </dl>
                         </div>
                         <div class="col-md-3">
                             <dl>
                                 <dt>Created</dt>
-                                <dd>@project.Created.DateTime.ToShortDateString()</dd>
+                                <dd>@project.Created.FormatDateTimeOffset()</dd>
                                 <dt>Last Modified</dt>
-                                    <dd>@project.LastModified.FormatDateTimeOffsetCondensed()</dd> 
+                                    <dd>@project.LastModified.FormatDateTimeOffset()</dd> 
                             </dl>
                         </div>
                         <div class="col-md-3">
@@ -68,7 +76,7 @@ else
                                 <dt>Assigned Users</dt>
                                 <dd>
                                     <ul class="list-unstyled">
-                                        @if (project.Users != null)
+                                        @if (project.Users.Count() != 0)
                                         {
                                             foreach (var user in project.Users)
                                             {
@@ -81,96 +89,6 @@ else
                                 </dd>
                             </dl>
                         </div>
-                    </div>
-                    <div class="innerTable col-md-12">
-                        <h4>Active Tickets</h4>
-                        <table class="data-table compact hover table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Ticket Name</th>
-                                    <th>Priority</th>
-                                    <th>Status</th>
-                                    <th>Assigned To</th>
-                                    <th>Phase</th>
-                                    <th>Action</th>
-                                    <th>Submitted</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var ticket in project.Tickets)
-                                {
-                                    <tr>
-                                        <td>@ticket.Name</td>
-                                        @if (ticket.Priority != null)
-                                        {
-                                            <td>@ticket.Priority.Name</td> }
-                                        else {
-                                            <td><small>none given</small></td>}
-
-                                        <td>@ticket.Status.Name</td>
-
-                                        @if (ticket.AssignedToId != null)
-                                        {
-                                            <td>@ticket.AssignedTo.FullName</td> }
-                                        else {
-                                            <td><small>not assigned</small></td> }
-
-                                        @if (ticket.Phase != null)
-                                        {
-                                            <td>@ticket.Phase.Name</td> }
-                                        else {
-                                            <td><small>none given</small></td> }
-
-                                        @if (ticket.Action != null)
-                                        {
-                                            <td>@ticket.Action.Name</td> }
-                                        else {
-                                            <td><small>none given</small></td> }
-
-                                        <td>@ticket.Submitted.DateTime.ToShortDateString()</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="innerTable col-md-12">
-                        <h4>Change Log</h4>
-                        <table class="data-table compact hover table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Modified Property</th>
-                                    <th>New Value</th>
-                                    <th>Old Value</th>
-                                    <th>Modified By</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @if (project.Logs.Count() == 0)
-                                {
-                                    <tr>
-                                <td>There have been no changes to this project.</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                }
-                                else
-                                {
-                                    foreach (var log in project.Logs)
-                                    {
-                                        <tr>
-                                            <td>@log.Modified.DateTime.ToShortDateString()</td>
-                                            <td>@log.Property</td>
-                                            <td>@log.NewValue</td>
-                                            <td>@log.OldValue</td>
-                                            <td>@log.ModifiedBy.FullName</td>
-                                        </tr>
-                                    }
-                                }
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </div>
