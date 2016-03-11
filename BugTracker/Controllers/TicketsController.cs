@@ -18,10 +18,10 @@ namespace BugTracker.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Tickets
-        [Authorize(Roles ="Administrator, Project Manager, Developer")]
+        [Authorize(Roles ="Administrator")]
         public ActionResult Index()
         { 
-            IEnumerable<Ticket> tickets = db.Tickets.Include(t => t.AssignedTo).Include(t => t.Project).Where(t=>t.Status.Name != "Resolved").OrderBy(t=>t.Priority.Id).ToList();
+            IEnumerable<Ticket> tickets = db.Tickets.Include(t => t.AssignedTo).Include(t => t.Project).OrderBy(t=>t.Priority.Id).ToList();
 
             return View(tickets);
         }
@@ -66,6 +66,27 @@ namespace BugTracker.Controllers
                 return HttpNotFound();
             
             return View(ticket);
+        }
+
+        //GET: Tickets/ChooseProject
+        public ActionResult ChooseProject()
+        {
+            var projects = db.Projects.Where(p => p.IsResolved != true).ToList();
+            var model = new ChooseProjectViewModel()
+            {
+                Projects = new SelectList(projects, "Id", "Name")
+            };
+
+            return View(model);
+        }
+
+        //POST: Tickets/ChooseProject/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles="Administrator, Project Manager, Developer")]
+        public ActionResult ChooseProject(int id)
+        {
+            return RedirectToAction("Create", new { id = id });
         }
 
         // GET: Tickets/Create
@@ -143,7 +164,11 @@ namespace BugTracker.Controllers
 
                 db.Tickets.Add(ticket);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+
+                if (User.IsInRole("Administrator"))
+                    return RedirectToAction("Index");
+                else
+                    return RedirectToAction("Index", "Projects");
             }
             return View(ticket);
         }
@@ -157,8 +182,9 @@ namespace BugTracker.Controllers
             var project = db.Projects.Find(id);
             string projectName;
             var projects = new List<Project>();
-            var devRole = db.Roles.FirstOrDefault(r => r.Name == "Developer").Name;
-            IList<ApplicationUser> developers = devRole.UsersInRole();
+            var devRole = "Developer";
+            var developers = devRole.UsersInRole();
+            var projectDevelopers = new List<ApplicationUser>();
 
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -174,8 +200,8 @@ namespace BugTracker.Controllers
             if (project != null)
             {
                 foreach (var dev in developers.ToList())
-                    if (!project.Users.Contains(dev))
-                        developers.Remove(dev);
+                    if (project.Users.Any(u => u.Id == dev.Id))
+                        projectDevelopers.Add(dev);
                 projectName = project.Name;
             }
             else
@@ -186,7 +212,7 @@ namespace BugTracker.Controllers
                 Ticket = ticket,
                 ProjectName = projectName,
                 Projects = new SelectList(projects, "Id", "Name"),
-                Developers = new SelectList(developers, "Id", "FullName", ticket.AssignedTo),
+                Developers = new SelectList(projectDevelopers, "Id", "FullName", ticket.AssignedTo),
                 Priorities = new SelectList(db.Priorities.OrderBy(p => p.Id), "Id", "Name", ticket.Priority),
                 Statuses = new SelectList(db.Statuses, "Id", "Name", ticket.Status),
                 Phases = new SelectList(db.TicketPhases, "Id", "Name", ticket.Phase),
@@ -202,12 +228,12 @@ namespace BugTracker.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrator, Project Manager, Developer")]
-        public ActionResult Edit([Bind(Include = "Id,ProjectId,AssignedToId,PriorityId,PhaseId,StatusId,ActionId,Name,LastModified,Submitted, Submitter,Closed,Description")] Ticket ticket)
+        public ActionResult Edit([Bind(Include = "Id,ProjectId,AssignedToId,PriorityId,PhaseId,StatusId,ActionId,Name,LastModified,Submitted, SubmitterId,Closed,Description")] Ticket ticket)
         {
             if (ModelState.IsValid)
             {
                 var resolvedStatus = db.Statuses.FirstOrDefault(s => s.Name == "Resolved");
-                if (ticket.Status == resolvedStatus)
+                if (ticket.StatusId == resolvedStatus.Id)
                 {
                     ticket.Closed = DateTimeOffset.Now;
 
@@ -227,7 +253,10 @@ namespace BugTracker.Controllers
                 ticket.LastModified = DateTimeOffset.Now;
                 db.Entry(ticket).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                if (User.IsInRole("Administrator"))
+                    return RedirectToAction("Index");
+                else
+                    return RedirectToAction("UserTickets");
             }
             return View(ticket);
         }

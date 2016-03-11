@@ -18,7 +18,7 @@
     </div>
     @if (User.IsInRole("Administrator"))
     {
-        <div class="col-md-6">
+        <div class="col-md-5">
 @Html.Action("_AddRemoveRole", "Admin", new { id = Model.User.Id })
         </div>
     }
@@ -57,7 +57,7 @@
         if (Model.User.Id.UserIsInRole("Program Manager"))
         {
             <div class="col-md-12">
-                <table>
+                <table class="data-table compact hover table-striped">
                     <thead>
                         <tr>
                             <th>Project Name</th>

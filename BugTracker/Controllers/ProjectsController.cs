@@ -67,14 +67,21 @@ namespace BugTracker.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrator, Project Manager")]
-        public ActionResult Create([Bind(Include="Id,ProjectManagerId,Name,Deadline,Description,Version")]Project project, List<string> SelectedDevelopers, List<string> SelectedSubmitters)
+        public ActionResult Create(Project project, List<string> SelectedDevelopers, List<string> SelectedSubmitters)
         {
             var userId = User.Identity.GetUserId();
-            var manager = project.ProjectManagerId.GetProjectManager();
+            //var manager = project.ProjectManagerId.GetProjectManager();
+            var manager = db.Users.Find(project.ProjectManagerId);
+            var defaultManager = userId.GetProjectManager();
+
             if (ModelState.IsValid)
             {
+                db.Projects.Add(project);
                 if (manager == null && userId.UserIsInRole("Project Manager"))
-                        project.ProjectManagerId = userId;
+                {
+                    project.ProjectManagerId = userId;
+                    project.Users.Add(defaultManager);
+                }
                 else if (manager != null)
                     project.Users.Add(manager);
 
@@ -94,9 +101,9 @@ namespace BugTracker.Controllers
                         project.Users.Add(user);
                 }
 
-                project.Users.Add(manager);
+                //project.Users.Add(manager);
                 project.Created = DateTimeOffset.Now;
-                db.Projects.Add(project);
+                //db.Projects.Add(project);
                 db.SaveChanges();
 
                 ViewBag.SuccessMessage = "Project " + project.Name + " created.";

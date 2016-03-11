@@ -6,15 +6,15 @@
         }
 
 <div id="projectDetails" class="col-md-12">
+    <h2>@Model.Name <span><a href="#open" class="section-scroll"><i class="fa fa-angle-down"></i> Open Tickets</a><a href="#resolved" class="section-scroll"><i class="fa fa-angle-down"></i> Resolved Tickets</a><a href="#changeLog" class="section-scroll"><i class="fa fa-angle-down"></i> Change Log</a></span></h2>
     <div class="box-info shadow">
-        <h2><strong>Details for: </strong>@Model.Name</h2>
-
+        <h2><strong>Details</strong></h2>
         <div id="headerButtons">
             @if (User.IsInRole("Administrator") || User.IsInRole("Project Manager"))
             {
-                <a href=@Url.Action("Create", "Tickets", new { id = Model.Id }) class="btn btn-warning"><i class="fa fa-plus"></i> Ticket</a>
                 <a href=@Url.Action("Edit", "Projects", new { id = Model.Id }) class="btn btn-warning">Edit</a>
             }
+            <a href=@Url.Action("Create", "Tickets", new { id = Model.Id }) class="btn btn-warning"><i class="fa fa-plus"></i> Ticket</a>
             <a href=@Url.Action("Index", "Projects") class="btn btn-warning">Back to Projects</a>
         </div>
         <div class="row">
@@ -66,127 +66,135 @@
     </div>
     <div class="box-info shadow">
         <h2><strong>Active</strong> Tickets</h2>
-        <table class="data-table hover table-striped">
-            <thead>
-                <tr>
-                    <th>Ticket Name</th>
-                    <th>Priority</th>
-                    <th>Status</th>
-                    <th>Assigned To</th>
-                    <th>Phase</th>
-                    <th>Action</th>
-                    <th>Submitted</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var ticket in Model.Tickets.Where(t => t.Status.Name != "Resolved"))
-                {
+        <div id="open" class="box-content">
+            <table class="data-table hover table-striped">
+                <thead>
                     <tr>
-                        <td>@ticket.Name</td>
-                        @if (ticket.Priority != null)
-                        {
-                            <td>@ticket.Priority.Name</td> }
-                        else {
-                            <td><small>none given</small></td>}
-
-                        <td>@ticket.Status.Name</td>
-
-                        @if (ticket.AssignedToId != null)
-                        {
-                            <td>@ticket.AssignedTo.FullName</td> }
-                        else {
-                            <td><small>not assigned</small></td> }
-
-                        @if (ticket.Phase != null)
-                        {
-                            <td>@ticket.Phase.Name</td> }
-                        else {
-                            <td><small>none given</small></td> }
-
-                        @if (ticket.Action != null)
-                        {
-                            <td>@ticket.Action.Name</td> }
-                        else {
-                            <td><small>none given</small></td> }
-
-                        <td>@ticket.Submitted.DateTime.ToShortDateString()</td>
-                        <td><a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-warning"><i class="fa fa-eye"></i></a>
-                        <a href=@Url.</td>
+                        <th>Ticket Name</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Assigned To</th>
+                        <th>Phase</th>
+                        <th>Action</th>
+                        <th>Submitted</th>
+                        <th>Actions</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var ticket in Model.Tickets.Where(t => t.Status.Name != "Resolved"))
+                    {
+                        <tr>
+                            <td>@ticket.Name</td>
+                            @if (ticket.Priority != null)
+                            {
+                                <td>@ticket.Priority.Name</td> }
+                            else {
+                                <td><small>none given</small></td>}
+
+                            <td>@ticket.Status.Name</td>
+
+                            @if (ticket.AssignedToId != null)
+                            {
+                                <td>@ticket.AssignedTo.FullName</td> }
+                            else {
+                                <td><small>not assigned</small></td> }
+
+                            @if (ticket.Phase != null)
+                            {
+                                <td>@ticket.Phase.Name</td> }
+                            else {
+                                <td><small>none given</small></td> }
+
+                            @if (ticket.Action != null)
+                            {
+                                <td>@ticket.Action.Name</td> }
+                            else {
+                                <td><small>none given</small></td> }
+
+                            <td>@ticket.Submitted.DateTime.ToShortDateString()</td>
+                            <td>
+                                <a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-warning"><i class="fa fa-eye"></i></a>
+                                <a href=@Url .
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
     <div class="box-info shadow">
         <h2><strong>Resolved</strong> Tickets</h2>
-        <table class="data-table hover table-striped">
-            <thead>
-                <tr>
-                    <th>Ticket Name</th>
-                    <th>Action</th>
-                    <th>Submitted</th>
-                    <th>Closed</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var ticket in Model.Tickets.Where(t => t.Status.Name == "Resolved"))
-                {
+        <div id="resolved" class="box-content">
+            <table class="data-table hover table-striped">
+                <thead>
                     <tr>
-                        <td>@ticket.Name</td>
-                        @if (ticket.Action != null)
-                        {
-                            <td>@ticket.Action.Name</td> }
-                        else {
-                            <td><small>none given</small></td> }
-
-                        <td>@ticket.Submitted.FormatDateTimeOffset()</td>
-                        <td>@ticket.Closed.FormatDateTimeOffset()</td>
-                        <td><a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-warning">Details</a></td>
+                        <th>Ticket Name</th>
+                        <th>Action</th>
+                        <th>Submitted</th>
+                        <th>Closed</th>
+                        <th>Actions</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-    <div class="box-info shadow">
-        <h2>Change Log</h2>
-        <table class="data-table hover table-striped">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Modified Property</th>
-                    <th>New Value</th>
-                    <th>Old Value</th>
-                    <th>Modified By</th>
-                </tr>
-            </thead>
-            <tbody>
-                @*@if (Model.Logs.Count() == 0)
-            {
-                    <tr>
-                        <td>There have been no changes to this project.</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                }
-                else
-                {
-                    foreach (var log in Model.Logs)
+                </thead>
+                <tbody>
+                    @foreach (var ticket in Model.Tickets.Where(t => t.Status.Name == "Resolved"))
                     {
                         <tr>
-                            <td>@log.Modified.DateTime.ToShortDateString()</td>
-                            <td>@log.Property</td>
-                            <td>@log.NewValue</td>
-                            <td>@log.OldValue</td>
-                            <td>@log.ModifiedBy.FullName</td>
+                            <td>@ticket.Name</td>
+                            @if (ticket.Action != null)
+                            {
+                                <td>@ticket.Action.Name</td> }
+                            else {
+                                <td><small>none given</small></td> }
+
+                            <td>@ticket.Submitted.FormatDateTimeOffset()</td>
+                            <td>@ticket.Closed.FormatDateTimeOffset()</td>
+                            <td><a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-warning">Details</a></td>
                         </tr>
                     }
-                }*@
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="box-info shadow">
+        <h2><strong>Change Log</strong></h2>
+        <div class="box-content">
+            <table id="changeLog" class="data-table hover table-striped">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Modified Property</th>
+                        <th>New Value</th>
+                        <th>Old Value</th>
+                        <th>Modified By</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @*@if (Model.Logs.Count() == 0)
+                    {
+                            <tr>
+                                <td>There have been no changes to this project.</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var log in Model.Logs)
+                            {
+                                <tr>
+                                    <td>@log.Modified.DateTime.ToShortDateString()</td>
+                                    <td>@log.Property</td>
+                                    <td>@log.NewValue</td>
+                                    <td>@log.OldValue</td>
+                                    <td>@log.ModifiedBy.FullName</td>
+                                </tr>
+                            }
+                        }*@
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 

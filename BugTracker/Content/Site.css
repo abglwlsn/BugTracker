@@ -92,9 +92,10 @@ footer {
 #title {
     height:125px;
     position:absolute;
-    bottom:50px;
-    right:300px;
+    bottom:125px;
+    right:100px;
 }
+
 
 #hero {
     background: url(/Images/hero-detective.png) center center no-repeat;
@@ -176,6 +177,22 @@ h1 span {
     text-shadow: -1px 1px #fff;
 }
 
+#projectDetails span {
+    margin-left:10%;
+    font-size:.5em;
+    color:#f0ad4e;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+#projectDetails span a {
+    margin:0 10px 0 10px;
+}
+
+#projectDetails span a:hover {
+    text-decoration:none;
+    color:#fff;
+}
+
 #about h4 {
     color: #737373;
     font-family: 'Source Sans Pro', sans-serif;
@@ -186,17 +203,6 @@ h1 span {
     margin-top: 25px;
 }
 
-.anon h1,
-.anon h2,
-.anon h3,
-.anon h4,
-.anon h5,
-.anon h6,
-.anon p,
-.anon label {
-    color: #fff;
-}
-
 .box-info small {
     font-size: 12px;
 }
@@ -204,8 +210,11 @@ h1 span {
 .box-info {
     background:#e6e6e6;
     color:#262626;
-    padding:5px 5px 0 5px;
-    margin-bottom:10px;
+}
+
+#usersRender .box-info {
+        padding:5px 5px 0 5px;
+        margin-bottom:10px;
 }
 
 .box-content {
@@ -216,7 +225,14 @@ h1 span {
     color:#262626;
     border-bottom:1px solid #070712;
     margin-bottom:0;
-    padding:5px 20px 20px 20px;
+}
+
+/*.box-info table {
+    padding:25px;
+}*/
+
+#usersRender .box-info h2 {
+        padding:5px 20px 20px 20px;
 }
 
 dd {
@@ -326,7 +342,6 @@ img {
 
 #userProjects .box-info, 
 #userTickets .box-info,
-#allTickets .box-info,
 #usersRender .box-info, 
 #ticketDetails .box-info,
 #projectDetails .box-info {
@@ -337,6 +352,15 @@ img {
     position:absolute;
     top:10px;
     right:25px;
+}
+
+.btns-top {
+    margin-bottom:10px;
+    text-align:right;
+}
+
+.btns-top .btn {
+    margin-left: 10px;
 }
 
 .btn span {

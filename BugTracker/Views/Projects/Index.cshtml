@@ -4,106 +4,106 @@
 
 @{ 
 }
-
-@if (User.IsInRole("Administrator"))
-{
-    <h2>All Projects<a href=@Url.Action("Create", "Projects") class="btn btn-warning">Create New Project</a></h2>
-}
-else
-{
-    <h2>My Projects</h2>
-}
-
-    <div id="projectsRender" class="col-md-12">
-    @if (ViewBag.SuccessMessage != null)
-    {@ViewBag.SuccessMessage();
-    }
-    @if (ViewBag.ErrorMessage != null)
-    {@ViewBag.ErrorMessage();
-    }
-    
-    @if (Model.Count() != 0)
-    {
-        foreach (var project in Model)
-        {
-            var manager = project.ProjectManagerId.GetProjectManager();
-
-            <div class="box-info shadow">
-                <h2>@project.Name <small> Due: @project.Deadline.FormatDateTimeOffset()</small>
-                </h2>
-                <div id="headerButtons">
-                    <a role="button" data-toggle="collapse" data-parent="#projectsRender" data-target="#collapse-@project.Id" aria-expanded="false" class="btn btn-warning">Quick View</a>
-                    <a href=@Url.Action("Details", "Projects", new { id = project.Id }) class="btn btn-warning">Full Info</a>
-                    @if (User.IsInRole("Administrator") || User.IsInRole("Project Manager"))
-                    {
-                        <a href=@Url.Action("Create", "Tickets", new { id = project.Id }) class="btn btn-warning"><i class="fa fa-plus"></i> Ticket</a>
-                            <a href=@Url.Action("Edit", "Projects", new { id = project.Id }) class="btn btn-warning">Edit</a>
-                    }
-                </div>
-                    <div id="collapse-@project.Id" class="collapse" role="tabpanel">
-                        <div class="box-content">
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <dl>
-                                        <dt>Project Manager</dt>
-                                        <dd>@manager.FullName</dd>
-                                        <dt>Version</dt>
-                                        @if (project.Version != null)
-                                        {
-                                            <dd>@project.Version</dd> }
-                                        else {
-                                            <dd><small>none given</small></dd> }
-
-                                    </dl>
-                                </div>
-                                <div class="col-md-4">
-                                    <dl>
-                                        <dt>(@project.Tickets.Where(t => t.Status.Name != "Resolved").Count()) Open Tickets</dt>
-                                        <dt><br />Description</dt>
-                                        <dd>@project.Description</dd>
-                                    </dl>
-                                </div>
-                                <div class="col-md-3">
-                                    <dl>
-                                        <dt>Created</dt>
-                                        <dd>@project.Created.FormatDateTimeOffset()</dd>
-                                        <dt>Last Modified</dt>
-                                        <dd>@project.LastModified.FormatDateTimeOffset()</dd>
-                                    </dl>
-                                </div>
-                                <div class="col-md-3">
-                                    <dl>
-                                        <dt>Assigned Users</dt>
-                                        <dd>
-                                            <ul class="list-unstyled">
-                                                @if (project.Users.Count() != 0)
-                                                {
-                                                    foreach (var user in project.Users)
-                                                    {
-                                                        if (user.FullName != null)
-                                                        {
-                                                            <li>@user.FullName</li>}
-                                                    }
-                                                }
-                                            </ul>
-                                        </dd>
-                                    </dl>
-                                </div>
-                            </div>
-                        </div>
-                </div>
-            </div>
-
-        }
+<div class="col-md-12">
+    @if (User.IsInRole("Administrator"))
+    {<h2>All Projects</h2>
+        <div class="btns-top">
+            <a href=@Url.Action("Create", "Projects") class="btn btn-warning">Create New Project</a>
+        </div>
     }
     else
     {
-        <div class="box-info shadow">
-            <h2>Projects</h2>
-            <div class="box-content">
+        <h2>My Projects</h2>
+    }
+
+    <div id="projectsRender" class="col-md-12">
+        @if (ViewBag.SuccessMessage != null)
+        {@ViewBag.SuccessMessage();
+        }
+        @if (ViewBag.ErrorMessage != null)
+        {@ViewBag.ErrorMessage();
+        }
+
+        @if (Model.Count() != 0)
+        {
+            foreach (var project in Model)
+            {
+                var manager = project.ProjectManagerId.GetProjectManager();
+
+                <div class="box-info shadow">
+                    <h2>
+                        @project.Name <small> Due: @project.Deadline.FormatDateTimeOffset()</small>
+                    </h2>
+                    <div id="headerButtons">
+                        <a role="button" data-toggle="collapse" data-parent="#projectsRender" data-target="#collapse-@project.Id" aria-expanded="false" class="btn btn-warning">Quick View</a>
+                        <a href=@Url.Action("Details", "Projects", new { id = project.Id }) class="btn btn-warning">Full Info</a>
+                        @if (User.IsInRole("Administrator") || User.IsInRole("Project Manager"))
+                    {
+                            <a href=@Url.Action("Create", "Tickets", new { id = project.Id }) class="btn btn-warning"><i class="fa fa-plus"></i> Ticket</a>
+                            <a href=@Url.Action("Edit", "Projects", new { id = project.Id }) class="btn btn-warning">Edit</a>
+                        }
+                    </div>
+                    <div id="collapse-@project.Id" class="collapse" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <dl>
+                                    <dt>Project Manager</dt>
+                                    <dd>@manager.FullName</dd>
+                                    <dt>Version</dt>
+                                    @if (project.Version != null)
+                                    {
+                                        <dd>@project.Version</dd> }
+                                    else {
+                                        <dd><small>none given</small></dd> }
+
+                                </dl>
+                            </div>
+                            <div class="col-md-4">
+                                <dl>
+                                    <dt>(@project.Tickets.Where(t => t.Status.Name != "Resolved").Count()) Open Tickets</dt>
+                                    <dt><br />Description</dt>
+                                    <dd>@project.Description</dd>
+                                </dl>
+                            </div>
+                            <div class="col-md-3">
+                                <dl>
+                                    <dt>Created</dt>
+                                    <dd>@project.Created.FormatDateTimeOffset()</dd>
+                                    <dt>Last Modified</dt>
+                                    <dd>@project.LastModified.FormatDateTimeOffset()</dd>
+                                </dl>
+                            </div>
+                            <div class="col-md-3">
+                                <dl>
+                                    <dt>Assigned Users</dt>
+                                    <dd>
+                                        <ul class="list-unstyled">
+                                            @if (project.Users.Count() != 0)
+                                            {
+                                                foreach (var user in project.Users)
+                                                {
+                                                    if (user.FullName != null)
+                                                    {
+                                                        <li>@user.FullName</li>}
+                                                }
+                                            }
+                                        </ul>
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            }
+        }
+        else
+        {
+            <div class="box-info shadow">
+                <h2>Projects</h2>
                 <p>There are no current projects.</p>
             </div>
-        </div>
-    }
-</div>
+        }
+    </div>
 
+</div>
