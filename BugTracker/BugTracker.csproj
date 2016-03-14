@@ -407,8 +407,6 @@
     <Content Include="Site Template\third\weather-icon\font\weathericons-regular-webfont.ttf" />
     <Content Include="Site Template\third\weather-icon\font\weathericons-regular-webfont.woff" />
     <Content Include="Views\Admin\_AssignUserToTicket.cshtml" />
-    <Content Include="Views\Admin\UserInfo.cshtml" />
-    <Content Include="Views\Admin\AddRemoveRole.cshtml" />
     <Content Include="Views\Account\ResendEmaillConfirmation.cshtml" />
     <Content Include="Views\Account\ConfirmationSent.cshtml" />
     <Content Include="Views\Tickets\UserTickets.cshtml" />

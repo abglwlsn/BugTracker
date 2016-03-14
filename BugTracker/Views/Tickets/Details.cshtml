@@ -22,7 +22,10 @@
             <div class="col-md-4">
                 <dl>
                     <dt>Priority</dt>
-                    <dd>@Model.Priority.Name</dd>
+                    @if (Model.Priority != null)
+                    { <dd>@Model.Priority.Name</dd>}
+                    else
+                    { <dd>none given</dd>}
                     <dt>Description</dt>
                     @if (Model.Description != null)
                     { <dd>@Model.Description</dd> }

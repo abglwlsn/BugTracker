@@ -3,11 +3,12 @@
 
 body {
     /*background-color: #262626;*/
-    background-color:#0a1010;
+    background-color:#070712;
     margin:0;
     padding:0;
     width:100%;
     overflow-x:hidden;
+    color:#ccc;
 }
 
 .body.content.rows {
@@ -177,18 +178,24 @@ h1 span {
     text-shadow: -1px 1px #fff;
 }
 
-#projectDetails span {
-    margin-left:10%;
+#projectDetails span,
+#ticketIndex span {
     font-size:.5em;
     color:#f0ad4e;
     font-family: 'Source Sans Pro', sans-serif;
 }
 
-#projectDetails span a {
+#projectDetails span {
+        margin-left:10%;
+}
+
+#projectDetails span a,
+#ticketIndex span a {
     margin:0 10px 0 10px;
 }
 
-#projectDetails span a:hover {
+#projectDetails span a:hover,
+#ticketIndex span a:hover {
     text-decoration:none;
     color:#fff;
 }
@@ -212,7 +219,8 @@ h1 span {
     color:#262626;
 }
 
-#usersRender .box-info {
+#usersRender .box-info,
+#projectsRender .box-info {
         padding:5px 5px 0 5px;
         margin-bottom:10px;
 }
@@ -231,8 +239,17 @@ h1 span {
     padding:25px;
 }*/
 
-#usersRender .box-info h2 {
+#usersRender .box-info h2,
+#projectsRender .box-info h2 {
         padding:5px 20px 20px 20px;
+}
+
+.dl-horizontal dt {
+    width:30%;
+}
+
+.dl-horizontal dd {
+    margin-left:35%;
 }
 
 dd {
@@ -319,6 +336,7 @@ img {
 
 /*------------ BUTTONS ---------*/
 
+
 .btn.btn-dark {
 	border-color: #111;
 	background: #111;
@@ -348,7 +366,7 @@ img {
     position:relative;
 }
 
-#headerButtons {
+.headerButtons {
     position:absolute;
     top:10px;
     right:25px;

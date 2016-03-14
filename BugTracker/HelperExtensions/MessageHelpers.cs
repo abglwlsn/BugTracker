@@ -9,9 +9,11 @@ namespace BugTracker.HelperExtensions
 {
     public static class MessageHelpers
     {
+        private static ApplicationDbContext db = new ApplicationDbContext();
+
         public static IdentityMessage CreateAssignedToTicketMessage(this Ticket ticket, ApplicationUser user)
         {
-            var manager = ticket.Project.ProjectManagerId.GetProjectManager();
+            var manager = db.Users.Find(ticket.Project.ProjectManagerId);
             var msg = new IdentityMessage();
             msg.Destination = user.Email;
             msg.Body = "A new ticket has been assigned to you by " + manager.FullName + ". Ticket details are below. <br/><br/> Project: " + ticket.Project.Name + "<br/> Project Due Date: " + ticket.Project.Deadline + "<br/> Ticket Name: " + ticket.Name + "<br/> Description: " + ticket.Description + "<br/> Submitter: " + ticket.Submitter.FullName + "<br/> Priority: " + ticket.Priority.Name + "<br/> Action: " + ticket.Action.Name + "<br/> Phase: " + ticket.Phase.Name + "<br/><br/>If you have questions or cannot complete this ticket, please contact " + manager.FirstName + "at" + manager.Email + ".";
@@ -22,7 +24,7 @@ namespace BugTracker.HelperExtensions
 
         public static IdentityMessage CreateAssignedToProjectMessage(this Project project, ApplicationUser user)
         {
-            var manager = project.ProjectManagerId.GetProjectManager();
+            var manager = db.Users.Find(project.ProjectManagerId);
             var msg = new IdentityMessage();
            msg.Destination = user.Email;
            msg.Body = "You have recently been assigned to a new project. Project details are below. <br/><br/> Project: " + project.Name + "<br/> Project Due Date: " + project.Deadline.FormatDateTimeOffsetCondensed() + "<br/> Open Tickets: " + project.Tickets.Count() + "<br/><br/>If you have questions,, please contact " + manager.FirstName + "at" + manager.Email + ".";
@@ -33,7 +35,7 @@ namespace BugTracker.HelperExtensions
 
         public static IdentityMessage CreateRemovedFromProjectMessage(this Project project, ApplicationUser user)
         {
-            var manager = project.ProjectManagerId.GetProjectManager();
+            var manager = db.Users.Find(project.ProjectManagerId);
             var msg = new IdentityMessage();
            msg.Destination = user.Email;
            msg.Body = "You have recently been removed from a project. Project details are below. <br/><br/> Project: " + project.Name + "<br/> Project Due Date: " + project.Deadline.FormatDateTimeOffsetCondensed() + "<br/> Open Tickets: " + project.Tickets.Count() + "<br/><br/>If you have questions, please contact " + manager.FirstName + "at" + manager.Email + ".";
@@ -44,7 +46,7 @@ namespace BugTracker.HelperExtensions
 
         public static IEnumerable<IdentityMessage> CreateNewProjectManagerMessage(this Project project, IEnumerable<ApplicationUser> developers)
         {
-            var manager = project.ProjectManagerId.GetProjectManager();
+            var manager = db.Users.Find(project.ProjectManagerId);
             var msgList = new List<IdentityMessage>();
             foreach(var developer in developers)
             {
@@ -58,7 +60,7 @@ namespace BugTracker.HelperExtensions
 
         public static IdentityMessage CreateAssignmentRemovedMessage(this Ticket ticket, ApplicationUser user)
         {
-            var manager = ticket.Project.ProjectManagerId.GetProjectManager();
+            var manager = db.Users.Find(ticket.Project.ProjectManagerId);
             var msg = new IdentityMessage();
             msg.Destination = user.Email;
             msg.Body = "One of your tickets has been reassigned to a new developer.  Details are below. <br/><br/> Name: " + ticket.Name + "<br/> Project: " + ticket.Project.Name + "<br/><br/> If you have questions about this reassignment, please contact the Project Manager, " + manager.FullName + " at " + manager.Email + ".";
@@ -69,7 +71,7 @@ namespace BugTracker.HelperExtensions
 
         public static IEnumerable<IdentityMessage> CreateTicketResolvedMessage(this Ticket ticket, IEnumerable<ApplicationUser> recipients)
         {
-            var manager = ticket.Project.ProjectManagerId.GetProjectManager();
+            var manager = db.Users.Find(ticket.Project.ProjectManagerId);
             var msgList = new List<IdentityMessage>();
             foreach (var recipient in recipients)
             {

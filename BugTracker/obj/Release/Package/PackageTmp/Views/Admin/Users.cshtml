@@ -1,8 +1,9 @@
 ﻿@model IEnumerable<BugTracker.Models.ApplicationUser>
 @using BugTracker.Models
+@using BugTracker.HelperExtensions
 
-
-<div id="usersRender" class="col-md-9">
+<h2 class="col-md-offset-1">All Users</h2>
+<div id="usersRender" class="col-md-10 col-md-offset-1">
     @if (ViewBag.SuccessMessage != null)
     {@ViewBag.SuccessMessage()}
     @if (ViewBag.ErrorMessage != null)
@@ -10,19 +11,13 @@
     @foreach (var user in Model.OrderBy(u => u.LastName))
     {
     <div class="box-info shadow">
-        <h2>
-            @user.FullName
-            @*<button type="button" class="viewUserInfo btn btn-primary" data-id="@user.Id"><i class="fa fa-eye"></i></button>*@
-            <a href=@Url.Action("UserInfo", new { id = user.Id }) class="btn btn-warning"><i class="fa fa-eye"></i></a>
-            <button type="button" class="assignUser btn btn-warning" data-id="@user.Id"><i class="fa fa-plus"></i> Ticket</button>
-            @if (User.IsInRole("Administrator"))
-            {
-                @*<button type="button" class="manageUserRoles btn btn-primary" data-id="@user.Id"><i class="fa fa-plus"></i>/<i class="fa fa-minus"></i>Roles</button>*@
-            <a href=@Url.Action("AddRemoveRole", new { id = user.Id }) class="btn btn-warning"><i class="fa fa-plus"></i>/<i class="fa fa-minus"></i>Roles</a>
-            }
-        </h2>
-        <div id="userInfo-@user.Id" class="collapse" role="tabpanel">
-            @*@Html.Action("_UserInfo", new { id = user.Id })*@
+        <h2>@user.LastName, @user.FirstName <small>(@user.Id.ListUserTickets().Count()) Tickets</small></h2>
+        <div class="headerButtons">
+            <a role="button" data-toggle="collapse" data-parent="#usersRender" data-target="#userInfo-@user.Id" aria-expanded="false" class="btn btn-warning">Details</a>
+            @*<button type="button" class="assignUser btn btn-warning" data-id="@user.Id"><i class="fa fa-plus"></i> Ticket</button>*@
+        </div>
+        <div id="userInfo-@user.Id" class="box-content collapse" role="tabpanel">
+            @Html.Action("_UserInfo", new { id = user.Id })
         </div>
     </div>
     }

@@ -72,7 +72,7 @@ namespace BugTracker.Controllers
             var userId = User.Identity.GetUserId();
             //var manager = project.ProjectManagerId.GetProjectManager();
             var manager = db.Users.Find(project.ProjectManagerId);
-            var defaultManager = userId.GetProjectManager();
+            var defaultManager = db.Users.Find(userId);
 
             if (ModelState.IsValid)
             {
@@ -124,7 +124,7 @@ namespace BugTracker.Controllers
             var managers = db.Roles.FirstOrDefault(r => r.Name == "Project Manager").Name.UsersInRole();
             var developers = db.Roles.FirstOrDefault(r => r.Name == "Developer").Name.UsersInRole();
             var submitters = db.Roles.FirstOrDefault(r => r.Name == "Submitter").Name.UsersInRole();
-            var selectedManager = project.ProjectManagerId.GetProjectManager();
+            var selectedManager = db.Users.Find(project.ProjectManagerId);
             var selectedDevelopers = new List<string>();
             var selectedSubmitters = new List<string>();
 
@@ -154,8 +154,8 @@ namespace BugTracker.Controllers
         public ActionResult Edit([Bind(Include="Id,ProjectManagerId,Name,Deadline,Description,Version")]Project project, List<string> SelectedDevelopers, List<string> SelectedSubmitters)
         {
             var original = db.Projects.AsNoTracking().FirstOrDefault(p=>p.Id == project.Id);
-            var origManager = original.ProjectManagerId.GetProjectManager();
-            var manager = project.ProjectManagerId.GetProjectManager();
+            var origManager = db.Users.Find(original.ProjectManagerId);
+            var manager = db.Users.Find(project.ProjectManagerId);
 
             var proj = db.Projects.Find(project.Id);
             proj.Name = project.Name;

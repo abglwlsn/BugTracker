@@ -33,6 +33,7 @@ namespace BugTracker.Models
     {
         public SelectList Projects { get; set; }
         [Required]
-        public int SelectedProject { get; set; }
+        public int SelectedProjectId { get; set; }
+        public string returnUrl { get; set; }
     }
 }

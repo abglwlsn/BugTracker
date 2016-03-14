@@ -34,16 +34,16 @@
                     <h2>
                         @project.Name <small> Due: @project.Deadline.FormatDateTimeOffset()</small>
                     </h2>
-                    <div id="headerButtons">
+                    <div class="headerButtons">
                         <a role="button" data-toggle="collapse" data-parent="#projectsRender" data-target="#collapse-@project.Id" aria-expanded="false" class="btn btn-warning">Quick View</a>
-                        <a href=@Url.Action("Details", "Projects", new { id = project.Id }) class="btn btn-warning">Full Info</a>
                         @if (User.IsInRole("Administrator") || User.IsInRole("Project Manager"))
                     {
-                            <a href=@Url.Action("Create", "Tickets", new { id = project.Id }) class="btn btn-warning"><i class="fa fa-plus"></i> Ticket</a>
                             <a href=@Url.Action("Edit", "Projects", new { id = project.Id }) class="btn btn-warning">Edit</a>
                         }
+                        <a href=@Url.Action("Details", "Projects", new { id = project.Id }) class="btn btn-warning">Full Info</a>
+                        <a href=@Url.Action("Create", "Tickets", new { id = project.Id }) class="btn btn-warning"><i class="fa fa-plus"></i> Ticket</a>
                     </div>
-                    <div id="collapse-@project.Id" class="collapse" role="tabpanel">
+                    <div id="collapse-@project.Id" class="box-content collapse" role="tabpanel">
                         <div class="row">
                             <div class="col-md-2">
                                 <dl>

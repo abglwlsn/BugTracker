@@ -28,7 +28,7 @@ namespace BugTracker.Controllers
 
         //GET: Tickets/UserTickets
         //try route prefix for Tickets/{user.FirstName}
-        [Authorize(Roles = "Project Manager, Developer")]
+        [Authorize(Roles = "Project Manager, Developer, Submitter")]
         public ActionResult UserTickets(string returnUrl)
         {
             var userId = User.Identity.GetUserId();
@@ -69,12 +69,22 @@ namespace BugTracker.Controllers
         }
 
         //GET: Tickets/ChooseProject
-        public ActionResult ChooseProject()
+        public ActionResult ChooseProject(string returnUrl)
         {
-            var projects = db.Projects.Where(p => p.IsResolved != true).ToList();
+            var user = db.Users.Find(User.Identity.GetUserId());
+            var projects = new List<Project>();
+
+            if (User.IsInRole("Administrator"))
+                projects = db.Projects.Where(p => p.IsResolved != true).ToList();
+            else
+                foreach (var project in db.Projects.ToList())
+                    if (project.Users.Contains(user))
+                        projects.Add(project);
+
             var model = new ChooseProjectViewModel()
             {
-                Projects = new SelectList(projects, "Id", "Name")
+                Projects = new SelectList(projects, "Id", "Name"),
+                returnUrl = returnUrl
             };
 
             return View(model);
@@ -83,10 +93,10 @@ namespace BugTracker.Controllers
         //POST: Tickets/ChooseProject/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles="Administrator, Project Manager, Developer")]
-        public ActionResult ChooseProject(int id)
+        public ActionResult ChooseProject(ChooseProjectViewModel model)
         {
-            return RedirectToAction("Create", new { id = id });
+            var project = db.Projects.Find(model.SelectedProjectId);
+            return RedirectToAction("Create", new { id = project.Id});
         }
 
         // GET: Tickets/Create
@@ -168,7 +178,7 @@ namespace BugTracker.Controllers
                 if (User.IsInRole("Administrator"))
                     return RedirectToAction("Index");
                 else
-                    return RedirectToAction("Index", "Projects");
+                    return RedirectToAction("UserTickets");
             }
             return View(ticket);
         }

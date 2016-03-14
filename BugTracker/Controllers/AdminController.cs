@@ -71,7 +71,8 @@ namespace BugTracker.Controllers
 
             if(ModelState.IsValid)
             {
-                foreach (var role in db.Roles.Select(r=>r.Name))
+                var roles = db.Roles.ToList();
+                foreach (var role in roles.Select(r=>r.Name))
                 {
                     if (model.SelectedRoles.Contains(role))
                         model.User.Id.AddUserToRole(role);
@@ -93,7 +94,7 @@ namespace BugTracker.Controllers
 
             ViewBag.ErrorMessage = "Something went wrong. Please try again, or contact tech support.";
             //return RedirectToAction("Users");
-            return View(model);
+            return RedirectToAction("Users");
         }
 
         //GET: Admin/Roles/_AddRemoveUsers/roleName

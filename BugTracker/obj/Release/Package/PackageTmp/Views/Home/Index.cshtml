@@ -15,7 +15,7 @@
             <a href=@Url.Action("Register", "Account") class="btn btn-warning btn-block"><i class="fa fa-rocket fa-inverse"></i> Register</a>
         </div>
         <div class="login-wrap">
-            <h2 class="text-title">Demo application as:</h2>
+            <h4>Demo application as:</h4>
             @using (Html.BeginForm("LoginGuestSubmitter", "Account"))
             {
                 @Html.AntiForgeryToken()
@@ -43,6 +43,6 @@
 <div class="row">
     <div id="title" class="col-md-5">
         <h4 style="color:#f0ad4e">Welcome to</h4>
-        <h1 class="app-title text-right">Bug Sleuth</h1>
+        <h1 class="accent app-title text-right">Bug Sleuth</h1>
     </div>
 </div>

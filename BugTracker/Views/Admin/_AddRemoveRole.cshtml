@@ -1,10 +1,11 @@
 ﻿@model BugTracker.Models.AddRemoveRolesViewModel
 
 
-        @using (Html.BeginForm())
+        @using (Html.BeginForm("AddRemoveRole", "Admin"))
         {
             @Html.AntiForgeryToken()
             @Html.ListBox("SelectedRoles", Model.Roles, new { @class = "chosen-select" })
+            @Html.HiddenFor(m=>m.User.Id)
             <br />
             <input type="submit" class="btn btn-warning btn-pad" value="Update Roles" />
         }

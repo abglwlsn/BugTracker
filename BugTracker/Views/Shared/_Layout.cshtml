@@ -62,7 +62,7 @@
                                 }
                                 @if (User.IsInRole("Submitter") && !User.IsInRole("Project Manager") && !User.IsInRole("Developer") && !User.IsInRole("Administrator"))
                                 {
-                                    <li><a href=@Url.Action("Index", "Tickets")><i class="fa fa-fw fa-ticket"></i> Tickets</a></li>
+                                    <li><a href=@Url.Action("UserTickets", "Tickets")><i class="fa fa-fw fa-ticket"></i> Tickets</a></li>
                                 }
                             <li><a href=@Url.Action("Index", "Manage")><i class="fa fa-fw fa-user"></i> Profile</a></li>
                         </ul>

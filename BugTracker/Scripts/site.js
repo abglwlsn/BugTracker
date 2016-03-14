@@ -8,22 +8,44 @@
         responsive: true
     });
 
+    $('.data-table-xl').DataTable({
+        "columnDefs": [
+            { className: "dt-body-right", "targets": -1 },
+            { "width": "95px", "targets":-1 }
+        ],
+        responsive: true
+    })
+
+    $('.data-table-a').DataTable({
+        "columnDefs": [
+            { className: "dt-body-right", "targets": -1 },
+        ],
+        responsive: true
+    })
+
     $('.data-table-t').DataTable({
         "columnDefs": [
-          { "width": "50%", "targets": 3 }
+          { "width": "50%", "targets": 3 },
+          { className: "dt-body-right", "targets" : -1 }
         ],
-        responsive:true
+        responsive: true
     });
 
     $('.data-table-p').DataTable({
         "columnDefs": [
-          { "width": "50%", "targets": 2 }
+          { "width": "50%", "targets": 2 },
+          { className: "dt-body-right", "targets": -1 }
         ],
         responsive:true
     });
 
     //chosen plugin
         $(".chosen-select").chosen();
+
+    //cancel
+        $('.cancel').click(function () {
+            window.history.back();
+        });
 
     //partial views handling
     function AssignPartialViewHandler(divContain, divRender, target, controllerName, actionName, hasDataTag) {
