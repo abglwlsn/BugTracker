@@ -11,8 +11,9 @@ namespace BugTracker.Models
         public int Id { get; set; }
         public int TicketId { get; set; }
         public string SubmitterId { get; set; }
-        public string Title { get; set; }
         [Required]
+        [StringLength(500, ErrorMessage = "Comment must be between {2} and {1} characters.", MinimumLength = 5)]
+        [DataType(DataType.MultilineText)]
         public string Body { get; set; }
         public DateTimeOffset Submitted { get; set; }
 

@@ -12,6 +12,7 @@ using System.Web.Mvc;
 namespace BugTracker.Controllers
 {
     [RequireHttps]
+    [Authorize]
     public class ProjectsController : Controller
     {
         private static ApplicationDbContext db = new ApplicationDbContext();

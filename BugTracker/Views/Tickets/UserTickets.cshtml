@@ -4,14 +4,16 @@
     ViewBag.Title = "UserTickets";
 }
 
+@if (User.IsInRole("Administrator"))
+{ <a href=@Url.Action("Index") class="btn btn-warning pull-right">View All Tickets</a>
+    <div class="clearfix"></div>
+    <br />
+}
 @if (User.IsInRole("Developer"))
 {
-<div id="userTickets" class="box-info shadow">
+<div id="userTicketsBox" class="box-info shadow">
     <h2>My <strong>Assigned Tickets</strong></h2>
     <div class="headerButtons">
-        @if (User.IsInRole("Administrator"))
-        { <a href=@Url.Action("Index") class="btn btn-warning">View All Tickets</a>
-        }
         <a href=@Url.Action("ChooseProject", "Tickets") class="btn btn-warning"><i class="fa fa-plus"></i> Ticket</a>
     </div>
     <div class="box-content">
@@ -40,17 +42,34 @@
                         <tr>
                             <td>@ticket.Name</td>
                             <td>@ticket.Project.Name</td>
+                            @if (ticket.Priority != null)
+                            {
                             <td>@ticket.Priority.Name</td>
+                            }
+                            else { <td>none given</td>}
+                            @if (ticket.Status != null)
+                            {
                             <td>@ticket.Status.Name</td>
-                            <td>@ticket.Action.Name</td>
-                            <td>@ticket.Phase.Name</td>
+                            }
+                            else { <td>none given</td>}
+                            @if (ticket.Action != null)
+                            {
+                                <td>@ticket.Action.Name</td>
+                            }
+                            else { <td>none given</td>}
+                            @if (ticket.Phase != null)
+                            {
+                                <td>@ticket.Phase.Name</td>
+                            }
+                            else { <td>none given</td>}
                             <td>@ticket.Submitted.FormatDateTimeOffsetCondensed()</td>
                             <td>
-                                <a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-warning"><i class="fa fa-eye"></i></a>
+                                <a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-eye"></i></a>
                                 @if (User.IsInRole("Developer") || User.IsInRole("Project Manager"))
                         {
-                                    <a href=@Url.Action("Edit", "Tickets", new { id = ticket.Id }) class="btn btn-warning"><i class="fa fa-edit"></i></a>
+                                    <a href=@Url.Action("Edit", "Tickets", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></a>
                                 }
+                                <a href=@Url.Action("Create", "Attachments", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-flip-horizontal fa-paperclip"></i></a>
                         </tr>
                     }
                 }
@@ -58,6 +77,87 @@
         </table>
     </div>
 </div>
+}
+
+@if(User.IsInRole("Project Manager"))
+{
+    <div id="projectTicketsBox" class="box-info shadow">
+        <h2>My <strong>Project Tickets</strong></h2>
+        <div class="headerButtons">
+            <a href=@Url.Action("ChooseProject", "Tickets") class="btn btn-warning"><i class="fa fa-plus"></i> Ticket</a>
+        </div>
+        <div class="box-content">
+            <table id="projectTickets" class="data-table hover table-striped compact">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Project</th>
+                        <th>Priority</th>
+                        <th>Assigned To</th>
+                        <th>Status</th>
+                        <th>Type</th>
+                        <th>Phase</th>
+                        <th>Submitted</th>
+                        <td>Actions</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.AssignedProjects == null)
+                {
+                        <tr><td>No assigned projects</td></tr>
+                    }
+                    else
+                    {
+                        foreach (var project in Model.AssignedProjects)
+                        {
+                            foreach (var ticket in project.Tickets)
+                            {
+                            <tr>
+                                <td>@ticket.Name</td>
+                                <td>@ticket.Project.Name</td>
+                                @if (ticket.Priority != null)
+                                {
+                                    <td>@ticket.Priority.Name</td>
+                                }
+                                else {
+                            <td>none given</td>}
+                                @if (ticket.AssignedTo != null)
+                                { <td>@ticket.AssignedTo.FullName</td>}
+                                else { <td>unassigned</td>}
+                                @if (ticket.Status != null)
+                                {
+                                    <td>@ticket.Status.Name</td>
+                                }
+                                else {
+                            <td>none given</td>}
+                                @if (ticket.Action != null)
+                                {
+                                    <td>@ticket.Action.Name</td>
+                                }
+                                else {
+                            <td>none given</td>}
+                                @if (ticket.Phase != null)
+                                {
+                                    <td>@ticket.Phase.Name</td>
+                                }
+                                else {
+                            <td>none given</td>}
+                                <td>@ticket.Submitted.FormatDateTimeOffsetCondensed()</td>
+                                <td>
+                                    <a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-eye"></i></a>
+                                    @if (User.IsInRole("Developer") || User.IsInRole("Project Manager"))
+                                    {
+                                        <a href=@Url.Action("Edit", "Tickets", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></a>
+                                    }
+                                    <a href=@Url.Action("Create", "Attachments", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-flip-horizontal fa-paperclip"></i></a>
+                            </tr>
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 }
 
 @if (Model.SubmittedTickets != null)
@@ -109,7 +209,7 @@
                         {
                             <td>unassigned</td>
                         }
-                        @if (ticket.Action != null)
+                        @if (ticket.Phase != null)
                         {
                             <td>@ticket.Phase.Name</td>
                         }
@@ -119,11 +219,12 @@
                         }
                         <td>@ticket.Submitted.FormatDateTimeOffsetCondensed()</td>
                         <td>
-                            <a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-warning"><i class="fa fa-eye"></i></a>
-                            @if (User.IsInRole("Developer") || User.IsInRole("Project Manager"))
+                            <a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-eye"></i></a>
+                            @if (User.IsInRole("Developer") || User.IsInRole("Project Manager") || User.IsInRole("Administrator"))
                     {
-                                <a href=@Url.Action("Edit", "Tickets", new { id = ticket.Id }) class="btn btn-warning"><i class="fa fa-edit"></i></a>
+                                <a href=@Url.Action("Edit", "Tickets", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></a>
                             }
+                            <a href=@Url.Action("Create", "Attachments", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-flip-horizontal fa-paperclip"></i></a>
                     </tr>
                 }
             </tbody>

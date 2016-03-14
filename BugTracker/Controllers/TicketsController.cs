@@ -13,6 +13,7 @@ using BugTracker.HelperExtensions;
 namespace BugTracker.Controllers
 {
     [RequireHttps]
+    [Authorize]
     public class TicketsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -57,8 +58,8 @@ namespace BugTracker.Controllers
         // GET: Tickets/Details/5
         public ActionResult Details(int? id)
         {
-            Ticket ticket = db.Tickets.FirstOrDefault(t=>t.Id == id);
-            //.Include(t=>t.Logs)
+            Ticket ticket = db.Tickets.Include(t=>t.Comments).Include(t=>t.Logs).FirstOrDefault(t=>t.Id == id);
+
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             
@@ -189,7 +190,7 @@ namespace BugTracker.Controllers
         {
             Ticket ticket = db.Tickets.Find(id);
             var userId = User.Identity.GetUserId();
-            var project = db.Projects.Find(id);
+            var project = ticket.Project;
             string projectName;
             var projects = new List<Project>();
             var devRole = "Developer";
@@ -242,6 +243,10 @@ namespace BugTracker.Controllers
         {
             if (ModelState.IsValid)
             {
+                var unassigned = db.Statuses.FirstOrDefault(s => s.Name == "Unassigned");
+                if (ticket.StatusId == unassigned.Id && ticket.AssignedToId != null)
+                    ticket.Status = db.Statuses.FirstOrDefault(t => t.Name == "Assigned");
+
                 var resolvedStatus = db.Statuses.FirstOrDefault(s => s.Name == "Resolved");
                 if (ticket.StatusId == resolvedStatus.Id)
                 {

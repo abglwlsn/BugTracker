@@ -28,36 +28,36 @@ namespace BugTracker.Controllers
         public PartialViewResult _UserInfo(string id)
         //public ActionResult UserInfo(string id)
         {
-            var model = new UserInfoViewModel(id);
-            var devTickets = db.Tickets.OrderBy(t => t.PriorityId).Where(t => t.AssignedToId == id && t.Status.Name != "Resolved").ToList();
-
+            var model = new UserInfoViewModel();
+            model.User = db.Users.Find(id);
             model.AssignedProjects = id.ListUserProjects();
             model.AssignedTickets = id.ListUserTickets();
-            model.Roles = id.ListUserRoles();
+            model.SelectedRoles = id.ListUserRoles().ToList();
+            model.AllRoles = new MultiSelectList(db.Roles, "Name", "Name", model.SelectedRoles);
 
             return PartialView(model);
             //return View(model);
         }
 
-        //GET: Admin/Users/_AddRemoveRole/5
-        [Authorize(Roles = "Administrator")]
-        public PartialViewResult _AddRemoveRole(string id)
-        //public ActionResult AddRemoveRole(string id)
-        {
-            var model = new AddRemoveRolesViewModel();
-            model.User = db.Users.Find(id);
-            model.Roles = new MultiSelectList(db.Roles, "Name", "Name", model.SelectedRoles);
-            model.SelectedRoles = id.ListUserRoles().ToArray();
+        ////GET: Admin/Users/_AddRemoveRole/5
+        //[Authorize(Roles = "Administrator")]
+        //public PartialViewResult _AddRemoveRole(string id)
+        ////public ActionResult AddRemoveRole(string id)
+        //{
+        //    var model = new AddRemoveRolesViewModel();
+        //    model.User = db.Users.Find(id);
+        //    model.Roles = new MultiSelectList(db.Roles, "Name", "Name", model.SelectedRoles);
+        //    model.SelectedRoles = id.ListUserRoles().ToArray();
 
-            return PartialView(model);
-            //return View(model);
-        }
+        //    return PartialView(model);
+        //    //return View(model);
+        //}
 
         //POST: Admin/Users/AddRemoveRole/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrator")]
-        public ActionResult AddRemoveRole([Bind(Include="User, SelectedRoles")]AddRemoveRolesViewModel model)
+        public ActionResult AddRemoveRole([Bind(Include = "User, SelectedRoles")]ApplicationUser user, List<string> SelectedRoles)
         {
             //model.User = db.Users.Find(model.User.Id);
 
@@ -69,16 +69,16 @@ namespace BugTracker.Controllers
             ModelState.Remove("User.LastName");
             //ModelState.Add("SelectedRoles", model.SelectedRoles);
 
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var roles = db.Roles.ToList();
-                foreach (var role in roles.Select(r=>r.Name))
+                foreach (var role in roles.Select(r => r.Name))
                 {
-                    if (model.SelectedRoles.Contains(role))
-                        model.User.Id.AddUserToRole(role);
+                    if (SelectedRoles.Contains(role))
+                        user.Id.AddUserToRole(role);
                     else
-                        if (model.User.Id.UserIsInRole(role))
-                            model.User.Id.RemoveUserFromRole(role);
+                        if (user.Id.UserIsInRole(role))
+                        user.Id.RemoveUserFromRole(role);
                     //UserManager handles validation for us, ex: user is already in role when add is attempted. Fails silently.
                 }
 
@@ -130,12 +130,12 @@ namespace BugTracker.Controllers
         }
 
         //POST: Admin/Users/AssignUserToTicket/5
-        [Authorize(Roles="Project Manager, Administrator")]
+        [Authorize(Roles = "Project Manager, Administrator")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AssignUserToTicket(AssignUserViewModel model)
         {
-            var original = db.Tickets.AsNoTracking().FirstOrDefault(t=>t.Id == model.SelectedTicketId);
+            var original = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == model.SelectedTicketId);
             var ticket = db.Tickets.Find(model.SelectedTicketId);
             var userId = User.Identity.GetUserId();
 
@@ -147,7 +147,7 @@ namespace BugTracker.Controllers
             //var es = new EmailService();
             //var msg = ticket.CreateAssignedToTicketMessage(developer);
             //es.SendAsync(msg);
-        
+
             //var oldDeveloper = db.Users.Find(original.AssignedToId);
             //var msg2 = original.CreateAssignmentRemovedMessage(oldDeveloper);
             //es.SendAsync(msg2);

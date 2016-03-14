@@ -9,7 +9,7 @@
             <dt>Roles</dt>
             <dd>
                 <ul class="list-unstyled">
-                    @foreach (var role in Model.Roles)
+                    @foreach (var role in Model.SelectedRoles)
                     {
                         <li>@role</li>}
                 </ul>
@@ -19,7 +19,14 @@
     @if (User.IsInRole("Administrator"))
     {
         <div class="col-md-5">
-@Html.Action("_AddRemoveRole", "Admin", new { id = Model.User.Id })
+            @using (Html.BeginForm("AddRemoveRole", "Admin"))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ListBox("SelectedRoles", Model.AllRoles, new { @class = "chosen-select" })
+                @Html.HiddenFor(m => m.User.Id)
+                <br />
+                <input type="submit" class="btn btn-warning btn-pad" value="Update Roles" />
+            }
         </div>
     }
     @if (Model.User.Id.UserIsInRole("Developer"))
@@ -46,8 +53,13 @@
                             <tr>
                                 <td>@ticket.Name</td>
                                 <td>@ticket.Project.Name</td>
-                                <td>@ticket.Priority.Name</td>
-                                <td>@ticket.Description</td>
+                                @if (ticket.Priority != null)
+                                { <td>@ticket.Priority.Name</td> }
+                                else
+                                { <td>unassigned</td>}
+                                @if (ticket.Description != null)
+                                { <td>@ticket.Description</td> }
+                                else {  <td>none given</td>}
                             </tr>
                         }
                     }
@@ -78,7 +90,9 @@
                                 <tr>
                                     <td>@project.Name</td>
                                     <td>@project.Deadline.FormatDateTimeOffset()</td>
-                                    <td>@project.Description</td>
+                                    @if (project.Description != null)
+                                    { <td>@project.Description</td> }
+                                    else {<td>none given</td>}
                                     <td>@project.Tickets.Count()</td>
                                 </tr>
                             }

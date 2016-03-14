@@ -7,7 +7,7 @@
 <div id="ticketIndex" class="col-md-12">
     <h2><span class="pull-right">
     <a href="#unassigned" class="section-scroll"><i class="fa fa-angle-down"></i> Unassigned</a><a href="#open" class="section-scroll"><i class="fa fa-angle-down"></i> Open Tickets</a><a href="#resolved" class="section-scroll"><i class="fa fa-angle-down"></i> Resolved Tickets</a><a href=@Url.Action("ChooseProject", "Tickets") class="btn btn-warning">Create New Ticket</a>
-    @if (User.IsInRole("Project Manager") || User.IsInRole("Developer"))
+    @if (User.IsInRole("Project Manager") || User.IsInRole("Developer") || User.IsInRole("Submitter"))
             {<a href=@Url.Action("UserTickets") class="btn btn-warning">View My Tickets</a>    }
 </span></h2>
     <div class="clearfix"></div>
@@ -105,7 +105,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var ticket in Model.Where(t => t.Status.Name != "Resolved"))
+                    @foreach (var ticket in Model.Where(t => t.Status.Name != "Resolved" && (t.Status.Name != "Unassigned" || t.Priority != null || t.AssignedToId != null)))
                     {
                         <tr>
                             <td>@ticket.Name</td>

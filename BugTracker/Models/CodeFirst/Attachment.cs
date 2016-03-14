@@ -10,10 +10,10 @@ namespace BugTracker.Models
     {
         public int Id { get; set; }
         public int TicketId { get; set; }
-        public int SubmitterId { get; set; }
+        public string SubmitterId { get; set; }
+        public string Title { get; set; }
         [StringLength(100, ErrorMessage ="Description must be fewer than 100 characters. For a longer message, please leave a comment.")]
         public string Description { get; set; }
-        [Required]
         public string FilePath { get; set; }
         public DateTimeOffset Submitted { get; set; }
 
