@@ -147,6 +147,7 @@ namespace BugTracker.Migrations
                 );
 
             context.NotificationTypes.AddOrUpdate(n => n.Name,
+                new NotificationType() { Name = "Ticket Submitted" },
                 new NotificationType() { Name = "Ticket Assigned" },
                 new NotificationType() { Name = "Ticket Resolved" },
                 new NotificationType() { Name = "Reminder: Update Tickets" },

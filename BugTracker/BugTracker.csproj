@@ -208,7 +208,7 @@
     </Compile>
     <Compile Include="HelperExtensions\FormatHelpers.cs" />
     <Compile Include="HelperExtensions\MessageHelpers.cs" />
-    <Compile Include="HelperExtensions\NotificatonHelpers.cs" />
+    <Compile Include="HelperExtensions\NotificationHelpers.cs" />
     <Compile Include="HelperExtensions\ProjectHelpers.cs" />
     <Compile Include="HelperExtensions\TicketHelpers.cs" />
     <Compile Include="HelperExtensions\UserRolesHelpers.cs" />
@@ -241,6 +241,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\escalante.png" />
     <Content Include="Images\hero-detective.png" />
     <Content Include="Images\icon-c.png" />
     <Content Include="Images\icon-entity.png" />
@@ -395,10 +396,7 @@
     <Content Include="Views\Admin\Users.cshtml" />
     <Content Include="Views\Admin\Roles.cshtml" />
     <Content Include="Views\Admin\_UserInfo.cshtml" />
-    <Content Include="Views\Admin\_AddRemoveRole.cshtml" />
     <Content Include="Views\Projects\Index.cshtml" />
-    <Content Include="Views\Projects\_Create.cshtml" />
-    <Content Include="Views\Projects\_Edit.cshtml" />
     <Content Include="Views\Shared\_AnonLayout.cshtml" />
     <Content Include="Views\Home\Dashboard.cshtml" />
     <Content Include="Site Template\third\font-awesome\fonts\fontawesome-webfont.eot" />
@@ -409,7 +407,6 @@
     <Content Include="Site Template\third\weather-icon\font\weathericons-regular-webfont.eot" />
     <Content Include="Site Template\third\weather-icon\font\weathericons-regular-webfont.ttf" />
     <Content Include="Site Template\third\weather-icon\font\weathericons-regular-webfont.woff" />
-    <Content Include="Views\Admin\_AssignUserToTicket.cshtml" />
     <Content Include="Views\Account\ResendEmaillConfirmation.cshtml" />
     <Content Include="Views\Account\ConfirmationSent.cshtml" />
     <Content Include="Views\Tickets\UserTickets.cshtml" />
@@ -419,6 +416,10 @@
     <Content Include="Views\Projects\Details.cshtml" />
     <Content Include="Views\Tickets\ChooseProject.cshtml" />
     <Content Include="Views\Attachments\Create.cshtml" />
+    <Content Include="Views\Attachments\Details.cshtml" />
+    <Content Include="Views\Attachments\View.cshtml" />
+    <Content Include="Views\Tickets\RequestReassignment.cshtml" />
+    <Content Include="Views\Admin\Notifications.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

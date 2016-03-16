@@ -293,6 +293,8 @@ dd {
     color:#f0ad4e;
 }
 
+
+
 /* --- FORMS AND VERIFICATION --*/
 label {
     display: inline;
@@ -337,6 +339,10 @@ table td {
     margin-top:35px;
 }
 
+/*.innerTable {
+    margin-top:25px;
+}*/
+
 /* ----------- IMAGES AND GRAPHS----------*/
 
 img {
@@ -354,6 +360,10 @@ img {
     margin-bottom:15px;
 }
 
+#attachmentImg {
+    border:solid 1px #fff;
+}
+
 /*------------ BUTTONS ---------*/
 
 .btn.btn-dark {
@@ -368,8 +378,8 @@ img {
 	color: #fff;
 }
 
-.btn-warning {
-    color:#262626;
+.btn-xs {
+    color: #262626;
 }
 
 #about .btn {

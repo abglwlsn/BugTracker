@@ -74,19 +74,86 @@ namespace BugTracker.HelperExtensions
         //    db.SaveChanges();
         //}
 
-        public static void CreateProjectChangeLog(this int projectId, string userId, string property, string newValue, string oldValue)
+        public static ICollection<Log> CreateProjectChangelogs(this Project oldProject, Project newProject, string userId)
         {
-            Log newLog = new Log()
+            var newLogs = new List<Log>();
+            var modified = DateTimeOffset.Now;
+
+            if (oldProject?.ProjectManagerId != newProject.ProjectManagerId)
             {
-                ProjectId = projectId,
-                ModifiedById = userId,
-                Modified = DateTimeOffset.Now,
-                Property = property,
-                NewValue = newValue,
-                OldValue = oldValue
-            };
-            db.Logs.Add(newLog);
-            db.SaveChanges();
+                var oldPM = db.Users.Find(oldProject.ProjectManagerId);
+                var newPM = db.Users.Find(newProject.ProjectManagerId);
+                Log log = new Log
+                {
+                    TicketId = newProject.Id,
+                    ProjectId = newProject.Id,
+                    ModifiedById = userId,
+                    Modified = modified,
+                    Property = "Project Manager",
+                    OldValue = oldPM?.FullName,
+                    NewValue = newPM.FullName
+                };
+
+                newLogs.Add(log);
+            }
+
+            if (oldProject?.Deadline != newProject.Deadline)
+            {
+                Log log = new Log
+                {
+                    TicketId = newProject.Id,
+                    ProjectId = newProject.Id,
+                    ModifiedById = userId,
+                    Modified = modified,
+                    Property = "Deadline",
+                    OldValue = oldProject?.Deadline.FormatDateTimeOffset(),
+                    NewValue = newProject.Deadline.FormatDateTimeOffset()
+                };
+
+                newLogs.Add(log);
+            }
+
+            if (oldProject?.Description != newProject.Description)
+            {
+                Log log = new Log
+                {
+                    TicketId = newProject.Id,
+                    ProjectId = newProject.Id,
+                    ModifiedById = userId,
+                    Modified = modified,
+                    Property = "Description",
+                    OldValue = oldProject?.Description,
+                    NewValue = newProject.Description
+                };
+
+                newLogs.Add(log);
+            }
+
+            if (oldProject.Users != newProject.Users)
+            {
+                var oldUsers = "";
+                foreach (var user in oldProject.Users)
+                    oldUsers = oldUsers + user.FullName + "...";
+
+                var newUsers = ""; ;
+                foreach (var user in newProject.Users)
+                    newUsers = newUsers + user.FullName + "...";
+
+                Log log = new Log
+                {
+                    TicketId = newProject.Id,
+                    ProjectId = newProject.Id,
+                    ModifiedById = userId,
+                    Modified = modified,
+                    Property = "Assigned Users",
+                    OldValue = oldUsers,
+                    NewValue = newUsers
+                };
+
+                newLogs.Add(log);
+            }
+
+            return newLogs;
         }
     }
 }

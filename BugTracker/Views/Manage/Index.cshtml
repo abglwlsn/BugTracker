@@ -31,15 +31,15 @@
                 <label>Last Name</label>
                 @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control login-input" } })
                 <br />
-                <button type="submit" class="btn btn-warning pull-right">Save Changes</button>
+                <button type="submit" class="btn btn-warning pull-right text-white">Save Changes</button>
                 <div class="clearfix"></div>
             </div>
         }
         <div class="col-md-6">
             <div id="manage">
-                <a href=@Url.Action("ChangePassword") class="btn btn-dark text-center">Change Password</a>
+                <a href=@Url.Action("ChangePassword") class="btn btn-dark text-center btn-pad">Change Password</a>
                 <br />
-                <a href=@Url.Action("Manage", "ManageLogins") class="btn btn-dark text-center">Manage (@Model.Logins.Count) External Logins</a>
+                <a href=@Url.Action("Manage", "ManageLogins") class="btn btn-dark text-center btn-pad">Manage (@Model.Logins.Count) External Logins</a>
             </div>
 
             <dl>

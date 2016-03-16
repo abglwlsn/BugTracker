@@ -1,0 +1,78 @@
+﻿@model IEnumerable<BugTracker.Models.NotificationsViewModel>
+@{
+    ViewBag.Title = "Notifications";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="box-info shadow">
+            <h2>Project Notifications</h2>
+            <table class="data-table hover compact table-striped">
+                <thead>
+                    <tr>
+                        <th>Project</th>
+                        <th>Type</th>
+                        <th>Recipient(s)</th>
+                        <th>Sent</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var notif in Model.Where(n=>n.ProjectName != null))
+                    {
+                       <tr>
+                           <td>@notif.ProjectName</td>
+                           <td>@notif.Type</td>
+                           <td>
+                           <ul>
+                                   @foreach (var user in notif.Recipients)
+                                   {
+                                   <li>@user</li>
+                                   }
+                                   </ul></td>
+                           <td>@notif.SendDate</td>
+                           <td>@notif.Message</td>
+                       </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="box-info shadow">
+            <h2>Ticket Notifications</h2>
+            <table class="data-table hover compact table-striped">
+                <thead>
+                    <tr>
+                        <th>Ticket</th>
+                        <th>Type</th>
+                        <th>Recipient(s)</th>
+                        <th>Sent</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var notif in Model.Where(n => n.TicketName != null))
+                    {
+                        <tr>
+                            <td>@notif.TicketName</td>
+                            <td>@notif.Type</td>
+                                <td>
+                                    <ul>
+                                        @foreach (var user in notif.Recipients)
+                                        {
+                                            <li>@user</li>
+                                        }
+                                    </ul>
+                                </td>
+                            <td>@notif.SendDate</td>
+                            <td>@notif.Message</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

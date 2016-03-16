@@ -10,6 +10,14 @@
         <div class="btns-top">
             <a href=@Url.Action("Create", "Projects") class="btn btn-warning">Create New Project</a>
         </div>
+        if (ViewBag.SuccessMessage != null)
+        {
+            <p>@ViewBag.SuccessMessage</p>
+        }
+        if (ViewBag.ErrorMessage != null)
+        {
+            <p class="text-danger">@ViewBag.ErrorMessage</p>
+        }
     }
     else
     {

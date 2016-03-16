@@ -110,7 +110,7 @@
                     {
                         foreach (var project in Model.AssignedProjects)
                         {
-                            foreach (var ticket in project.Tickets)
+                            foreach (var ticket in project.Tickets.Where(t=>t.Status.Name !="Resolved"))
                             {
                             <tr>
                                 <td>@ticket.Name</td>

@@ -65,7 +65,7 @@ namespace BugTracker.Controllers
                 if (attachment.Title == null)
                 {
                     if (attachment.Description != null)
-                        attachment.Title = (attachment.Description.Take(10) + "...").ToString();
+                        attachment.Title = new string(attachment.Description.Take(15).ToArray()) + "...";
                     else
                         attachment.Title = attachment.Submitted.FormatDateTimeOffset();
                 }
@@ -83,9 +83,9 @@ namespace BugTracker.Controllers
                 if (User.IsInRole("Administrator"))
                     return RedirectToAction("Index", "Tickets");
                 else
-                    return RedirectToAction("UserTickets", "Tickets");
+                    return RedirectToAction("Details", "Tickets", new { id = attachment.TicketId });
             }
-
+            TempData["FileErrorMessage"] = "File not uploaded. Please try again.";
                 return RedirectToAction("Details", "Tickets", new { id = attachment.TicketId });
         }
 

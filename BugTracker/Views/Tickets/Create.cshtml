@@ -53,12 +53,13 @@
                 </div>
                 <div class="pull-right">
                     <input type="submit" class="btn btn-warning" value="Create Ticket" />
-                    <a href=@Url.Action("Index", "Projects") class="btn btn-info">To Projects</a>
-                    <a href=@Url.Action("UserTickets") class="btn btn-info">To My Tickets</a>
+                    <button type="button" class="cancel btn btn-warning">Cancel</button>
+                    @*<a href=@Url.Action("Index", "Projects") class="btn btn-warning">To Projects</a>
+                    <a href=@Url.Action("UserTickets") class="btn btn-warning">To My Tickets</a>
                     @if (User.IsInRole("Administrator"))
                 {
-                        <a href=@Url.Action("Index") class="btn btn-info">To All Tickets</a>
-                    }
+                        <a href=@Url.Action("Index") class="btn btn-warning">To All Tickets</a>
+                    }*@
                 </div>
             }
 

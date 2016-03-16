@@ -52,6 +52,15 @@ namespace BugTracker.Models
         public IEnumerable<ApplicationUser> Developers { get; set; }
         public IEnumerable<ApplicationUser> ProjectManagers { get; set; }
         public IEnumerable<ApplicationUser> Administrators { get; set; }
+    }
 
+    public class NotificationsViewModel
+    {
+        public string ProjectName { get; set; }
+        public string TicketName { get; set; }
+        public string Type { get; set; }
+        public IEnumerable<string> Recipients { get; set; }
+        public string SendDate { get; set; }
+        public string Message { get; set; }
     }
 }

@@ -68,16 +68,8 @@
                 </div>
 
                 <input type="submit" class="btn btn-warning" value="Save Ticket" />
-                if (User.IsInRole("Project Manager") || User.IsInRole("Developer"))
-                {
-                    <a href=@Url.Action("UserTickets") class="btn btn-info">Back To My Tickets</a>
-
+                <button type="button" class="cancel btn btn-warning">Cancel</button>
                 }
-                if (User.IsInRole("Administrator"))
-                {
-                    <a href=@Url.Action("Index") class="btn btn-info">Back To All Tickets</a>
-                }
-            }
         </div>
     </div>
 </div>

@@ -16,6 +16,18 @@ namespace BugTracker.Controllers
     public class ProjectsController : Controller
     {
         private static ApplicationDbContext db = new ApplicationDbContext();
+        private Dictionary<int, NotificationType> types = new Dictionary<int, NotificationType>()
+        {
+            { 1, new NotificationType {Id=9, Name="Ticket Submitted" } },
+            { 2, new NotificationType {Id=1, Name="Ticket Assigned" } },
+            { 3, new NotificationType {Id=4, Name="Ticket Modified" } },
+            { 4, new NotificationType {Id=5, Name="Ticket Reassigned" } },
+            { 5, new NotificationType {Id=2, Name="Ticket Resolved" } },
+            { 6, new NotificationType {Id=3, Name="Reminder:Update Tickets" } },
+            { 7, new NotificationType {Id=6, Name="Project Assigned" } },
+            { 8, new NotificationType {Id=7, Name="Project Reassigned" } },
+            { 9, new NotificationType {Id=8, Name="New Project Manager" } }
+        };
 
         // GET: Projects/Index
         [Authorize(Roles = "Administrator, Project Manager, Developer")]
@@ -28,7 +40,9 @@ namespace BugTracker.Controllers
                 projects = db.Projects.Where(p => p.IsResolved != true).OrderByDescending(p => p.Deadline).ToList();
             else
                 projects = userId.ListUserProjects().ToList();
-           
+
+            ViewBag.ErrorMessage = TempData["ErrorMessage"];
+            ViewBag.SuccessMessage = TempData["SuccessMessage"];
             return View(projects);
         }
 
@@ -71,13 +85,13 @@ namespace BugTracker.Controllers
         public ActionResult Create(Project project, List<string> SelectedDevelopers, List<string> SelectedSubmitters)
         {
             var userId = User.Identity.GetUserId();
-            //var manager = project.ProjectManagerId.GetProjectManager();
             var manager = db.Users.Find(project.ProjectManagerId);
             var defaultManager = db.Users.Find(userId);
 
             if (ModelState.IsValid)
             {
                 db.Projects.Add(project);
+
                 if (manager == null && userId.UserIsInRole("Project Manager"))
                 {
                     project.ProjectManagerId = userId;
@@ -86,14 +100,16 @@ namespace BugTracker.Controllers
                 else if (manager != null)
                     project.Users.Add(manager);
 
-                //VERIFY THAT THE ABOVE CODE APPLIES BEFORE THIS RUNS
                 //notify project manager
-                //if (manager != null)
-                //{
-                //    var es = new EmailService();
-                //    var msg = project.CreateAssignedToProjectMessage(project.ProjectManager);
-                //    es.Send(msg);
-                //}
+                var es = new EmailService();
+                var msg = project.CreateAssignedToProjectMessage(manager != null ? manager : defaultManager);
+                es.Send(msg);
+
+                //log notification
+                var notif = project.Id.CreateProjectNotification(types[7], new List<ApplicationUser> { manager != null ? manager : defaultManager }, msg.Body);
+                db.Notifications.Add(notif);
+
+                //add users
                 foreach (var user in db.Users)
                 {
                     if (SelectedDevelopers.Contains(user.FullName))
@@ -102,16 +118,14 @@ namespace BugTracker.Controllers
                         project.Users.Add(user);
                 }
 
-                //project.Users.Add(manager);
                 project.Created = DateTimeOffset.Now;
-                //db.Projects.Add(project);
                 db.SaveChanges();
 
-                ViewBag.SuccessMessage = "Project " + project.Name + " created.";
+                TempData["SuccessMessage"] = "Project " + project.Name + " created.";
                 return RedirectToAction("Index");
             }
 
-            ViewBag.ErrorMessage = "Something went wrong. Please try again or submit a ticket.";
+            TempData["ErrorMessage"] = "Something went wrong. Please try again or submit a ticket.";
             return RedirectToAction("Index");
         }
 
@@ -157,6 +171,7 @@ namespace BugTracker.Controllers
             var original = db.Projects.AsNoTracking().FirstOrDefault(p=>p.Id == project.Id);
             var origManager = db.Users.Find(original.ProjectManagerId);
             var manager = db.Users.Find(project.ProjectManagerId);
+            var userId = User.Identity.GetUserId();
 
             var proj = db.Projects.Find(project.Id);
             proj.Name = project.Name;
@@ -164,9 +179,11 @@ namespace BugTracker.Controllers
             proj.Version = project.Version;
             proj.Deadline = project.Deadline;
             proj.Description = project.Description;
+            proj.LastModified = DateTimeOffset.Now;
 
             if (ModelState.IsValid)
             {
+                //reassign current users
                 proj.Users.Clear();
                 foreach (var user in db.Users)
                 {
@@ -176,70 +193,50 @@ namespace BugTracker.Controllers
                         proj.Users.Add(user);
                 }
 
-                if (proj.ProjectManagerId != original.ProjectManagerId)
+                //add changelogs
+                var newLogs = original.CreateProjectChangelogs(proj, userId);
+                db.Logs.AddRange(newLogs);
+
+                //check if new Project Manager
+                if (original.ProjectManagerId != project.ProjectManagerId)
                 {
+                    var developers = db.Roles.FirstOrDefault(r => r.Name == "Developer").Name.UsersInRole();
+
                     proj.Users.Remove(origManager);
                     proj.Users.Add(manager);
+
+                    //create emails
+                    var es = new EmailService();
+                    var msgList = project.CreateNewProjectManagerMessage(developers);
+                    var msg = project.CreateAssignedToProjectMessage(manager);
+                    var msg2 = original.CreateRemovedFromProjectMessage(origManager);
+                    var msg3 = msgList.First().Body;
+
+                    es.Send(msg);
+                    es.Send(msg2);
+                    foreach (var message in msgList)
+                        es.Send(message);
+
+                    //add notifications
+                    ICollection<Notification> notifs = new List<Notification>
+                    { 
+                    project.Id.CreateProjectNotification(types[7], new List<ApplicationUser> { manager }, msg.Body),
+                    project.Id.CreateProjectNotification(types[8], new List<ApplicationUser> { origManager }, msg2.Body),
+                    project.Id.CreateProjectNotification(types[9], new List<ApplicationUser>(developers), msg3)
+                    };
+
+                    db.Notifications.AddRange(notifs);
                 }
                 else
                     proj.Users.Add(manager);
 
-                proj.LastModified = DateTimeOffset.Now;
-                //db.Entry(project).State = EntityState.Modified;
                 db.SaveChanges();
 
-                //notify involved users
-                //if (original.ProjectManagerId != project.ProjectManagerId)
-                //{
-                //    var developers = db.Roles.FirstOrDefault(r => r.Name == "Developer").Name.UsersInRole();
-                //    var es = new EmailService();
-                //    var msg = project.CreateAssignedToProjectMessage(project.ProjectManager);
-                //    es.Send(msg);
-
-                //    var msg2 = original.CreateRemovedFromProjectMessage(original.ProjectManager);
-                //    es.Send(msg2);
-
-                //    var msgList = project.CreateNewProjectManagerMessage(developers);
-                //    foreach (var message in msgList)
-                //        es.Send(message);
-
-                //    //add notifications
-                //    project.Id.CreateProjectNotification("Project Assigned", new List<string> { project.ProjectManagerId }, msg.Body);
-                //    project.Id.CreateTicketNotification("Project Reassigned", new List<string> { original.ProjectManagerId }, msg2.Body);
-                //    //developers notification
-                //}
-
-                //add changelog
-                //project.Id.CreateProjectChangeLog(userId, );
-                //How to determin which fields where changed? foreach through all, need new and old value
-
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Projects", new { id = project.Id });
             }
 
             ViewBag.ErrorMessage = "Something went wrong. Please try again or submit a ticket.";
             return RedirectToAction("Index");
         }
-
-        // GET: Projects/Delete/5
-        //[Authorize(Roles ="Administrator")]
-        //public PartialViewResult _Delete(int id)
-        //{
-        //    var project = db.Projects.Find(id);
-
-        //    return PartialView(project);
-        //}
-
-        // POST: Projects/Delete/5
-        //[HttpPost]
-        //[ActionName("Delete")]
-        //[Authorize(Roles = "Administrator")]
-        //public ActionResult SoftDelete(int id)
-        //{
-        //    var project = db.Projects.Find(id);
-        //    project.IsResolved = true;
-        //    db.SaveChanges();
-
-        //    return RedirectToAction("Index");
-        //}
     }
 }

@@ -26,7 +26,6 @@ namespace BugTracker.Controllers
         //GET: Admin/Users
         [Authorize(Roles = "Project Manager, Administrator")]
         public PartialViewResult _UserInfo(string id)
-        //public ActionResult UserInfo(string id)
         {
             var model = new UserInfoViewModel();
             model.User = db.Users.Find(id);
@@ -36,22 +35,7 @@ namespace BugTracker.Controllers
             model.AllRoles = new MultiSelectList(db.Roles, "Name", "Name", model.SelectedRoles);
 
             return PartialView(model);
-            //return View(model);
         }
-
-        ////GET: Admin/Users/_AddRemoveRole/5
-        //[Authorize(Roles = "Administrator")]
-        //public PartialViewResult _AddRemoveRole(string id)
-        ////public ActionResult AddRemoveRole(string id)
-        //{
-        //    var model = new AddRemoveRolesViewModel();
-        //    model.User = db.Users.Find(id);
-        //    model.Roles = new MultiSelectList(db.Roles, "Name", "Name", model.SelectedRoles);
-        //    model.SelectedRoles = id.ListUserRoles().ToArray();
-
-        //    return PartialView(model);
-        //    //return View(model);
-        //}
 
         //POST: Admin/Users/AddRemoveRole/5
         [HttpPost]
@@ -59,15 +43,8 @@ namespace BugTracker.Controllers
         [Authorize(Roles = "Administrator")]
         public ActionResult AddRemoveRole([Bind(Include = "User, SelectedRoles")]ApplicationUser user, List<string> SelectedRoles)
         {
-            //model.User = db.Users.Find(model.User.Id);
-
-            //var selectedRoles = new List<string>();
-            //foreach (var role in model.SelectedRoles)
-            //    selectedRoles.Add(role.Text);
-
             ModelState.Remove("User.FirstName");
             ModelState.Remove("User.LastName");
-            //ModelState.Add("SelectedRoles", model.SelectedRoles);
 
             if (ModelState.IsValid)
             {
@@ -97,92 +74,65 @@ namespace BugTracker.Controllers
             return RedirectToAction("Users");
         }
 
-        //GET: Admin/Roles/_AddRemoveUsers/roleName
-        [Authorize(Roles = "Administrator")]
-        public PartialViewResult _AddRemoveUsers(string roleName)
+        //GET:Admin/Notifications
+        public ActionResult Notifications()
         {
-            var users = new List<string>();
-            foreach (var user in db.Users)
-                users.Add(user.FullName);
-
-            var model = new AddRemoveUsersViewModel();
-            model.RoleName = roleName;
-            model.Users = new MultiSelectList(db.Users, "Id", "FullName", users);
-
-            return PartialView(model);
-        }
-
-        //GET: Admin/Users
-        [Authorize(Roles = "Project Manager, Administrator")]
-        public PartialViewResult _AssignUserToTicket(string id)
-        {
-            var user = db.Users.Find(id);
-            var projects = db.Projects.Where(p => p.Users.Contains(user)).ToList();
-            var tickets = db.Tickets.Where(t => t.Status.Name != "Resolved").ToList();
-
-            var model = new AssignUserViewModel();
-            model.User = db.Users.Find(id);
-            model.Projects = new SelectList(projects, "Id", "Name");
-            model.Tickets = new SelectList(tickets, "Id", "Name");
-            model.CurrentTickets = db.Tickets.Where(t => t.AssignedToId == id).ToList();
-
-            return PartialView(model);
-        }
-
-        //POST: Admin/Users/AssignUserToTicket/5
-        [Authorize(Roles = "Project Manager, Administrator")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult AssignUserToTicket(AssignUserViewModel model)
-        {
-            var original = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == model.SelectedTicketId);
-            var ticket = db.Tickets.Find(model.SelectedTicketId);
-            var userId = User.Identity.GetUserId();
-
-            ticket.AssignedToId = model.User.Id;
-            ticket.Status = db.Statuses.FirstOrDefault(s => s.Name == "Assigned");
-
-            //notify developers
-            //var developer = db.Users.Find(ticket.AssignedToId);
-            //var es = new EmailService();
-            //var msg = ticket.CreateAssignedToTicketMessage(developer);
-            //es.SendAsync(msg);
-
-            //var oldDeveloper = db.Users.Find(original.AssignedToId);
-            //var msg2 = original.CreateAssignmentRemovedMessage(oldDeveloper);
-            //es.SendAsync(msg2);
-
-            ////add changelog
-            //ticket.Id.CreateTicketChangeLog(userId, "Assigned To", ticket.AssignedTo.FullName, original.AssignedTo.FullName);
-
-            ////add notifications
-            //ticket.Id.CreateTicketNotification("Ticket Assigned", new List<string>{developer.Id}, msg.Body);
-            //ticket.Id.CreateTicketNotification("Ticket Reassigned", new List<string> { oldDeveloper.Id }, msg2.Body);
-
-            db.SaveChanges();
-            ViewBag.SuccessMessage = "Ticket: " + ticket.Name + "has been reassigned, and a notification has been sent to the developers.";
-
-            return RedirectToAction("Users");
-        }
-
-        //GET: Admin/Roles
-        [Authorize(Roles = "Administrator")]
-        public ActionResult Roles()
-        {
-            var developers = db.Roles.FirstOrDefault(r => r.Name == "Developer").Name.UsersInRole().AsEnumerable();
-            var administrators = db.Roles.FirstOrDefault(r => r.Name == "Administrator").Name.UsersInRole().AsEnumerable();
-            var projectManagers = db.Roles.FirstOrDefault(r => r.Name == "Project Manager").Name.UsersInRole().AsEnumerable();
-            var submitters = db.Roles.FirstOrDefault(r => r.Name == "Submitter").Name.UsersInRole().AsEnumerable();
-
-            var model = new RolesIndexViewModel()
+            var notifications = db.Notifications.ToList();
+            var model = new List<NotificationsViewModel>();
+            foreach (var notif in notifications)
             {
-                Submitters = submitters,
-                Developers = developers,
-                ProjectManagers = projectManagers,
-                Administrators = administrators
-            };
+                var project = db.Projects.Find(notif.ProjectId);
+                var ticket = db.Tickets.Find(notif.TicketId);
+                var type = db.NotificationTypes.Find(notif.TypeId);
+                var users = notif.Recipients.ConvertUsersToNames();
+
+                model.Add(new NotificationsViewModel
+                {
+                    ProjectName = project != null ? project.Name : null,
+                    TicketName = ticket != null ? ticket.Name : null,
+                    Type = type.Name,
+                    Recipients = users,
+                    SendDate = notif.SendDate.FormatDateTimeOffset(),
+                    Message = notif.Message
+                });
+            }
 
             return View(model);
         }
+
+        ////GET: Admin/Roles/_AddRemoveUsers/roleName
+        //[Authorize(Roles = "Administrator")]
+        //public PartialViewResult _AddRemoveUsers(string roleName)
+        //{
+        //    var users = new List<string>();
+        //    foreach (var user in db.Users)
+        //        users.Add(user.FullName);
+
+        //    var model = new AddRemoveUsersViewModel();
+        //    model.RoleName = roleName;
+        //    model.Users = new MultiSelectList(db.Users, "Id", "FullName", users);
+
+        //    return PartialView(model);
+        //}
+
+        ////GET: Admin/Roles
+        //[Authorize(Roles = "Administrator")]
+        //public ActionResult Roles()
+        //{
+        //    var developers = db.Roles.FirstOrDefault(r => r.Name == "Developer").Name.UsersInRole().AsEnumerable();
+        //    var administrators = db.Roles.FirstOrDefault(r => r.Name == "Administrator").Name.UsersInRole().AsEnumerable();
+        //    var projectManagers = db.Roles.FirstOrDefault(r => r.Name == "Project Manager").Name.UsersInRole().AsEnumerable();
+        //    var submitters = db.Roles.FirstOrDefault(r => r.Name == "Submitter").Name.UsersInRole().AsEnumerable();
+
+        //    var model = new RolesIndexViewModel()
+        //    {
+        //        Submitters = submitters,
+        //        Developers = developers,
+        //        ProjectManagers = projectManagers,
+        //        Administrators = administrators
+        //    };
+
+        //    return View(model);
+        //}
     }
 }
