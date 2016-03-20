@@ -59,7 +59,7 @@ namespace BugTracker.Models
         public string ProjectName { get; set; }
         public string TicketName { get; set; }
         public string Type { get; set; }
-        public IEnumerable<string> Recipients { get; set; }
+        public string Recipients { get; set; }
         public string SendDate { get; set; }
         public string Message { get; set; }
     }

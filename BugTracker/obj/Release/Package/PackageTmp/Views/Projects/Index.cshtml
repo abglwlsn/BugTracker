@@ -10,6 +10,14 @@
         <div class="btns-top">
             <a href=@Url.Action("Create", "Projects") class="btn btn-warning">Create New Project</a>
         </div>
+        if (ViewBag.SuccessMessage != null)
+        {
+            <p>@ViewBag.SuccessMessage</p>
+        }
+        if (ViewBag.ErrorMessage != null)
+        {
+            <p class="text-danger">@ViewBag.ErrorMessage</p>
+        }
     }
     else
     {
@@ -36,12 +44,12 @@
                     </h2>
                     <div class="headerButtons">
                         <a role="button" data-toggle="collapse" data-parent="#projectsRender" data-target="#collapse-@project.Id" aria-expanded="false" class="btn btn-warning">Quick View</a>
+                        <a href=@Url.Action("Details", "Projects", new { id = project.Id }) class="btn btn-warning">Full Info</a>
+                        <a href=@Url.Action("Create", "Tickets", new { id = project.Id }) class="btn btn-warning"><i class="fa fa-plus"></i> Ticket</a>
                         @if (User.IsInRole("Administrator") || User.IsInRole("Project Manager"))
                     {
                             <a href=@Url.Action("Edit", "Projects", new { id = project.Id }) class="btn btn-warning">Edit</a>
                         }
-                        <a href=@Url.Action("Details", "Projects", new { id = project.Id }) class="btn btn-warning">Full Info</a>
-                        <a href=@Url.Action("Create", "Tickets", new { id = project.Id }) class="btn btn-warning"><i class="fa fa-plus"></i> Ticket</a>
                     </div>
                     <div id="collapse-@project.Id" class="box-content collapse" role="tabpanel">
                         <div class="row">

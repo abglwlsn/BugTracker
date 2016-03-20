@@ -1,107 +1,234 @@
 ﻿@model BugTracker.Models.Ticket
 @using BugTracker.HelperExtensions
+@using Microsoft.AspNet.Identity
 
-<div id="ticketDetails" class="col-md-12">
-    <div class="box-info shadow">
-        <h2><strong>Details</strong> for: @Model.Name in Project @Model.Project.Name</h2>
-        <div class="box-content row">
-            <div class="col-md-4">
-                <dl>
-                    <dt>Project</dt>
-                    <dd>@Model.Project.Name</dd>
-                    <dt>Project Deadline</dt>
-                    @if (Model.Project.Deadline != null)
-                    { <dd>@Model.Project.Deadline.FormatDateTimeOffset()</dd> }
-                    else { <dd>none given </dd>}
-                    <dt>Assigned To</dt>
-                    @if (Model.AssignedTo != null)
-                    { <dd>@Model.AssignedTo.FullName</dd> }
-                    else { <dd>unassigned</dd> }
-                </dl>
-            </div>
-            <div class="col-md-4">
-                <dl>
-                    <dt>Priority</dt>
-                    @if (Model.Priority != null)
-                    { <dd>@Model.Priority.Name</dd>}
-                    else
-                    { <dd>none given</dd>}
-                    <dt>Description</dt>
-                    @if (Model.Description != null)
-                    { <dd>@Model.Description</dd> }
-                    else { <dd>no description given</dd> }
-                </dl>
-            </div>
-            <div class="col-md-4">
-                <dl>
-                    <dt>Status</dt>
-                    @if (Model.Status != null)
-                    { <dd>@Model.Status.Name</dd> }
-                    else { <dd>unassigned </dd>}
-                    <dt>Phase</dt>
-                    @if (Model.Phase != null)
-                    { <dd>@Model.Phase.Name</dd> }
-                    else { <dd>unassigned </dd>}
-                    <dt>Type</dt>
-                    @if (Model.Action != null)
-                    { <dd>@Model.Action.Name</dd> }
-                    else { <dd>unassigned </dd>}
-                    <dt>Submitted</dt>
-                    <dd>@Model.Submitted.FormatDateTimeOffset()</dd>
-                </dl>
-            </div>
-            <div class="col-md-12">
-                <div class="pull-right">
-                    <a href=@Url.Action("Edit", "Tickets", new { id = Model.Id }) class="btn btn-warning">Edit</a>
-                    <a href=@Url.Action("UserTickets") class="btn btn-info">Back To My Tickets</a>
-                    @if (User.IsInRole("Administrator"))
+
+<div id="ticketDetails" class="row">
+    <h2>
+        <span class="pull-right">
+            <a href="#changelog" class="section-scroll"><i class="fa fa-angle-down"></i> Change Log</a>
+            <a href="#comments" class="section-scroll"><i class="fa fa-angle-down"></i> Comments</a>
+            <a href="#attachments" class="section-scroll"><i class="fa fa-angle-down"></i> Attachments</a>
+            <a href=@Url.Action("Create", "Attachments", new { id = Model.Id }) class="btn btn-warning"><i class="fa fa-plus"></i> Attachment</a>
+            @if (User.Identity.GetUserId() == Model.AssignedToId)
             {
-                        <a href=@Url.Action("Index") class="btn btn-info">Back To All Tickets</a>
-                    }  
+                <a href=@Url.Action("RequestReassignment", "Tickets", new { id = Model.Id }) class="btn btn-warning">Request Reassignment</a>
+            }
+        </span>
+    </h2>
+    <div class="clearfix"></div>
+    <br />
+    <div class="col-md-12">
+        <div class="box-info shadow">
+            <h2>Details for <strong>@Model.Name</strong> in @Model.Project.Name</h2>
+            <div class="box-content row">
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>Project</dt>
+                        <dd>@Model.Project.Name</dd>
+                        <dt>Deadline</dt>
+                        @if (Model.Project.Deadline != null)
+                        {
+                            <dd>@Model.Project.Deadline.FormatDateTimeOffset()</dd> }
+                        else {
+                            <dd>none given </dd>}
+                        <dt>Assigned To</dt>
+                        @if (Model.AssignedTo != null)
+                        {
+                            <dd>@Model.AssignedTo.FullName</dd> }
+                        else {
+                            <dd>unassigned</dd> }
+                        <dt>Submitted</dt>
+                        <dd>@Model.Submitted.FormatDateTimeOffset()</dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>Priority</dt>
+                        @if (Model.Priority != null)
+                        {
+                            <dd>@Model.Priority.Name</dd>}
+                        else
+                        {
+                            <dd>none given</dd>}
+                        <dt>Description</dt>
+                        @if (Model.Description != null)
+                        {
+                            <dd>@Model.Description</dd> }
+                        else {
+                            <dd>no description given</dd> }
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>Status</dt>
+                        @if (Model.Status != null)
+                        {
+                            <dd>@Model.Status.Name</dd> }
+                        else {
+                            <dd>unassigned </dd>}
+                        <dt>Phase</dt>
+                        @if (Model.Phase != null)
+                        {
+                            <dd>@Model.Phase.Name</dd> }
+                        else {
+                            <dd>unassigned </dd>}
+                        <dt>Type</dt>
+                        @if (Model.Action != null)
+                        {
+                            <dd>@Model.Action.Name</dd> }
+                        else {
+                            <dd>unassigned </dd>}
+                    </dl>
+                </div>
+                <div class="col-md-12">
+                    <div class="pull-right">
+                        <a href=@Url.Action("Edit", "Tickets", new { id = Model.Id }) class="btn btn-warning">Edit</a>
+                        <a href=@Url.Action("UserTickets") class="btn btn-warning">To My Tickets</a>
+                        @if (User.IsInRole("Administrator"))
+            {
+                            <a href=@Url.Action("Index") class="btn btn-warning">To All Tickets</a>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="box-info shadow">
-        <h2>Change Log</h2>
-        <div class="box-content">
-            <table class="data-table hover table-striped">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Modified Property</th>
-                        <th>New Value</th>
-                        <th>Old Value</th>
-                        <th>Modified By</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @*@if (Model.Logs.Count() == 0)
-                        {
-                                    <tr>
-                                        <td>There have been no changes to this ticket.</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                }
-                                else
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div id="comments" class="box-info shadow">
+            <h2>Comments</h2>
+            <div class="box-content">
+                @if (HttpContext.Current.User.Identity.IsAuthenticated)
+            {
+                    <form action="@Url.Action("Create","Comments")" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="ticketId" value="@Model.Id" />
+                        <input name="Body" class="comment-input" placeholder="Leave a new comment" />
+                        <input type="submit" class="comment-submit btn btn-warning" value="Submit">
+                    </form>
+                }
+                <hr />
+                @if (Model.Comments.Count == 0)
+            {
+                    <p>There are no comments for this ticket.</p>
+                }
+                else
+                {
+                    <h6>Viewing (@Model.Comments.Count) Comments</h6>
+                    foreach (var comment in Model.Comments.OrderBy(c=>c.Submitted))
+                    {
+                        <article class="comment">
+                            <div class="row">
+                                <p><b>@comment.Submitter.FullName</b> says...</p>
+                                @*@if (User.IsInRole("Admin") || User.IsInRole("Moderator"))
                                 {
-                                    foreach (var log in Model.Logs)
-                                    {
-                                        <tr>
-                                            <td>@log.Modified.FormatDateTimeOffset()</td>
-                                            <td>@log.Property</td>
-                                            <td>@log.NewValue</td>
-                                            <td>@log.OldValue</td>
-                                            <td>@log.ModifiedBy.FullName</td>
-                                        </tr>
-                                    }
+                                    <div class="col-sm-9">
+                                        @Html.ActionLink("Edit", "Edit", "Comments", new { id = comment.Id }, null)
+                                        @Html.ActionLink("Delete", "Delete", "Comments", new { id = comment.Id }, null)
+                                    </div>
                                 }*@
-                </tbody>
-            </table>
+                            </div>
+                            <div class="comment-body">
+                                <p>@Html.Raw(comment.Body)</p>
+                            </div>
+                            <div class="comment-meta">
+                                @comment.Submitted.DateTime.ToLongDateString() - @comment.Submitted.DateTime.ToShortTimeString()
+                            </div>
+                            <hr />
+                        </article>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div id="attachments" class="box-info shadow">
+            <h2>Attachments</h2>
+            <div class="box-content">
+                @if (Model.Attachments.Count == 0)
+                {
+                    if (ViewBag.FileErrorMessage != null)
+                    {
+                        <p class="text-danger">@ViewBag.FileErrorMessage</p>
+                    }
+                    <p>There are no attachments for this ticket.</p>
+                }
+                else
+                {
+                    if (ViewBag.FileErrorMessage != null)
+                    {
+                        <p class="text-danger">@ViewBag.FileErrorMessage</p>
+                    }
+                    <ul class="list-unstyled">
+                        @foreach (var attach in Model.Attachments)
+                {
+                            <li><i class="fa fa-fw fa-angle-double-right"></i><a href=@Url.Action("Details", "Attachments", new { id = attach.Id })>@attach.Title</a><span class="pull-right">@attach.Submitted.FormatDateTimeOffsetCondensed()</span><div class="clearfix"></div>
+</li>
+                        }
+                    </ul>
+                }
+            </div>
         </div>
     </div>
 </div>
-
+<div class="row">
+    <div class="col-md-12">
+        <div id="changelog" class="box-info shadow">
+            <h2>Change Log</h2>
+            <div class="box-content">
+                <table class="data-table hover table-striped">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Modified Property</th>
+                            <th>New Value</th>
+                            <th>Old Value</th>
+                            <th>Modified By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Logs.Count() == 0)
+                            {
+                                        <tr>
+                                            <td>There have been no changes to this ticket.</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        foreach (var log in Model.Logs)
+                                        {
+                                            <tr>
+                                                <td>@log.Modified.FormatDateTimeOffset()</td>
+                                                <td><strong>@log.Property</strong></td>
+                                                @if (log.NewValue != null)
+                                                {
+                                                    <td>@log.NewValue</td>
+                                                }
+                                                else
+                                                {
+                                                <td></td>}
+                                                @if (log.OldValue != null)
+                                                {
+                                                    <td>@log.OldValue</td>
+                                                }
+                                                else
+                                                {
+                                                <td></td>}
+   
+                                                <td>@log.ModifiedBy.FullName</td>
+                                            </tr>
+                                        }
+                                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

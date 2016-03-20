@@ -25,6 +25,13 @@
 
     $('.data-table-t').DataTable({
         "columnDefs": [
+          { "width": "25%", "targets": 4 },
+        ],
+        responsive: true
+    });
+
+    $('.data-table-t').DataTable({
+        "columnDefs": [
           { "width": "50%", "targets": 3 },
           { className: "dt-body-right", "targets" : -1 }
         ],

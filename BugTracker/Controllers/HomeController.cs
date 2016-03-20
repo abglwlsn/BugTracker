@@ -15,6 +15,7 @@ namespace BugTracker.Controllers
 
         public ActionResult Dashboard()
         {
+
             return View();
         }
 

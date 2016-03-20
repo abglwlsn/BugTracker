@@ -41,10 +41,9 @@ namespace BugTracker.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrator")]
-        public ActionResult AddRemoveRole([Bind(Include = "User, SelectedRoles")]ApplicationUser user, List<string> SelectedRoles)
+        public ActionResult AddRemoveRole(string userId, List<string> SelectedRoles)
         {
-            ModelState.Remove("User.FirstName");
-            ModelState.Remove("User.LastName");
+            var user = db.Users.Find(userId);
 
             if (ModelState.IsValid)
             {
@@ -84,16 +83,16 @@ namespace BugTracker.Controllers
                 var project = db.Projects.Find(notif.ProjectId);
                 var ticket = db.Tickets.Find(notif.TicketId);
                 var type = db.NotificationTypes.Find(notif.TypeId);
-                var users = notif.Recipients.ConvertUsersToNames();
+                var message = notif.Message.Replace("<br/>", " | "); ;
 
                 model.Add(new NotificationsViewModel
                 {
                     ProjectName = project != null ? project.Name : null,
                     TicketName = ticket != null ? ticket.Name : null,
                     Type = type.Name,
-                    Recipients = users,
+                    Recipients = notif.Recipients,
                     SendDate = notif.SendDate.FormatDateTimeOffset(),
-                    Message = notif.Message
+                    Message = message
                 });
             }
 

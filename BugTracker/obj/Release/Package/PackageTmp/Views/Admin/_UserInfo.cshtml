@@ -23,16 +23,19 @@
             {
                 @Html.AntiForgeryToken()
                 @Html.ListBox("SelectedRoles", Model.AllRoles, new { @class = "chosen-select" })
-                @Html.HiddenFor(m => m.User.Id)
+                <input type="hidden" name="userId" value="@Model.User.Id" />
                 <br />
                 <input type="submit" class="btn btn-warning btn-pad" value="Update Roles" />
             }
         </div>
     }
+</div>
+<hr />
     @if (Model.User.Id.UserIsInRole("Developer"))
             {
-        <div class="col-md-12">
-            <table>
+        <div class="innerTable col-md-12">
+            <h4>Assigned Tickets</h4>
+            <table class="table table-striped table-hover">
                 <thead>
                     <tr>
                         <th>Ticket Name</th>
@@ -48,7 +51,7 @@
                     }
                     else
                     {
-                        foreach (var ticket in Model.AssignedTickets)
+                        foreach (var ticket in Model.AssignedTickets.OrderBy(t=>t.Project.Name))
                         {
                             <tr>
                                 <td>@ticket.Name</td>
@@ -68,6 +71,7 @@
         </div>
         if (Model.User.Id.UserIsInRole("Program Manager"))
         {
+            <div class="row">
             <div class="col-md-12">
                 <table class="data-table compact hover table-striped">
                     <thead>
@@ -100,6 +104,6 @@
                     </tbody>
                 </table>
             </div>
+                </div>
         }
     }
-</div>

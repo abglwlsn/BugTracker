@@ -6,7 +6,10 @@
 
 <div id="ticketIndex" class="col-md-12">
     <h2><span class="pull-right">
-    <a href="#unassigned" class="section-scroll"><i class="fa fa-angle-down"></i> Unassigned</a><a href="#open" class="section-scroll"><i class="fa fa-angle-down"></i> Open Tickets</a><a href="#resolved" class="section-scroll"><i class="fa fa-angle-down"></i> Resolved Tickets</a><a href=@Url.Action("ChooseProject", "Tickets") class="btn btn-warning">Create New Ticket</a>
+    <a href="#unassigned" class="section-scroll"><i class="fa fa-angle-down"></i> Unassigned</a>
+        <a href="#open" class="section-scroll"><i class="fa fa-angle-down"></i> Open Tickets</a>
+        <a href="#resolved" class="section-scroll"><i class="fa fa-angle-down"></i> Resolved Tickets</a
+><a href=@Url.Action("ChooseProject", "Tickets") class="btn btn-warning"><i class="fa fa-plus"></i> Ticket</a>
     @if (User.IsInRole("Project Manager") || User.IsInRole("Developer") || User.IsInRole("Submitter"))
             {<a href=@Url.Action("UserTickets") class="btn btn-warning">View My Tickets</a>    }
 </span></h2>
@@ -76,8 +79,9 @@
                             <td>@ticket.Submitter.FullName</td>
                             <td>@ticket.Submitted.FormatDateTimeOffsetCondensed()</td>
                             <td>
-                                <a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-warning"><i class="fa fa-eye"></i></a>
-                                <a href=@Url.Action("Edit", "Tickets", new { id = ticket.Id }) class="btn btn-warning"><i class="fa fa-edit"></i></a>
+                                <a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-eye"></i></a>
+                                <a href=@Url.Action("Edit", "Tickets", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></a>
+                                <a href=@Url.Action("Create", "Attachments", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-flip-horizontal fa-paperclip"></i></a>
                             </td>
                         </tr>
                     }
@@ -148,8 +152,9 @@
                             <td>@ticket.Submitter.FullName</td>
                             <td>@ticket.Submitted.FormatDateTimeOffsetCondensed()</td>
                             <td>
-                                <a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-warning"><i class="fa fa-eye"></i></a>
-                                <a href=@Url.Action("Edit", "Tickets", new { id = ticket.Id }) class="btn btn-warning"><i class="fa fa-edit"></i></a>
+                                <a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-eye"></i></a>
+                                <a href=@Url.Action("Edit", "Tickets", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></a>
+                                <a href=@Url.Action("Create", "Attachments", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-flip-horizontal fa-paperclip"></i></a>
                             </td>
                         </tr>
                     }
@@ -192,7 +197,7 @@
                             <td>@ticket.Closed.FormatDateTimeOffset()</td>
                             <td>@ticket.Submitted.FormatDateTimeOffset()</td>
                             <td>
-                                <a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-warning"><i class="fa fa-eye"></i></a>
+                                <a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-eye"></i></a>
                         </tr>
                     }
                 </tbody>

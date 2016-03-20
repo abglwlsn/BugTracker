@@ -126,18 +126,15 @@ namespace BugTracker.HelperExtensions
                     NewValue = newProject.Description
                 };
 
+
+                
                 newLogs.Add(log);
             }
 
-            if (oldProject.Users != newProject.Users)
+            if (oldProject.Users.ToList() != newProject.Users.ToList())
             {
-                var oldUsers = "";
-                foreach (var user in oldProject.Users)
-                    oldUsers = oldUsers + user.FullName + "...";
-
-                var newUsers = ""; ;
-                foreach (var user in newProject.Users)
-                    newUsers = newUsers + user.FullName + "...";
+                var oldUsers = oldProject.Users.ConvertUsersToNamesString();
+                var newUsers = newProject.Users.ConvertUsersToNamesString();
 
                 Log log = new Log
                 {

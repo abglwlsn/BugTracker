@@ -1,0 +1,21 @@
+﻿@model BugTracker.Models.Ticket
+@{
+    ViewBag.Title = "RequestReassignment";
+}
+
+<div class="col-md-6 col-md-offset-3">
+    <div class="box-info shadow">
+        <h2>Request Reassignment for Ticket @Model.Name</h2>
+        @using (Html.BeginForm("RequestReassignment", "Tickets"))
+        {
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" id="id" value="@Model.Id" />
+            <div class="form-group">
+                <label>Please provide a detailed reason for this request.</label>
+                <textarea name="request" id="request" class="form-control" placeholder="Enter request here"></textarea>
+                <input type="submit" class="btn btn-warning" value="Send Request" />
+            </div>
+        }
+    </div>
+</div>
+

@@ -155,7 +155,8 @@ namespace BugTracker.Migrations
                 new NotificationType() { Name = "Ticket Reassigned" },
                 new NotificationType() { Name = "Project Reassigned" },
                 new NotificationType() { Name = "Project Assigned" },
-                new NotificationType() { Name = "New Project Manager" }
+                new NotificationType() { Name = "New Project Manager" },
+                new NotificationType() { Name = "Project Deadline Changed" }
                 );
         }
     }

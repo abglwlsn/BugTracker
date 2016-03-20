@@ -1,0 +1,52 @@
+﻿@model BugTracker.Models.Attachment
+    @using BugTracker.HelperExtensions
+
+<h2>@Model.Title</h2>
+<div class="row">
+    <div class="col-md-4">
+        <dl class="dl-horizontal">
+            <dt>
+                Submitted On:
+            </dt>
+            <dd>
+                @Model.Submitted.FormatDateTimeOffset()
+            </dd>
+            <dt>
+                Submitted By:
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Submitter.FullName)
+            </dd>
+        </dl>
+    </div>
+    <div class="col-md-4">
+        <dl class="dl-horizontal">
+            @if (Model.Description != null)
+            {
+                <dt>
+                    Description
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Description)
+                </dd>
+            }
+        </dl>
+    </div>
+
+        <div class="col-md-4">
+            <div class="pull-right">
+                <a href=@Url.Action("Details", "Tickets", new { id = Model.TicketId }) class="btn btn-warning text-white">Ticket Details</a>
+                <a href=@Url.Action("UserTickets", "Tickets") class="btn btn-warning text-white">My Tickets</a>
+                @if (User.IsInRole("Administrator"))
+            { <a href=@Url.Action("Index", "Tickets") class="btn btn-warning text-white">All Tickets</a>
+                }
+            </div>
+            <div class="clearfix"></div>
+        </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <img id="attachmentImg" src="@Url.Content(Model.FilePath)" alt="@Model.Title" />
+    </div>
+</div>
+

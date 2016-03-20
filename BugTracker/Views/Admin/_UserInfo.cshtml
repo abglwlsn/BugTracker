@@ -23,7 +23,7 @@
             {
                 @Html.AntiForgeryToken()
                 @Html.ListBox("SelectedRoles", Model.AllRoles, new { @class = "chosen-select" })
-                @Html.HiddenFor(m => m.User.Id)
+                <input type="hidden" name="userId" value="@Model.User.Id" />
                 <br />
                 <input type="submit" class="btn btn-warning btn-pad" value="Update Roles" />
             }

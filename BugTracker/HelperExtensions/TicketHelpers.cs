@@ -62,8 +62,8 @@ namespace BugTracker.HelperExtensions
 
             if(oldTicket?.StatusId != newTicket.StatusId)
             {
-                var oldStat = db.Statuses.Find(oldTicket.PriorityId);
-                var newStat = db.Statuses.Find(newTicket.PriorityId);
+                var oldStat = db.Statuses.Find(oldTicket.StatusId);
+                var newStat = db.Statuses.Find(newTicket.StatusId);
 
                 Log log = new Log
                 {

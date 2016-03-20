@@ -219,6 +219,7 @@
     <Compile Include="Models\CodeFirst\Comment.cs" />
     <Compile Include="Models\CodeFirst\TicketAction.cs" />
     <Compile Include="Models\CreateEditProjectViewModel.cs" />
+    <Compile Include="Models\DashboardViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\CodeFirst\Log.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -354,7 +355,9 @@
     <Content Include="Site Template\third\wizard\jquery.easyWizard.js" />
     <Content Include="Site Template\third\wizard\jquery.snippet.js" />
     <Content Include="Site Template\third\wizard\scripts.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>

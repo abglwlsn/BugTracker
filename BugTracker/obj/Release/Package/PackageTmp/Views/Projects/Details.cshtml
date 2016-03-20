@@ -118,10 +118,11 @@
                                     var userId = User.Identity.GetUserId();
                                     if (User.IsInRole("Developer") && userId == ticket.AssignedToId || User.IsInRole("Administrator") || User.IsInRole("Project Manager"))
                                     {
-                                        <a href=@Url.Action("Edit", "Tickets", new { id = ticket.Id }) class="btn btn-warning"><i class="fa fa-edit"></i></a>
+                                        <a href=@Url.Action("Edit", "Tickets", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></a>
                                     }
                                     }
-                                <a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-warning"><i class="fa fa-eye"></i></a>
+                                <a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-eye"></i></a>
+                                <a href=@Url.Action("Create", "Attachments", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-flip-horizontal fa-paperclip"></i></a>
                             </td>
                         </tr>
                     }
@@ -176,7 +177,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @*@if (Model.Logs.Count() == 0)
+                    @if (Model.Logs.Count() == 0)
                     {
                             <tr>
                                 <td>There have been no changes to this project.</td>
@@ -198,7 +199,7 @@
                                     <td>@log.ModifiedBy.FullName</td>
                                 </tr>
                             }
-                        }*@
+                        }
                 </tbody>
             </table>
         </div>

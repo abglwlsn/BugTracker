@@ -3,7 +3,7 @@
 
 body {
     /*background-color: #262626;*/
-    background-color:#070712;
+    background-color:#111;
     margin:0;
     padding:0;
     width:100%;
@@ -179,10 +179,15 @@ h1 span {
 }
 
 #projectDetails span,
-#ticketIndex span {
+#ticketIndex span,
+#ticketDetails span {
     font-size:.5em;
     color:#f0ad4e;
     font-family: 'Source Sans Pro', sans-serif;
+}
+
+#ticketDetails span {
+    margin-right:5%;
 }
 
 #projectDetails span {
@@ -190,14 +195,20 @@ h1 span {
 }
 
 #projectDetails span a,
-#ticketIndex span a {
+#ticketIndex span a,
+#ticketDetails span a {
     margin:0 10px 0 10px;
 }
 
 #projectDetails span a:hover,
-#ticketIndex span a:hover {
+#ticketIndex span a:hover,
+#ticketDetails span a:hover {
     text-decoration:none;
     color:#fff;
+}
+
+#about h2, #about li, #about p {
+    color:#1a1a1a;
 }
 
 #about h4 {
@@ -273,6 +284,21 @@ dd {
         color:#f0ad4e;
 }
 
+#attachments li {
+        margin:10px 0;
+}
+
+#attachments li a {
+    font-size:1.25em;
+    color:#262626;
+}
+
+#attachments li a:hover {
+    color:#f0ad4e;
+}
+
+
+
 /* --- FORMS AND VERIFICATION --*/
 label {
     display: inline;
@@ -317,6 +343,10 @@ table td {
     margin-top:35px;
 }
 
+/*.innerTable {
+    margin-top:25px;
+}*/
+
 /* ----------- IMAGES AND GRAPHS----------*/
 
 img {
@@ -334,8 +364,15 @@ img {
     margin-bottom:15px;
 }
 
-/*------------ BUTTONS ---------*/
+#attachmentImg {
+    border:solid 1px #fff;
+}
 
+.box-info.warning {
+    background:#ed9c28!important;
+}
+
+/*------------ BUTTONS ---------*/
 
 .btn.btn-dark {
 	border-color: #111;
@@ -347,6 +384,10 @@ img {
 	border-color: #1F1E1E;
 	background: #1F1E1E;
 	color: #fff;
+}
+
+.btn-xs {
+    color: #262626;
 }
 
 #about .btn {
@@ -397,3 +438,17 @@ h2 .btn {
 .btn-pad {
     margin:5px;
 }
+
+.text-white {
+    color:#fff;
+}
+
+/* --------- COMMENTS ------------*/
+
+.comment-input {
+    word-break:break-word;
+    height:50px;
+    width: 85%;
+    margin:0;
+}
+

@@ -80,9 +80,6 @@ namespace BugTracker.Controllers
                 db.Attachments.Add(attachment);
                 db.SaveChanges();
 
-                if (User.IsInRole("Administrator"))
-                    return RedirectToAction("Index", "Tickets");
-                else
                     return RedirectToAction("Details", "Tickets", new { id = attachment.TicketId });
             }
             TempData["FileErrorMessage"] = "File not uploaded. Please try again.";

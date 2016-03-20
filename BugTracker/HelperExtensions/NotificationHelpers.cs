@@ -10,22 +10,24 @@ namespace BugTracker.HelperExtensions
     {
         private static ApplicationDbContext db = new ApplicationDbContext();
 
-        public static IEnumerable<string> ConvertUsersToNames(this ICollection<ApplicationUser> users)
+        public static string ConvertUsersToNamesString(this ICollection<ApplicationUser> users)
         {
-            var names = new List<string>();
+            string nameString = "";
             foreach (var user in users)
-                names.Add(user.FullName);
+                nameString = nameString + user.FullName + "...";
 
-            return names;
+            return nameString.Remove(nameString.Length-3);
         }
 
         public static Notification CreateTicketNotification(this int ticketId, NotificationType type, List<ApplicationUser> recipients, string msgBody)
         {
+            var users = recipients.ConvertUsersToNamesString();
+
             Notification notification = new Notification()
             {
                 TicketId = ticketId,
                 TypeId = type.Id,
-                Recipients = recipients,
+                Recipients = users,
                 SendDate = DateTimeOffset.Now,
                 Message = msgBody
             };
@@ -73,13 +75,15 @@ namespace BugTracker.HelperExtensions
 
         public static Notification CreateProjectNotification(this int projectId, NotificationType type, List<ApplicationUser> recipients, string msgBody)
         {
+            var users = recipients.ConvertUsersToNamesString();
+
             Notification notification = new Notification()
             {
                 ProjectId = projectId,
                 TypeId = type.Id,
-                Recipients = recipients,
                 SendDate = DateTimeOffset.Now,
-                Message = msgBody
+                Message = msgBody,
+                Recipients = users
             };
 
             return notification;

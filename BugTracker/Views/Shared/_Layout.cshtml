@@ -44,6 +44,7 @@
                     <!-- Sidebar menu -->
                     <div id="sidebar-menu">
                         <ul>
+                            <li><a href=@Url.Action("Dashboard", "Home")><i class="fa fa-fw fa-bar-chart"></i> Dashboard</a></li>
                             @if (User.IsInRole("Developer") || User.IsInRole("Project Manager") || User.IsInRole("Administrator"))
                             {
                                 <li><a href=@Url.Action("Index", "Projects")><i class="fa fa-fw fa-puzzle-piece"></i> Projects</a></li>

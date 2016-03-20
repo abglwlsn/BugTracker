@@ -26,7 +26,8 @@ namespace BugTracker.Controllers
             { 6, new NotificationType {Id=3, Name="Reminder:Update Tickets" } },
             { 7, new NotificationType {Id=6, Name="Project Assigned" } },
             { 8, new NotificationType {Id=7, Name="Project Reassigned" } },
-            { 9, new NotificationType {Id=8, Name="New Project Manager" } }
+            { 9, new NotificationType {Id=8, Name="New Project Manager" } },
+            {10, new NotificationType {Id=9, Name="Project Deadline Changed" } }
         };
 
         // GET: Projects/Index
@@ -114,7 +115,7 @@ namespace BugTracker.Controllers
                 {
                     if (SelectedDevelopers.Contains(user.FullName))
                         project.Users.Add(user);
-                    if (SelectedSubmitters.Contains(user.FullName) && !project.Users.Any(u=>u.FullName == user.FullName))
+                    if (SelectedSubmitters.Contains(user.FullName) && !project.Users.Any(u => u.FullName == user.FullName))
                         project.Users.Add(user);
                 }
 
@@ -166,12 +167,13 @@ namespace BugTracker.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrator, Project Manager")]
-        public ActionResult Edit([Bind(Include="Id,ProjectManagerId,Name,Deadline,Description,Version")]Project project, List<string> SelectedDevelopers, List<string> SelectedSubmitters)
+        public ActionResult Edit([Bind(Include = "Id,ProjectManagerId,Name,Deadline,Description,Version")]Project project, List<string> SelectedDevelopers, List<string> SelectedSubmitters)
         {
-            var original = db.Projects.AsNoTracking().FirstOrDefault(p=>p.Id == project.Id);
+            var original = db.Projects.AsNoTracking().FirstOrDefault(p => p.Id == project.Id);
             var origManager = db.Users.Find(original.ProjectManagerId);
             var manager = db.Users.Find(project.ProjectManagerId);
             var userId = User.Identity.GetUserId();
+            var es = new EmailService();
 
             var proj = db.Projects.Find(project.Id);
             proj.Name = project.Name;
@@ -197,20 +199,37 @@ namespace BugTracker.Controllers
                 var newLogs = original.CreateProjectChangelogs(proj, userId);
                 db.Logs.AddRange(newLogs);
 
-                //check if new Project Manager
-                if (original.ProjectManagerId != project.ProjectManagerId)
-                {
-                    var developers = db.Roles.FirstOrDefault(r => r.Name == "Developer").Name.UsersInRole();
+                var developers = "Developer".UsersInRole();
+                var projectDevs = new List<ApplicationUser>();
+                foreach (var dev in developers)
+                    if (proj.Users.Any(u => u.Id == dev.Id))
+                        projectDevs.Add(dev);
 
+                //check if deadline change
+                if (original.Deadline != proj.Deadline)
+                {
+                    if (manager.Id != userId)
+                        projectDevs.Add(manager);
+                    var msgList = proj.CreateProjectDeadlineChangedMessage(projectDevs);
+                    var msgListBody = msgList.First().Body;
+                    foreach (var message in msgList)
+                        es.Send(message);
+
+                    var notif = proj.Id.CreateProjectNotification(types[10], new List<ApplicationUser>(projectDevs), msgListBody);
+                    db.Notifications.Add(notif);
+                }
+
+                //check if new Project Manager
+                if (original.ProjectManagerId != proj.ProjectManagerId)
+                {
                     proj.Users.Remove(origManager);
                     proj.Users.Add(manager);
 
                     //create emails
-                    var es = new EmailService();
-                    var msgList = project.CreateNewProjectManagerMessage(developers);
-                    var msg = project.CreateAssignedToProjectMessage(manager);
-                    var msg2 = original.CreateRemovedFromProjectMessage(origManager);
-                    var msg3 = msgList.First().Body;
+                    var msgList = proj.CreateNewProjectManagerMessage(projectDevs);
+                    var msg = proj.CreateAssignedToProjectMessage(manager);
+                    var msg2 = proj.CreateRemovedFromProjectMessage(origManager);
+                    var msgListBody = msgList.First().Body;
 
                     es.Send(msg);
                     es.Send(msg2);
@@ -219,12 +238,11 @@ namespace BugTracker.Controllers
 
                     //add notifications
                     ICollection<Notification> notifs = new List<Notification>
-                    { 
-                    project.Id.CreateProjectNotification(types[7], new List<ApplicationUser> { manager }, msg.Body),
-                    project.Id.CreateProjectNotification(types[8], new List<ApplicationUser> { origManager }, msg2.Body),
-                    project.Id.CreateProjectNotification(types[9], new List<ApplicationUser>(developers), msg3)
+                    {
+                    proj.Id.CreateProjectNotification(types[7], new List<ApplicationUser> { manager }, msg.Body),
+                    proj.Id.CreateProjectNotification(types[8], new List<ApplicationUser> { origManager }, msg2.Body),
+                    proj.Id.CreateProjectNotification(types[9], new List<ApplicationUser>(projectDevs), msgListBody)
                     };
-
                     db.Notifications.AddRange(notifs);
                 }
                 else
@@ -232,7 +250,7 @@ namespace BugTracker.Controllers
 
                 db.SaveChanges();
 
-                return RedirectToAction("Details", "Projects", new { id = project.Id });
+                return RedirectToAction("Details", "Projects", new { id = proj.Id });
             }
 
             ViewBag.ErrorMessage = "Something went wrong. Please try again or submit a ticket.";

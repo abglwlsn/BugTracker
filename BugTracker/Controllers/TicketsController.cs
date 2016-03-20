@@ -121,15 +121,8 @@ namespace BugTracker.Controllers
             var userId = User.Identity.GetUserId();
             string projectName;
             var projectId = project.Id;
-            //var projects = new List<Project>();
-            var devRole = "Developer";
-            var developers = devRole.UsersInRole().ToList();
+            var developers = "Developer".UsersInRole().ToList();
             var projectDevelopers = new List<ApplicationUser>();
-
-            //if (User.IsInRole("Administrator"))
-            //    projects = db.Projects.Where(p => p.IsResolved != true).ToList();
-            //else
-            //    projects = userId.ListUserProjects().Where(p => p.IsResolved != true).ToList();
 
             //select project developers
             if (project != null)
@@ -147,7 +140,6 @@ namespace BugTracker.Controllers
                 Ticket = new Ticket(),
                 ProjectName = projectName,
                 ProjectId = project.Id,
-                //Projects = new SelectList(projects, "Id", "Name"),
                 Developers = new SelectList(projectDevelopers, "Id", "FullName"),
                 Priorities = new SelectList(db.Priorities.OrderBy(p => p.Id), "Id", "Name"),
                 Statuses = new SelectList(db.Statuses, "Id", "Name"),
@@ -175,24 +167,13 @@ namespace BugTracker.Controllers
                 var es = new EmailService();
 
                 if (ticket.AssignedToId != null)
-                {
-
                     ticket.Status = db.Statuses.FirstOrDefault(s => s.Name == "Assigned");
-                    var developer = db.Users.Find(ticket.AssignedToId);
-                    var msg = ticket.CreateAssignedToTicketMessage(project, developer);
-                    es.SendAsync(msg);
-
-                    //log notification
-                    var notif = ticket.Id.CreateTicketNotification(types[2], new List<ApplicationUser> { developer }, msg.Body);
-                    db.Notifications.Add(notif);
-                }
                 else
                     ticket.Status = db.Statuses.FirstOrDefault(s => s.Name == "Unassigned");
 
                 if (!User.IsInRole("Administrator"))
                 {
-                    var adminRole = "Administrator";
-                    var admins = adminRole.UsersInRole().ToList();
+                    var admins = "Administrator".UsersInRole().ToList();
                     var msgList = ticket.CreateTicketSubmittedMessage(admins);
                     var msg = msgList.First().Body;
                     foreach (var message in msgList)
@@ -204,10 +185,18 @@ namespace BugTracker.Controllers
                 db.Tickets.Add(ticket);
                 db.SaveChanges();
 
-                if (User.IsInRole("Administrator"))
-                    return RedirectToAction("Index");
-                else
-                    return RedirectToAction("UserTickets");
+                if(ticket.AssignedToId!= null)
+                {
+                    var developer = db.Users.Find(ticket.AssignedToId);
+                    var msg = ticket.CreateAssignedToTicketMessage(project, developer);
+                    es.SendAsync(msg);
+
+                    //log notification
+                    var notif = ticket.Id.CreateTicketNotification(types[2], new List<ApplicationUser> { developer }, msg.Body);
+                    db.Notifications.Add(notif);
+                }
+
+                    return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
             }
             return View(ticket);
         }
@@ -221,8 +210,7 @@ namespace BugTracker.Controllers
             var project = ticket.Project;
             string projectName;
             //var projects = new List<Project>();
-            var devRole = "Developer";
-            var developers = devRole.UsersInRole();
+            var developers = "Developer".UsersInRole();
             var projectDevelopers = new List<ApplicationUser>();
 
             if (id == null)
@@ -290,8 +278,7 @@ namespace BugTracker.Controllers
 
                     //notify submitter, project manager, admins
                     var recipientList = new List<ApplicationUser>();
-                    var adminRole = "Administrator";
-                    var admins = adminRole.UsersInRole();
+                    var admins = "Administrator".UsersInRole();
                     var submitter = db.Users.Find(ticket.SubmitterId);
 
                     recipientList.Add(manager);

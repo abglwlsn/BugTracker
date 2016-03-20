@@ -212,13 +212,16 @@
                                                     <td>@log.NewValue</td>
                                                 }
                                                 else
-                                                {<td></td>}
+                                                {
+                                                <td></td>}
                                                 @if (log.OldValue != null)
-                                                { 
+                                                {
                                                     <td>@log.OldValue</td>
                                                 }
                                                 else
-                                                { <td></td>}
+                                                {
+                                                <td></td>}
+   
                                                 <td>@log.ModifiedBy.FullName</td>
                                             </tr>
                                         }

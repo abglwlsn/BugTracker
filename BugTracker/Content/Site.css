@@ -3,7 +3,7 @@
 
 body {
     /*background-color: #262626;*/
-    background-color:#070712;
+    background-color:#111;
     margin:0;
     padding:0;
     width:100%;
@@ -207,6 +207,10 @@ h1 span {
     color:#fff;
 }
 
+#about h2, #about li, #about p {
+    color:#1a1a1a;
+}
+
 #about h4 {
     color: #737373;
     font-family: 'Source Sans Pro', sans-serif;
@@ -362,6 +366,10 @@ img {
 
 #attachmentImg {
     border:solid 1px #fff;
+}
+
+.box-info.warning {
+    background:#ed9c28!important;
 }
 
 /*------------ BUTTONS ---------*/
