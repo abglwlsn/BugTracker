@@ -1,4 +1,5 @@
-﻿
+﻿@model BugTracker.Models.DashboardViewModel
+@using BugTracker.HelperExtensions
 @{
     ViewBag.Title = "Dashboard";
 }
@@ -16,10 +17,12 @@
                             <i class="fa fa-puzzle-piece fa-stack-1x warning"></i>
                         </span>
                     </div>
-                    <div class="text-box">
-                        @*<h3>@Model.CurrentProjects.Count</h3>*@
-                        <p>Current Projects</p>
-                    </div>
+                    <a href=@Url.Action("Index", "Projects")>
+                        <div class="text-box">
+                            <h3>@Model.ProjectsAmt</h3>
+                            <p>Current Projects</p>
+                        </div>
+                    </a>
                     <div class="clear"></div>
                 </div>
             </div>
@@ -32,157 +35,164 @@
                             <i class="fa fa-ticket fa-stack-1x warning"></i>
                         </span>
                     </div>
+                    @if (User.IsInRole("Administrator"))
+                    {
+                        @:<a href=@Url.Action("Index", "Tickets")>
+                    }
+                    else
+                    {
+                        @:<a href=@Url.Action("UserTickets", "Tickets")>
+                    }
                     <div class="text-box">
-                        @*<h3>@Model.CurrentTickets.Count</h3>*@
+                        <h3>@Model.Tickets.Count()</h3>
                         <p>Current Tickets</p>
                     </div>
-                    <div class="clear"></div>
-                </div>
-            </div>
+                </a>
+                <div class="clear"></div>
         </div>
-        <div class="box-info shadow">
-            <div class="row">
-                <!-- priority donut -->
-                <div class="col-md-4">
-                    <h2>Tickets By Priority</h2>
-                    <div id="ticketsByPriority" class="box-content">
-                        <p>Chart comparing open tickets by priority level</p>
-                    </div>
+    </div>
+</div>
+<div class="box-info shadow">
+    <div class="row">
+        <!-- priority donut -->
+        <div class="col-md-4">
+            <h2>Tickets By Priority</h2>
+            <div id="ticketsByPriority" class="box-content">
+                <div id="priorityDonut" style="height: 125px;" class="col-md-12">
                 </div>
-                <!--action donut-->
-                <div class="col-md-4">
-                    <h2>Tickets By Type</h2>
-                    <div id="ticketByAction" class="box-content">
-                        <p>Chart comparing open tickets by type of work needed</p>
-                    </div>
                 </div>
-                <!--phase donut-->
-                <div class="col-md-4">
-                    <h2>Tickets By Phase</h2>
-                    <div id="ticketsByPhase" class="box-content">
-                        <p>Chart comparing open tickets by the stage of developmment</p>
-                    </div>
-                </div>
-            </div>
         </div>
+        <!--action donut-->
+        <div class="col-md-4">
+            <h2>Tickets By Type</h2>
+            <div id="ticketByAction" class="box-content">
+                <div id="actionDonut" style="height: 125px;" class="col-md-12">
+                </div>
+                </div>
+        </div>
+        <!--phase donut-->
+        <div class="col-md-4">
+            <h2>Tickets By Phase</h2>
+            <div id="ticketsByPhase" class="box-content">
+                <div id="phaseDonut" style="height: 125px;" class="col-md-12">
+                </div>
+                </div>
+        </div>
+    </div>
+</div>
+@if (User.IsInRole("Administrator"))
+{
         <!--UNASSIGNED TICKETS-->
-        <div class="row">
-            <div class="col-md-12">
-                <div id="unassigned" class="box-info shadow">
-                    <h2><strong>Unassigned</strong> Tickets</h2>
-                    <div class="box-content">
-                        <table id="unassignedTickets" class="data-table-xl hover table-striped compact">
-                            <thead>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="unassigned" class="box-info shadow">
+                <h2><strong>Unassigned</strong> Tickets</h2>
+                <div class="box-content">
+                    <table id="unassignedTickets" class="data-table-xl hover row-border table-striped compact">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Project</th>
+                                <th>Submitted By</th>
+                                <th>On</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var ticket in Model.Tickets.Where(t => t.Status.Name != "Resolved" && (t.Priority == null || t.AssignedToId == null)))
+                            {
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Project</th>
-                                    <th>Submitted By</th>
-                                    <th>On</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @*@foreach (var ticket in Model.UnassignedTickets)
+                                    <td>@ticket.Name</td>
+                                    @if (ticket.Project == null)
                                     {
-                                        <tr>
-                                            <td>@ticket.Name</td>
-                                            @if (ticket.Project == null)
-                                            {
-                                                <td>unassigned</td>}
-                                            else
-                                            {
-                                                <td>@ticket.Project.Name</td> }
-                                            @if (ticket.AssignedToId == null)
-                                            {
-                                                <td>unassigned</td> }
-                                            else
-                                            {
-                                                <td>@ticket.AssignedTo.FullName</td> }
-                                            @if (ticket.Priority == null)
-                                            {
-                                                <td>unassigned</td> }
-                                            else
-                                            {
-                                                <td>@ticket.Priority.Name</td> }
-                                            @if (ticket.Status == null)
-                                            {
-                                                <td>unassigned</td> }
-                                            else
-                                            {
-                                                <td>@ticket.Status.Name</td> }
-                                            @if (ticket.Action == null)
-                                            {
-                                                <td>unassigned</td> }
-                                            else
-                                            {
-                                                <td>@ticket.Action.Name</td> }
-                                            @if (ticket.Phase == null)
-                                            {
-                                                <td>unassigned</td> }
-                                            else
-                                            {
-                                                <td>@ticket.Phase.Name</td> }
-                                            <td>@ticket.Submitter.FullName</td>
-                                            <td>@ticket.Submitted.FormatDateTimeOffsetCondensed()</td>
-                                            <td>
-                                                <a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-eye"></i></a>
-                                                <a href=@Url.Action("Edit", "Tickets", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></a>
-                                                <a href=@Url.Action("Create", "Attachments", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-flip-horizontal fa-paperclip"></i></a>
-                                            </td>
-                                        </tr>
-                                    }*@
-                            </tbody>
-                        </table>
-                    </div>
+                                        <td>unassigned</td>}
+                                    else
+                                    {
+                                        <td>@ticket.Project.Name</td> }
+                                    <td>@ticket.Submitter.FullName</td>
+                                    <td>@ticket.Submitted.FormatDateTimeOffsetCondensed()</td>
+                                    <td>
+                                        <a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-eye"></i></a>
+                                        <a href=@Url.Action("Edit", "Tickets", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></a>
+                                        <a href=@Url.Action("Create", "Attachments", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-flip-horizontal fa-paperclip"></i></a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
-    <!-- counts -->
-    <div class="col-md-4">
-        <!-- comments -->
-        <div class="box-info">
-            <h2>Recent Comments</h2>
-            @*@foreach (var ticket in Model.Tickets)
-                {
-                    foreach (var comment in ticket.RecentComments)
-                    {
-                        <h6>Ticket: @ticket.Name</h6>
-                        <p><strong>@comment.Submitter.FullName</strong></p>
-                        <p>@comment.Body</p>
-                        <p>@comment.Submitted</p>
-                    }
-                }*@
+}
+</div>
+<!-- counts -->
+<div class="col-md-4">
+    <!-- comments -->
+    <div id="comments" class="box-info">
+        <h2>Recent Comments</h2>
+        <div class="box-content">
+            @foreach (var comment in Model.Comments)
+            {
+                <h6><b>Ticket: @comment.Ticket.Name</b></h6>
+                    <p class="single-line">@comment.Body</p>@*<span class="ellipsis">...</span>*@
+                    <p>@comment.Submitted.FormatDateTimeOffset()</p>
+                    <br />
+            }
         </div>
-        <!--attachments-->
-        <div class="box-info">
-            <h2>Recent Attachments</h2>
-            <div class="box-content">
-                @*@foreach (var attach in Model.RecentAttachments)
-                    {
-                            <h6>Ticket: @attach.Ticket.Name</h6>
-                            <p>@attach.Title</p>
-                            <p>@attach.FilePath</p>
-                            <p><strong>@attach.Submitter.FullName</strong></p>
-                            <p>@attach.Submitted</p>
-                    }*@
-            </div>
+    </div>
+    <!--attachments-->
+    <div id="attachments" class="box-info">
+        <h2>Recent Attachments</h2>
+        <div class="box-content">
+            @foreach (var attach in Model.Attachments)
+            {
+                <h6><b>Ticket: @attach.Ticket.Name</b></h6>
+                    <p>@attach.Title</p>
+            }
         </div>
-        <div class="box-info">
+    </div>
+    @if (User.IsInRole("Administrator"))
+    {
+        <div id="resolved" class="box-info">
             <h2>Recently Resolved</h2>
             <div class="box-content">
                 <dl>
-                    @*@foreach (var resolved in Model.ResolvedTickets)
+                    @foreach (var resolved in Model.Tickets.Where(t => t.Status.Name == "Resolved"))
                     {
                         <dt>@resolved.Project.Name</dt>
                         <dd>
                             @resolved.Name
-                            <a href=@Url.Action("Details", "Tickets", new { id = resolved.Id }) class="btn btn-warning btn-xs"><i class="fa fa-eye"></i></a>
+                            <a href=@Url.Action("Details", "Tickets", new { id = resolved.Id }) class="pull-right btn btn-warning btn-xs"><i class="fa fa-eye"></i></a>
                         </dd>
-                    }*@
+                    }
                 </dl>
             </div>
         </div>
-    </div>
+    }
 </div>
+</div>
+@section Scripts {
+<script type="text/javascript">
 
+    $.post('@Url.Action("GetCharts", "Home")').then(function (response) {
+        new Morris.Donut({
+            element: 'priorityDonut',
+            data: response.priorityDonut,
+            colors: ['#d48311', '#ed9c28', '#f0a742', '#f4bd71', '#f7d3a1', '#fbe9d0', '#ffffff'],
+            resize: true,
+        })
+        new Morris.Donut({
+            element: 'actionDonut',
+            data: response.actionDonut,
+            colors: ['#d48311', '#ed9c28', '#f0a742', '#f4bd71', '#f7d3a1', '#fbe9d0', '#ffffff'],
+            resize: true,
+        })
+        new Morris.Donut({
+            element: 'phaseDonut',
+            data: response.phaseDonut,
+            colors: ['#d48311', '#ed9c28', '#f0a742', '#f4bd71', '#f7d3a1', '#fbe9d0', '#ffffff'],
+            resize: true,
+        })
+    });
+</script>}

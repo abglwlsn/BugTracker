@@ -44,9 +44,9 @@
                     <!-- Sidebar menu -->
                     <div id="sidebar-menu">
                         <ul>
-                            <li><a href=@Url.Action("Dashboard", "Home")><i class="fa fa-fw fa-bar-chart"></i> Dashboard</a></li>
                             @if (User.IsInRole("Developer") || User.IsInRole("Project Manager") || User.IsInRole("Administrator"))
                             {
+                                <li><a href=@Url.Action("Dashboard", "Home")><i class="fa fa-fw fa-bar-chart"></i> Dashboard</a></li>
                                 <li><a href=@Url.Action("Index", "Projects")><i class="fa fa-fw fa-puzzle-piece"></i> Projects</a></li>
                                 if (User.IsInRole("Administrator"))
                                 { <li><a href=@Url.Action("Index", "Tickets")><i class="fa fa-fw fa-ticket"></i> Tickets</a></li> }
@@ -60,10 +60,6 @@
                                             @*<li><a href=@Url.Action("Roles", "Admin")><i class="fa fa-fw fa-angle-right"></i> Roles</a></li>*@
                                             <li><a href=@Url.Action("Users", "Admin")><i class="fa fa-fw fa-users"></i> Users </a></li>
                                             <li><a href=@Url.Action("Notifications", "Admin")><i class="fa fa-fw fa-paper-plane"></i> Notifications</a></li>
-                                }
-                                @if (User.IsInRole("Submitter") && !User.IsInRole("Project Manager") && !User.IsInRole("Developer") && !User.IsInRole("Administrator"))
-                                {
-                                    <li><a href=@Url.Action("UserTickets", "Tickets")><i class="fa fa-fw fa-ticket"></i> Tickets</a></li>
                                 }
                             <li><a href=@Url.Action("Index", "Manage")><i class="fa fa-fw fa-user"></i> Profile</a></li>
                         </ul>
@@ -97,7 +93,7 @@
                             </ul>
                             <!-- right navbar -->
                             <ul class="nav navbar-nav navbar-right top-navbar nav-pad">
-                                <li>@Html.Partial("_RolesPartial")</li>
+                                @*<li>@Html.Partial("_RolesPartial")</li>*@
                                 <li>@Html.Partial("_LoginPartial")</li>
                                 <li><a href="https://awest-bugtracker.azurewebsites.net#about">About</a></li>
                                 <li><a href="https://awest-bugtracker.azurewebsites.net#contact">Contact</a></li>
@@ -126,6 +122,8 @@
     @Scripts.Render("~/bundles/bootstrap")
     <script type="text/javascript" src="https://cdn.datatables.net/t/dt/dt-1.10.11,b-1.1.2,b-colvis-1.1.2,r-2.0.2/datatables.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.0.2/js/dataTables.responsive.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="~/Scripts/morris.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/chosen/1.1.0/chosen.jquery.min.js"></script>
     <script src="~/Site Template/js/lanceng.js"></script>
     <script src="~/Scripts/Site.js"></script>

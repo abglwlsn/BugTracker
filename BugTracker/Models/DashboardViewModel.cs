@@ -9,6 +9,7 @@ namespace BugTracker.Models
     {
         public IEnumerable<Ticket> Tickets { get; set; }
         public IEnumerable<Attachment> Attachments { get; set; }
+        public IEnumerable<Comment> Comments { get; set; }
         public int ProjectsAmt { get; set; }
     }
 }

@@ -131,7 +131,7 @@ namespace BugTracker.HelperExtensions
                 newLogs.Add(log);
             }
 
-            if (oldProject.Users.ToList() != newProject.Users.ToList())
+            if (oldProject.Users != newProject.Users)
             {
                 var oldUsers = oldProject.Users.ConvertUsersToNamesString();
                 var newUsers = newProject.Users.ConvertUsersToNamesString();

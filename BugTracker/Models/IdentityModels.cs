@@ -29,6 +29,7 @@ namespace BugTracker.Models
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
             var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
+            userIdentity.AddClaim(new Claim("FirstName", FirstName));
             // Add custom user claims here
             return userIdentity;
         }

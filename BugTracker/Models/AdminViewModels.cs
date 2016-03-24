@@ -8,6 +8,15 @@ using System.Web.Mvc;
 
 namespace BugTracker.Models
 {
+    public class NotificationsViewModel
+    {
+        public string ProjectName { get; set; }
+        public string TicketName { get; set; }
+        public string Type { get; set; }
+        public string Recipients { get; set; }
+        public string SendDate { get; set; }
+        public string Message { get; set; }
+    }
 
     public class UserInfoViewModel
     {
@@ -42,8 +51,6 @@ namespace BugTracker.Models
         public string RoleName { get; set; }
         public MultiSelectList Users { get; set; }
         public IEnumerable<string> SelectedUsers { get; set; }
-        //public MultiSelectList UsersInRole { get; set; }
-        //public string[] SelectedUsersToRemove { get; set; }
     }
 
     public class RolesIndexViewModel
@@ -52,15 +59,5 @@ namespace BugTracker.Models
         public IEnumerable<ApplicationUser> Developers { get; set; }
         public IEnumerable<ApplicationUser> ProjectManagers { get; set; }
         public IEnumerable<ApplicationUser> Administrators { get; set; }
-    }
-
-    public class NotificationsViewModel
-    {
-        public string ProjectName { get; set; }
-        public string TicketName { get; set; }
-        public string Type { get; set; }
-        public string Recipients { get; set; }
-        public string SendDate { get; set; }
-        public string Message { get; set; }
     }
 }

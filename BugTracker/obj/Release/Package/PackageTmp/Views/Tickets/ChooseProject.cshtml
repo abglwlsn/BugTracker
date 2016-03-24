@@ -11,9 +11,11 @@
             {
                 @Html.AntiForgeryToken()
                 <p>Please select the project that the new ticket will belong to.</p>
-                @Html.DropDownListFor(m => m.SelectedProjectId, Model.Projects, "Select Project", new { htmlAttributes = new { @class = "form-control" } })
-                <input type="submit" class="btn btn-warning" value="Choose and Continue" />
-                <a class="cancel btn btn-warning">Cancel</a>
+                <div class="form-group">
+                    @Html.DropDownListFor(m => m.SelectedProjectId, Model.Projects, "Select Project", htmlAttributes: new { @class = "form-control btn-block" })
+                    <input type="submit" class="btn-pad btn btn-warning" value="Choose Project" />
+                    <a class="cancel btn-pad btn btn-warning">Cancel</a>
+                </div>
             }
         </div>
     </div>

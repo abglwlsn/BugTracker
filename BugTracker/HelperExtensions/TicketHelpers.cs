@@ -12,7 +12,14 @@ namespace BugTracker.HelperExtensions
 
         public static IEnumerable<Ticket> ListUserTickets(this string userId)
         {
-            var tickets = db.Tickets.OrderBy(o=>o.PriorityId).Where(t => t.AssignedToId == userId && t.Status.Name != "Resolved").ToList();
+            var tickets = db.Tickets.OrderBy(o => o.PriorityId).Where(t => t.AssignedToId == userId && t.Status.Name != "Resolved").ToList();
+
+            return tickets;
+        }
+
+        public static IEnumerable<Ticket> ListSubmittedTickets(this string userId)
+        {
+            var tickets = db.Tickets.OrderBy(o => o.PriorityId).Where(t => t.SubmitterId == userId && t.Status.Name != "Resolved").ToList();
 
             return tickets;
         }
@@ -30,18 +37,17 @@ namespace BugTracker.HelperExtensions
                 var log = new Log
                 {
                     TicketId = newTicket.Id,
-                    ProjectId = newTicket.ProjectId,
                     ModifiedById = userId,
                     Modified = modified,
                     Property = "Assigned To",
-                    OldValue = oldDev.FullName,
+                    OldValue = oldDev?.FullName,
                     NewValue = newDev.FullName
                 };
 
                 newLogs.Add(log);
             }
 
-            if(oldTicket?.PriorityId != newTicket.PriorityId)
+            if (oldTicket?.PriorityId != newTicket.PriorityId)
             {
                 var oldPri = db.Priorities.Find(oldTicket.PriorityId);
                 var newPri = db.Priorities.Find(newTicket.PriorityId);
@@ -53,14 +59,14 @@ namespace BugTracker.HelperExtensions
                     ModifiedById = userId,
                     Modified = modified,
                     Property = "Priority",
-                    OldValue = oldPri.Name,
+                    OldValue = oldPri?.Name,
                     NewValue = newPri.Name
                 };
 
                 newLogs.Add(log);
             }
 
-            if(oldTicket?.StatusId != newTicket.StatusId)
+            if (oldTicket?.StatusId != newTicket.StatusId)
             {
                 var oldStat = db.Statuses.Find(oldTicket.StatusId);
                 var newStat = db.Statuses.Find(newTicket.StatusId);
@@ -72,7 +78,7 @@ namespace BugTracker.HelperExtensions
                     ModifiedById = userId,
                     Modified = modified,
                     Property = "Status",
-                    OldValue = oldStat.Name,
+                    OldValue = oldStat?.Name,
                     NewValue = newStat.Name
                 };
 
@@ -87,7 +93,7 @@ namespace BugTracker.HelperExtensions
                     ProjectId = newTicket.ProjectId,
                     ModifiedById = userId,
                     Modified = modified,
-                    Property = "Descriptin",
+                    Property = "Description",
                     OldValue = oldTicket?.Description,
                     NewValue = newTicket.Description
                 };

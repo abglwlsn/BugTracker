@@ -51,7 +51,7 @@ namespace BugTracker.Controllers
         [Authorize(Roles = "Administrator, Project Manager, Developer")]
         public ActionResult Details(int? id)
         {
-            Project project = db.Projects.Find(id);
+            Project project = db.Projects.Include(p=>p.Tickets).FirstOrDefault(p=>p.Id==id);
 
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -91,6 +91,7 @@ namespace BugTracker.Controllers
 
             if (ModelState.IsValid)
             {
+                project.Created = DateTimeOffset.Now;
                 db.Projects.Add(project);
 
                 if (manager == null && userId.UserIsInRole("Project Manager"))
@@ -111,15 +112,17 @@ namespace BugTracker.Controllers
                 db.Notifications.Add(notif);
 
                 //add users
-                foreach (var user in db.Users)
+                if (project.Users != null)
                 {
-                    if (SelectedDevelopers.Contains(user.FullName))
-                        project.Users.Add(user);
-                    if (SelectedSubmitters.Contains(user.FullName) && !project.Users.Any(u => u.FullName == user.FullName))
-                        project.Users.Add(user);
+                    foreach (var user in db.Users)
+                    {
+                        if (SelectedDevelopers.Contains(user.FullName))
+                            project.Users.Add(user);
+                        if (SelectedSubmitters.Contains(user.FullName) && !project.Users.Any(u => u.FullName == user.FullName))
+                            project.Users.Add(user);
+                    }
                 }
 
-                project.Created = DateTimeOffset.Now;
                 db.SaveChanges();
 
                 TempData["SuccessMessage"] = "Project " + project.Name + " created.";
@@ -195,10 +198,6 @@ namespace BugTracker.Controllers
                         proj.Users.Add(user);
                 }
 
-                //add changelogs
-                var newLogs = original.CreateProjectChangelogs(proj, userId);
-                db.Logs.AddRange(newLogs);
-
                 var developers = "Developer".UsersInRole();
                 var projectDevs = new List<ApplicationUser>();
                 foreach (var dev in developers)
@@ -247,6 +246,10 @@ namespace BugTracker.Controllers
                 }
                 else
                     proj.Users.Add(manager);
+
+                //add changelogs
+                var newLogs = original.CreateProjectChangelogs(proj, userId);
+                db.Logs.AddRange(newLogs);
 
                 db.SaveChanges();
 

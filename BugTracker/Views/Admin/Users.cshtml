@@ -11,10 +11,22 @@
     @foreach (var user in Model.OrderBy(u => u.LastName))
     {
     <div class="box-info shadow">
-        <h2>@user.LastName, @user.FirstName <small>(@user.Id.ListUserTickets().Count()) Tickets</small></h2>
+        <h2 class="userDetails">@user.LastName, @user.FirstName 
+            @if (user.Id.ListUserRoles().Contains("Project Manager"))
+            {
+                <small>(@user.Id.ListUserProjects().Where(p => p.ProjectManagerId == user.Id).Count()) Projects   </small>
+            }
+            @if (user.Id.ListUserRoles().Contains("Developer"))
+            { 
+                <small>(@user.Id.ListUserTickets().Count()) Tickets   </small>
+            }
+            @if(user.Id.ListSubmittedTickets().Count() > 0)
+            {
+                <small>(@user.Id.ListSubmittedTickets().Count()) Submissions</small>
+            }
+        </h2>
         <div class="headerButtons">
             <a role="button" data-toggle="collapse" data-parent="#usersRender" data-target="#userInfo-@user.Id" aria-expanded="false" class="btn btn-warning">Details</a>
-            @*<button type="button" class="assignUser btn btn-warning" data-id="@user.Id"><i class="fa fa-plus"></i> Ticket</button>*@
         </div>
         <div id="userInfo-@user.Id" class="box-content collapse" role="tabpanel">
             @Html.Action("_UserInfo", new { id = user.Id })

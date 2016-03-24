@@ -20,7 +20,7 @@ namespace BugTracker.HelperExtensions
             {
                 var msg = new IdentityMessage();
                 msg.Destination = user.Email;
-                msg.Body = "A new ticket has been submitted by " + _ticket.Submitter.FullName + ". Please review the ticket details to determine validity, and to assign a Project Manager and Developer. <br/><br/>Ticket: " + _ticket.Name + "<br/> <br/>Submitted: " + _ticket.Submitted.FormatDateTimeOffset() + "<br/><br/>Description: " + _ticket.Description;
+                msg.Body = "A new ticket has been submitted by " + _ticket.Submitter.FullName + ". Please review the ticket details to determine validity, and to assign a Project Manager and Developer. <br/><br/>Ticket: " + _ticket.Name + "<br/> <br/>Submitted: " + _ticket.Submitted.FormatDateTimeOffset() + "<br/><br/>Description: " + _ticket.Description != null ? _ticket.Description : "";
 
                 msgList.Add(msg);
             }
@@ -35,7 +35,7 @@ namespace BugTracker.HelperExtensions
             var manager = db.Users.Find(project.ProjectManagerId);
             var msg = new IdentityMessage();
             msg.Destination = user.Email;
-            msg.Body = "A new ticket has been assigned to you by " + manager.FullName + ". Ticket details are below. <br/><br/> Project: " + project.Name + "<br/> Project Due Date: " + project.Deadline + "<br/> Ticket Name: " + _ticket.Name + "<br/> Description: " + _ticket.Description + "<br/> Submitter: " + _ticket.Submitter.FullName + "<br/> Priority: " + _ticket.Priority.Name + "<br/> Action: " + _ticket.Action.Name + "<br/> Phase: " + _ticket.Phase.Name + "<br/><br/>If you have questions or cannot complete this ticket, please contact " + manager.FirstName + " at " + manager.Email + ".";
+            msg.Body = "A new ticket has been assigned to you by " + manager.FullName + ". Ticket details are below. <br/><br/> Project: " + project.Name + "<br/> Project Due Date: " + project.Deadline  + "<br/> Ticket Name: " + _ticket.Name != null ? _ticket.Name : "" + "<br/> Description: " + _ticket.Description != null ? _ticket.Description : "" + "<br/> Submitter: " + _ticket.Submitter.FullName + "<br/> Priority: " + _ticket.Priority.Name != null ? _ticket.Priority.Name : "" + "<br/> Action: " + _ticket.Action.Name + "<br/> Phase: " + _ticket.Phase.Name != null ? ticket.Phase.Name : "" + "<br/><br/>If you have questions or cannot complete this ticket, please contact " + manager.FirstName + " at " + manager.Email + ".";
             msg.Subject = "New ticket assignment on project " + project.Name;
 
             return msg;

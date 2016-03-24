@@ -80,7 +80,10 @@ namespace BugTracker.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToAction("Dashboard", "Home", null);
+                    if (!User.IsInRole("Administrator") && !User.IsInRole("Project Manager") && !User.IsInRole("Developer"))
+                        return RedirectToAction("UserTickets", "Tickets");
+                    else
+                        return RedirectToAction("Dashboard", "Home", null);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
@@ -104,7 +107,7 @@ namespace BugTracker.Controllers
 
             var result = await SignInManager.PasswordSignInAsync("guestsubmitter@bugsleuth.com", "Password-1", false, shouldLockout: false);
 
-            return RedirectToAction("Dashboard", "Home");
+            return RedirectToAction("UserTickets", "Tickets");
         }
 
         // POST: /Account/LoginGuestSuperUser

@@ -42,7 +42,7 @@ namespace BugTracker.Controllers
         //GET: Tickets/UserTickets
         //try route prefix for Tickets/{user.FirstName}
         [Authorize(Roles = "Project Manager, Developer, Submitter")]
-        public ActionResult UserTickets(string returnUrl)
+        public ActionResult UserTickets()
         {
             var userId = User.Identity.GetUserId();
             IEnumerable<Project> projects;
@@ -171,6 +171,9 @@ namespace BugTracker.Controllers
                 else
                     ticket.Status = db.Statuses.FirstOrDefault(s => s.Name == "Unassigned");
 
+                db.Tickets.Add(ticket);
+                db.SaveChanges();
+
                 if (!User.IsInRole("Administrator"))
                 {
                     var admins = "Administrator".UsersInRole().ToList();
@@ -182,10 +185,7 @@ namespace BugTracker.Controllers
                     var notif = ticket.Id.CreateTicketNotification(types[2], admins, msg);
                 }
 
-                db.Tickets.Add(ticket);
-                db.SaveChanges();
-
-                if(ticket.AssignedToId!= null)
+                if (ticket.AssignedToId!= null)
                 {
                     var developer = db.Users.Find(ticket.AssignedToId);
                     var msg = ticket.CreateAssignedToTicketMessage(project, developer);
@@ -266,17 +266,25 @@ namespace BugTracker.Controllers
                 var userId = User.Identity.GetUserId();
                 var es = new EmailService();
 
-                //check statuses
                 var unassigned = db.Statuses.FirstOrDefault(s => s.Name == "Unassigned");
                 if (ticket.StatusId == unassigned.Id && ticket.AssignedToId != null)
-                    ticket.Status = db.Statuses.FirstOrDefault(t => t.Name == "Assigned");
+                    ticket.StatusId = db.Statuses.FirstOrDefault(t => t.Name == "Assigned").Id;
 
                 var resolvedStatus = db.Statuses.FirstOrDefault(s => s.Name == "Resolved");
                 if (ticket.StatusId == resolvedStatus.Id)
-                {
                     ticket.Closed = DateTimeOffset.Now;
 
-                    //notify submitter, project manager, admins
+                ticket.LastModified = DateTimeOffset.Now;
+                db.Entry(ticket).State = EntityState.Modified;
+                db.SaveChanges();
+
+                var newLogs = oldTicket.CreateTicketChangeLogs(ticket, userId);
+                db.Logs.AddRange(newLogs);
+                db.SaveChanges();
+
+                //check for resolved status
+                if (ticket.StatusId == resolvedStatus.Id)
+                {
                     var recipientList = new List<ApplicationUser>();
                     var admins = "Administrator".UsersInRole();
                     var submitter = db.Users.Find(ticket.SubmitterId);
@@ -291,33 +299,28 @@ namespace BugTracker.Controllers
                     foreach (var message in msgList)
                         es.Send(message);
 
-                    //log notifications
                     var notification = ticket.Id.CreateTicketNotification(types[5], recipientList, msg);
                     db.Notifications.Add(notification);
                 }
 
+                //check for assigned developer
                 if (oldTicket.AssignedToId != ticket.AssignedToId)
                 {
                     var oldDev = db.Users.Find(oldTicket.AssignedToId);
                     var newDev = db.Users.Find(ticket.AssignedToId);
 
-                    //emails
-                    var msg = ticket.CreateTicketReassignedMessage(project, oldDev);
-                    var msg2 = ticket.CreateAssignedToTicketMessage(project, newDev);
-
-                    es.Send(msg);
-                    es.Send(msg2);
-
-                    //log notifications
-                    ICollection<Notification> notifications = new List<Notification>
+                    if (oldDev != null)
                     {
-                        ticket.Id.CreateTicketNotification(types[4], new List<ApplicationUser> {oldDev }, msg.Body),
-                        ticket.Id.CreateTicketNotification(types[2], new List<ApplicationUser> { newDev }, msg2.Body)
-                    };
+                        var msg = ticket.CreateTicketReassignedMessage(project, oldDev);
+                        es.Send(msg);
+                        var notifOld = ticket.Id.CreateTicketNotification(types[4], new List<ApplicationUser> { oldDev }, msg.Body);
+                        db.Notifications.Add(notifOld);
+                    }
 
-                    //db.Notifications.Add(notification);
-                    //db.Notifications.Add(notification2);
-                    db.Notifications.AddRange(notifications);
+                    var msg2 = ticket.CreateAssignedToTicketMessage(project, newDev);
+                    es.Send(msg2);
+                    var notifNew = ticket.Id.CreateTicketNotification(types[2], new List<ApplicationUser> { newDev }, msg2.Body);
+                    db.Notifications.Add(notifNew);
                 }
 
                 if (oldTicket != ticket && userId != manager.Id)
@@ -327,15 +330,6 @@ namespace BugTracker.Controllers
 
                     ticket.Id.CreateTicketNotification(types[3], new List<ApplicationUser> { manager }, msg.Body);
                 }
-
-                //create changelogs
-                var newLogs = oldTicket.CreateTicketChangeLogs(ticket, userId);
-                db.Logs.AddRange(newLogs);
-                db.SaveChanges();
-
-                ticket.LastModified = DateTimeOffset.Now;
-                db.Entry(ticket).State = EntityState.Modified;
-                db.SaveChanges();
 
                 return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
             }

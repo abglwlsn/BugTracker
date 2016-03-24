@@ -126,6 +126,11 @@ footer {
     color: #262626;
 }
 
+#comments .box-content, #attachments .box-content, #resolved .box-content {
+    height: 200px;
+    overflow: auto;
+}
+
 .module {
     padding:75px 25px;
     box-sizing: border-box;
@@ -296,6 +301,38 @@ dd {
 #attachments li a:hover {
     color:#f0ad4e;
 }
+
+.userDetails small {
+    color:#737373;
+}
+
+.box-info.warning .text-box p, .box-info.warning .text-box h3 {
+    color:#fff;
+    text-decoration:none;
+}
+
+.box-info.warning .text-box p:hover, .box-info.warning .text-box h3:hover {
+    color:#fff;
+    font-weight:800;
+    text-decoration:none;
+}
+
+a:hover, a:focus {
+    text-decoration:none;
+}
+
+/*.single-line {
+    max-height:20px;
+    line-height:20px;
+    overflow:hidden;
+    width:90%;
+    display:inline-block;
+    margin-bottom:0;
+}
+
+.ellipsis {
+    padding-bottom:5px;
+}*/
 
 
 

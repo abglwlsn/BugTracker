@@ -23,9 +23,18 @@
         responsive: true
     })
 
-    $('.data-table-t').DataTable({
+    $('.data-table-n').DataTable({
         "columnDefs": [
-          { "width": "25%", "targets": 4 },
+          { "width": "45%", "targets": 4 },
+          { "width": "20%", "targets" : 2 }
+        ],
+        responsive: true
+    });
+
+    $('.data-table-d').DataTable({
+        "columnDefs": [
+          { "width": "25%", "targets": 2 },
+          { "width": "25%", "targets": 3 }
         ],
         responsive: true
     });

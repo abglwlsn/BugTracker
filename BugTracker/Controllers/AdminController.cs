@@ -7,6 +7,7 @@ using BugTracker.Models;
 using BugTracker.HelperExtensions;
 using Microsoft.AspNet.Identity;
 using System.Collections;
+using System.Data.Entity;
 
 namespace BugTracker.Controllers
 {
@@ -19,7 +20,7 @@ namespace BugTracker.Controllers
         [Authorize(Roles = "Project Manager, Administrator")]
         public ActionResult Users()
         {
-            var users = db.Users.ToList();
+            var users = db.Users.Include(u=>u.Projects).ToList();
             return View(users);
         }
 
@@ -29,7 +30,7 @@ namespace BugTracker.Controllers
         {
             var model = new UserInfoViewModel();
             model.User = db.Users.Find(id);
-            model.AssignedProjects = id.ListUserProjects();
+            model.AssignedProjects = db.Projects.Where(p=>p.ProjectManagerId == id).ToList();
             model.AssignedTickets = id.ListUserTickets();
             model.SelectedRoles = id.ListUserRoles().ToList();
             model.AllRoles = new MultiSelectList(db.Roles, "Name", "Name", model.SelectedRoles);

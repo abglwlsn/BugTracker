@@ -25,12 +25,56 @@
                 @Html.ListBox("SelectedRoles", Model.AllRoles, new { @class = "chosen-select" })
                 <input type="hidden" name="userId" value="@Model.User.Id" />
                 <br />
-                <input type="submit" class="btn btn-warning btn-pad" value="Update Roles" />
+                if (User.Identity.GetFirstName() == "Guest")
+                { <input type="submit" class="btn btn-warning btn-pad" value="Update Roles" disabled />
+                <p><small>This button is disabled for guest users.</small></p>}
+                else { <input type="submit" class="btn btn-warning btn-pad" value="Update Roles" /> }
+
             }
         </div>
     }
 </div>
 <hr />
+@if (Model.User.Id.UserIsInRole("Project Manager"))
+        {
+<div class="row">
+    <div class="col-md-12">
+        <h4>Assigned Projects</h4>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Project Name</th>
+                    <th>Deadline</th>
+                    <th>Description</th>
+                    <th># of Tickets</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.AssignedProjects.Count() == 0)
+                {
+                    <tr><td>User has no projects.</td></tr>
+                }
+                else
+                {
+                    foreach (var project in Model.AssignedProjects)
+                    {
+                        <tr>
+                            <td>@project.Name</td>
+                            <td>@project.Deadline.FormatDateTimeOffset()</td>
+                            @if (project.Description != null)
+                            {
+                                    <td>@project.Description</td> }
+                            else {
+                                    <td>none given</td>}
+                            <td>@project.Tickets.Count()</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+        }
     @if (Model.User.Id.UserIsInRole("Developer"))
             {
         <div class="innerTable col-md-12">
@@ -68,42 +112,5 @@
                     }
                 </tbody>
             </table>
-        </div>
-        if (Model.User.Id.UserIsInRole("Program Manager"))
-        {
-            <div class="row">
-            <div class="col-md-12">
-                <table class="data-table compact hover table-striped">
-                    <thead>
-                        <tr>
-                            <th>Project Name</th>
-                            <th>Deadline</th>
-                            <th>Description</th>
-                            <th># of Tickets</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (Model.AssignedProjects.Count() == 0)
-                        {
-                            <tr><td>User has no projects.</td></tr>
-                        }
-                        else
-                        {
-                            foreach (var project in Model.AssignedProjects)
-                            {
-                                <tr>
-                                    <td>@project.Name</td>
-                                    <td>@project.Deadline.FormatDateTimeOffset()</td>
-                                    @if (project.Description != null)
-                                    { <td>@project.Description</td> }
-                                    else {<td>none given</td>}
-                                    <td>@project.Tickets.Count()</td>
-                                </tr>
-                            }
-                        }
-                    </tbody>
-                </table>
-            </div>
-                </div>
-        }
+        </div>       
     }
